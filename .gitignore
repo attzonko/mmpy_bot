@@ -1,0 +1,8 @@
+*.pyc
+*.pyo
+.idea
+local_settings.py
+logs
+dist
+build
+
