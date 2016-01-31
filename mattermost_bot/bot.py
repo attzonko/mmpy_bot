@@ -70,7 +70,9 @@ class PluginsManager(object):
         for py_file in glob('{}/[!_]*.py'.format(path_name)):
             module = '.'.join((plugin, os.path.split(py_file)[-1][:-3]))
             try:
-                importlib.import_module(module)
+                _module = importlib.import_module(module)
+                if hasattr(_module, 'on_init'):
+                    _module.on_init()
             except Exception as err:
                 logger.exception(err)
 

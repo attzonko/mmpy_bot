@@ -63,8 +63,8 @@ class MattermostAPI(object):
     def get_channel_posts(self, channel_id, since):
         return self.get('/channels/%s/posts/%s' % (channel_id, since))
 
-    def get_profiles(self, team):
-        return self.get('/users/profiles/%s' % team)
+    def get_profiles(self, team_id):
+        return self.get('/users/profiles/%s' % team_id)
 
     def me(self):
         return self.get('/users/me')
@@ -104,6 +104,9 @@ class MattermostClient(object):
     def channel_msg(self, channel, message, attachments=None):
         c_id = self.channels.get(channel, {}).get("id") or channel
         return self.api.create_post(self.user["id"], c_id, message)
+
+    def get_users(self):
+        return self.api.get_profiles(self.user['team_id'])
 
     def connect_websocket(self):
         host = self.api.url.replace('http', 'ws')

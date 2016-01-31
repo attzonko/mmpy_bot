@@ -106,15 +106,23 @@ class Message(object):
         self._client = client
         self._body = body
 
-    def get_username(self):
-        user_id = self._body['user_id']
+    def get_user_info(self, key, user_id=None):
+        user_id = user_id or self._body['user_id']
         if user_id in Message.users:
-            user_name = Message.users[user_id]
+            user_info = Message.users[user_id]
         else:
-            user = self._client.api.user(user_id)
-            user_name = user.get('username')
-            Message.users[user_id] = user_name
-        return user_name
+            user_info = self._client.api.user(user_id)
+            Message.users[user_id] = user_info
+        return user_info.get(key)
+
+    def get_username(self, user_id=None):
+        return self.get_user_info('username', user_id)
+
+    def get_user_mail(self, user_id=None):
+        return self.get_user_info('email', user_id)
+
+    def get_user_id(self, user_id=None):
+        return self.get_user_info('id', user_id)
 
     def get_channel_name(self):
         channel_id = self._body['channel_id']
@@ -126,8 +134,17 @@ class Message(object):
             self.channels[channel_id] = channel_name
         return channel_name
 
+    def get_team_id(self):
+        return self._client.user.get('team_id')
+
+    def get_message(self):
+        return self._body['props']['post']['message'].strip()
+
     def is_direct_message(self):
         return self._body['message_type'] == 'D'
+
+    def get_mentions(self):
+        return self._body['props'].get('mentions')
 
     def _gen_at_message(self, text):
         return '@{}: {}'.format(self.get_username(), text)
