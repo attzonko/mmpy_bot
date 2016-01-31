@@ -5,6 +5,7 @@ DEBUG = False
 PLUGINS = [
     'mattermost_bot.plugins',
 ]
+PLUGINS_ONLY_DOC_STRING = False
 
 BOT_URL = 'http://mm.example.com/api/v1'
 BOT_LOGIN = 'bot@example.com'

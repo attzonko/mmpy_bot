@@ -9,6 +9,7 @@ import traceback
 from six import iteritems
 
 from mattermost_bot.utils import WorkerPool
+from mattermost_bot import settings
 
 logger = logging.getLogger(__name__)
 
@@ -91,8 +92,10 @@ class MessageDispatcher(object):
             u'Bad command "%s", You can ask me one of the '
             u'following questions:\n' % self.get_message(msg),
         ]
+        docs_fmt = u'{1}' if settings.PLUGINS_ONLY_DOC_STRING else u'`{0}` {1}'
+
         default_reply += [
-            u'`{0}` {1}'.format(p.pattern, v.__doc__ or "")
+            docs_fmt.format(p.pattern, v.__doc__ or "")
             for p, v in iteritems(self._plugins.commands['respond_to'])]
 
         self._client.channel_msg(msg['channel_id'], '\n'.join(default_reply))
