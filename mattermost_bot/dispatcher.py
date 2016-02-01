@@ -160,8 +160,8 @@ class Message(object):
     def reply(self, text):
         self.send(self._gen_reply(text))
 
-    def send(self, text):
-        self._client.channel_msg(self._body['channel_id'], text)
+    def send(self, text, channel_id=None):
+        self._client.channel_msg(channel_id or self._body['channel_id'], text)
 
     @property
     def channel(self):
