@@ -24,3 +24,15 @@ class WorkerPool(object):
         while True:
             msg = self.queue.get()
             self.func(msg)
+
+
+def allow_only_direct_message():
+    def plugin(func):
+        def wrapper(message, *args, **kw):
+            if not message.is_direct_message():
+                return message.reply("`Only direct messages is allowed`")
+            return func(message, *args, **kw)
+
+        return wrapper
+
+    return plugin
