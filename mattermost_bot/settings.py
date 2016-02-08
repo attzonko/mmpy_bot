@@ -12,6 +12,8 @@ BOT_LOGIN = 'bot@example.com'
 BOT_PASSWORD = 'XXX'
 BOT_TEAM = 'devops'
 
+IGNORE_NOTIFIES = ['@channel', '@all']
+
 for key in os.environ:
     if key[:15] == 'MATTERMOST_BOT_':
         globals()[key[11:]] = os.environ[key]

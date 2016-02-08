@@ -31,6 +31,12 @@ class MessageDispatcher(object):
         return msg.get(
             'props', {}).get('post', {}).get('message', '').strip()
 
+    def ignore(self, _msg):
+        msg = self.get_message(_msg)
+        for prefix in settings.IGNORE_NOTIFIES:
+            if msg.startswith(prefix):
+                return True
+
     def is_mentioned(self, msg):
         mentions = msg.get('props', {}).get('mentions', [])
         return self._client.user['id'] in mentions
@@ -69,6 +75,9 @@ class MessageDispatcher(object):
             self._default_reply(msg)
 
     def _on_new_message(self, msg):
+        if self.ignore(msg) is True:
+            return
+
         msg = self.filter_text(msg)
         if self.is_mentioned(msg) or self.is_personal(msg):
             self._pool.add_task(('respond_to', msg))
