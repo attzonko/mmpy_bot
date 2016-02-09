@@ -31,7 +31,7 @@ Then you need to configure the `BOT_URL`, `BOT_LOGIN`, `BOT_PASSWORD`, `BOT_TEAM
 mattermost_bot_settings.py:
 
 ```python
-BOT_URL = '<http://mm.example.com/api/v1>'
+BOT_URL = '<http://mm.example.com/api/v1>'  # with 'http://' and with '/api/v1' path
 BOT_LOGIN = '<bot-email-address>'
 BOT_PASSWORD = '<bot-password>'
 BOT_TEAM = '<your-team>'
