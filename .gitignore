@@ -5,4 +5,4 @@ local_settings.py
 logs
 dist
 build
-
+*.egg-info*
