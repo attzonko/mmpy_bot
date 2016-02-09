@@ -13,6 +13,7 @@ BOT_PASSWORD = 'XXX'
 BOT_TEAM = 'devops'
 
 IGNORE_NOTIFIES = ['@channel', '@all']
+WORKERS_NUM = 10
 
 for key in os.environ:
     if key[:15] == 'MATTERMOST_BOT_':

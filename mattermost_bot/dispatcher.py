@@ -19,7 +19,7 @@ MESSAGE_MATCHER = re.compile(r'^(@.*?\:?)\s(.*)', re.MULTILINE | re.DOTALL)
 class MessageDispatcher(object):
     def __init__(self, client, plugins):
         self._client = client
-        self._pool = WorkerPool(self.dispatch_msg)
+        self._pool = WorkerPool(self.dispatch_msg, settings.WORKERS_NUM)
         self._plugins = plugins
         self._channel_info = {}
 
