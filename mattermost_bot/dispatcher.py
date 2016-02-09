@@ -63,7 +63,7 @@ class MessageDispatcher(object):
             if func:
                 responded = True
                 try:
-                    func(Message(self._client, msg), *args)
+                    func(Message(self._client, msg, self._pool), *args)
                 except Exception as err:
                     logger.exception(err)
                     reply = '[%s] I have problem when handling "%s"\n' % (
@@ -114,9 +114,10 @@ class Message(object):
     users = {}
     channels = {}
 
-    def __init__(self, client, body):
+    def __init__(self, client, body, pool):
         self._client = client
         self._body = body
+        self._pool = pool
 
     def get_user_info(self, key, user_id=None):
         user_id = user_id or self._body['user_id']
@@ -154,6 +155,9 @@ class Message(object):
 
     def is_direct_message(self):
         return self._body['message_type'] == 'D'
+
+    def get_busy_workers(self):
+        return self._pool.get_busy_workers()
 
     def get_mentions(self):
         return self._body['props'].get('mentions')

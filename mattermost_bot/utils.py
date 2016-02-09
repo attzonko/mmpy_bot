@@ -12,6 +12,7 @@ class WorkerPool(object):
         self.num_worker = num_worker
         self.func = func
         self.queue = queue.Queue()
+        self.busy_workers = queue.Queue()
 
     def start(self):
         for __ in range(self.num_worker):
@@ -20,10 +21,15 @@ class WorkerPool(object):
     def add_task(self, msg):
         self.queue.put(msg)
 
+    def get_busy_workers(self):
+        return self.busy_workers.qsize()
+
     def do_work(self):
         while True:
             msg = self.queue.get()
+            self.busy_workers.put(1)
             self.func(msg)
+            self.busy_workers.get()
 
 
 def allow_only_direct_message():
