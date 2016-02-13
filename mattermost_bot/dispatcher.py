@@ -121,12 +121,9 @@ class Message(object):
 
     def get_user_info(self, key, user_id=None):
         user_id = user_id or self._body['user_id']
-        if user_id in Message.users:
-            user_info = Message.users[user_id]
-        else:
-            user_info = self._client.api.user(user_id)
-            Message.users[user_id] = user_info
-        return user_info.get(key)
+        if not Message.users or user_id not in Message.users:
+            Message.users = self._client.get_users()
+        return Message.users[user_id].get(key)
 
     def get_username(self, user_id=None):
         return self.get_user_info('username', user_id)
