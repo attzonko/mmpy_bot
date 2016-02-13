@@ -40,6 +40,13 @@ BOT_TEAM = '<your-team>'
 Alternatively, you can use the environment variable `MATTERMOST_BOT_URL`,
 `MATTERMOST_BOT_LOGIN`, `MATTERMOST_BOT_PASSWORD`, `MATTERMOST_BOT_TEAM`.
 
+or `MATTERMOST_BOT_SETTINGS_MODULE` environment variable, which provide settings module
+
+```bash
+MATTERMOST_BOT_SETTINGS_MODULE=settings.bot.mattermost python main.py
+```
+
+
 ### Run the bot
 
 ```python

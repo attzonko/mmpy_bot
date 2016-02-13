@@ -1,3 +1,4 @@
+import importlib
 import os
 
 DEBUG = False
@@ -18,6 +19,12 @@ WORKERS_NUM = 10
 for key in os.environ:
     if key[:15] == 'MATTERMOST_BOT_':
         globals()[key[11:]] = os.environ[key]
+
+settings_module = os.environ.get('MATTERMOST_BOT_SETTINGS_MODULE')
+
+if settings_module is not None:
+    settings = importlib.import_module(settings_module)
+    exec (open(settings.__file__.replace('.pyc', '.py')).read())
 
 try:
     from mattermost_bot_settings import *

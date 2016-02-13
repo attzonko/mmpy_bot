@@ -109,7 +109,7 @@ class MattermostClient(object):
         return self.api.get_profiles()
 
     def connect_websocket(self):
-        host = self.api.url.replace('http', 'ws')
+        host = self.api.url.replace('http', 'ws').replace('https', 'wss')
         url = host + '/websocket?session_token_index=0&1'
         self.websocket = websocket.create_connection(
             url, header=[
