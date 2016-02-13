@@ -31,7 +31,7 @@ Then you need to configure the `BOT_URL`, `BOT_LOGIN`, `BOT_PASSWORD`, `BOT_TEAM
 mattermost_bot_settings.py:
 
 ```python
-BOT_URL = '<http://mm.example.com/api/v1>'  # with 'http://' and with '/api/v1' path
+BOT_URL = 'http://<mm.example.com>/api/v1'  # with 'http://' and with '/api/v1' path
 BOT_LOGIN = '<bot-email-address>'
 BOT_PASSWORD = '<bot-password>'
 BOT_TEAM = '<your-team>'
@@ -85,7 +85,7 @@ def love(message):
 
 
 @listen_to('Can someone help me?')
-def help(message):
+def help_me(message):
     # Message is replied to the sender (prefixed with @user)
     message.reply('Yes, I can!')
 
@@ -99,7 +99,7 @@ from mattermost_bot.bot import respond_to
 
 
 @respond_to('Give me (.*)')
-def giveme(message, something):
+def give_me(message, something):
     message.reply('Here is %s' % something)
 ```
 
@@ -122,8 +122,13 @@ And add the plugins module to `PLUGINS` list of mattermost_bot settings, e.g. ma
 ```python
 PLUGINS = [
     'mattermost_bot.plugins',
-    'mybot.plugins',
+    'my_bot.plugins',
 ]
 ```
+
+If you are migrating from `Slack` to the `Mattermost`, and previously you are used `SlackBot`,
+you can use this battery without any problem. On most cases your plugins will be working properly
+if you are used standard API or with minimal modifications.
+
 
 Source based on [SlackBot](https://github.com/lins05/slackbot).

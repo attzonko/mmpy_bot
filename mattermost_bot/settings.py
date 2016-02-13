@@ -24,7 +24,7 @@ settings_module = os.environ.get('MATTERMOST_BOT_SETTINGS_MODULE')
 
 if settings_module is not None:
     settings = importlib.import_module(settings_module)
-    exec (open(settings.__file__.replace('.pyc', '.py')).read())
+    execfile(settings.__file__.replace('.pyc', '.py'))
 
 try:
     from mattermost_bot_settings import *
