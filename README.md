@@ -1,4 +1,9 @@
 [![PyPI](https://badge.fury.io/py/mattermost_bot.svg)](https://pypi.python.org/pypi/mattermost_bot)
+[![Codacy](https://api.codacy.com/project/badge/grade/b06f3af1d8a04c6faa9a76a4ae3cb483)](https://www.codacy.com/app/gotlium/mattermost_bot)
+[![Code Health](https://landscape.io/github/LPgenerator/mattermost_bot/master/landscape.svg?style=flat)](https://landscape.io/github/LPgenerator/mattermost_bot/master)
+[![Python Support](https://img.shields.io/badge/python-2.7,3.5-blue.svg)](https://pypi.python.org/pypi/mattermost_bot/)
+[![Downloads from PyPi](https://img.shields.io/pypi/dm/mattermost_bot.svg)](https://pypi.python.org/pypi/mattermost_bot/)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](https://pypi.python.org/pypi/mattermost_bot/)
 
 A chat bot for [mattermost](http://www.mattermost.org).
 

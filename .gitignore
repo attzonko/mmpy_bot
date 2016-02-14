@@ -1,7 +1,7 @@
 *.pyc
 *.pyo
 .idea
-local_settings.py
+local_settings.*
 logs
 dist
 build
