@@ -181,8 +181,8 @@ class Message(object):
         base = '/'.join(settings.BOT_URL.split('/')[:3])
         return '%s/hooks/%s' % (base, hook_id)
 
-    def reply_webapi(self, text):
-        self.send_webapi(self._gen_reply(text))
+    def reply_webapi(self, text, *args, **kwargs):
+        self.send_webapi(self._gen_reply(text), *args, **kwargs)
 
     def send_webapi(self, text, attachments=None, channel_id=None, **kwargs):
         url = self._get_webhook_url_by_id(self._get_first_webhook())
