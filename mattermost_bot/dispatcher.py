@@ -186,6 +186,8 @@ class Message(object):
 
     def send_webapi(self, text, attachments=None, channel_id=None, **kwargs):
         url = self._get_webhook_url_by_id(self._get_first_webhook())
+        kwargs['username'] = kwargs.get(
+            'username', self.get_username(self._client.user['id']))
         self._client.api.in_webhook(
             url, self.get_channel_name(channel_id), text,
             attachments=attachments, **kwargs)
