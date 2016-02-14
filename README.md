@@ -127,7 +127,9 @@ And add the plugins module to `PLUGINS` list of mattermost_bot settings, e.g. ma
 ```python
 PLUGINS = [
     'mattermost_bot.plugins',
-    'my_bot.plugins',
+    'devops.plugins',
+    'programmers.plugins',
+    'frontend.plugins',
 ]
 ```
 
