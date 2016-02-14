@@ -26,6 +26,11 @@ setup(
     platforms=['Any'],
     packages=find_packages(exclude=excludes),
     install_requires=install_requires,
+    entry_points={
+        'console_scripts': [
+            'matterbot = mattermost_bot.cli:main',
+        ],
+    },
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'License :: OSI Approved :: GNU General Public License (GPL)',
