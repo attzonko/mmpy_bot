@@ -78,7 +78,13 @@ def webapi_reply(message):
         'text': 'Some text here ...',
         'color': '#59afe1'
     }]
-    message.send_webapi('', attachments)
+    message.reply_webapi(
+        'Attachments example', attachments,
+        username='Mattermost-Bot',
+        icon_url='https://goo.gl/OF4DBq',
+    )
+    # Send message to specified channel
+    # message.send_webapi('', attachments, message.channel)
 ```
 ## Plugins
 
