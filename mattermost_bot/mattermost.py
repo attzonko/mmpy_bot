@@ -5,7 +5,6 @@ import time
 import requests
 import websocket
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -52,6 +51,9 @@ class MattermostAPI(object):
     def get_channel_posts(self, channel_id, since):
         return self.get('/channels/%s/posts/%s' % (channel_id, since))
 
+    def get_channels(self):
+        return self.get('/channels/').get('channels')
+
     def get_profiles(self):
         return self.get('/users/profiles')
 
@@ -65,7 +67,28 @@ class MattermostAPI(object):
         return self.get('/hooks/incoming/list')
 
     def hooks_create(self, **kwargs):
-        return self.post('/hooks/incoming/create', **kwargs)
+        return self.post('/hooks/incoming/create', kwargs)
+
+    @staticmethod
+    def in_webhook(url, channel, text, username=None, as_user=None,
+                   parse=None, link_names=None, attachments=None,
+                   unfurl_links=None, unfurl_media=None, icon_url=None,
+                   icon_emoji=None):
+        return requests.post(
+            url, data={
+                'payload': json.dumps({
+                    'channel': channel,
+                    'text': text,
+                    'username': username,
+                    'as_user': as_user,
+                    'parse': parse,
+                    'link_names': link_names,
+                    'attachments': attachments,
+                    'unfurl_links': unfurl_links,
+                    'unfurl_media': unfurl_media,
+                    'icon_url': icon_url,
+                    'icon_emoji': icon_emoji})
+            })
 
 
 class MattermostClient(object):
@@ -128,3 +151,4 @@ class MattermostClient(object):
 
     def ping(self):
         self.websocket.ping()
+

@@ -63,6 +63,23 @@ if __name__ == "__main__":
 
 Now you can talk to your bot in your mattermost client!
 
+### Attachment Support
+
+```python
+from mattermost_bot.bot import respond_to
+
+
+@respond_to('webapi')
+def webapi_reply(message):
+    attachments = [{
+        'fallback': 'Fallback text',
+        'author_name': 'Author',
+        'author_link': 'http://www.github.com',
+        'text': 'Some text here ...',
+        'color': '#59afe1'
+    }]
+    message.send_webapi('', attachments)
+```
 ## Plugins
 
 A chat bot is meaningless unless you can extend/customize it to fit your own use cases.

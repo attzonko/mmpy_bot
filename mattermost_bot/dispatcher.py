@@ -134,8 +134,8 @@ class Message(object):
     def get_user_id(self, user_id=None):
         return self.get_user_info('id', user_id)
 
-    def get_channel_name(self):
-        channel_id = self._body['channel_id']
+    def get_channel_name(self, channel_id=None):
+        channel_id = channel_id or self._body['channel_id']
         if channel_id in self.channels:
             channel_name = self.channels[channel_id]
         else:
@@ -166,6 +166,29 @@ class Message(object):
         if self._body['message_type'] == '?':
             return self._gen_at_message(text)
         return text
+
+    def _get_first_webhook(self):
+        hooks = self._client.api.hooks_list()
+        if not hooks:
+            for channel in self._client.api.get_channels():
+                if channel.get('name') == 'town-square':
+                    return self._client.api.hooks_create(
+                        channel_id=channel.get('id')).get('id')
+        return hooks[0].get('id')
+
+    @staticmethod
+    def _get_webhook_url_by_id(hook_id):
+        base = '/'.join(settings.BOT_URL.split('/')[:3])
+        return '%s/hooks/%s' % (base, hook_id)
+
+    def reply_webapi(self, text):
+        self.send_webapi(self._gen_reply(text))
+
+    def send_webapi(self, text, attachments=None, channel_id=None, **kwargs):
+        url = self._get_webhook_url_by_id(self._get_first_webhook())
+        self._client.api.in_webhook(
+            url, self.get_channel_name(channel_id), text,
+            attachments=attachments, **kwargs)
 
     def reply(self, text):
         self.send(self._gen_reply(text))
