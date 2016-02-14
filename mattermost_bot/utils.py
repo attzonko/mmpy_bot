@@ -2,7 +2,7 @@
 
 import logging
 
-from six.moves import _thread, range, queue
+from six.moves import _thread, queue
 
 logger = logging.getLogger(__name__)
 
@@ -15,7 +15,7 @@ class WorkerPool(object):
         self.busy_workers = queue.Queue()
 
     def start(self):
-        for __ in range(self.num_worker):
+        for _ in range(self.num_worker):
             _thread.start_new_thread(self.do_work, tuple())
 
     def add_task(self, msg):

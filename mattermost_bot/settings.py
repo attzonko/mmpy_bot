@@ -10,7 +10,7 @@ PLUGINS_ONLY_DOC_STRING = False
 
 BOT_URL = 'http://mm.example.com/api/v1'
 BOT_LOGIN = 'bot@example.com'
-BOT_PASSWORD = 'XXX'
+BOT_PASSWORD = None
 BOT_TEAM = 'devops'
 
 IGNORE_NOTIFIES = ['@channel', '@all']

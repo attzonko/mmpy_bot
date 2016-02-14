@@ -28,27 +28,13 @@ class MattermostAPI(object):
             data=json.dumps(data)
         ).text)
 
-    def signup_with_team(
-            self, team_id, email, username, password, allow_marketing):
-        return self.post('/users/create', {
-            'team_id': team_id,
-            'email': email,
-            'username': username,
-            'password': password,
-            'allow_marketing': allow_marketing
-        })
-
     def login(self, name, email, password):
         props = {'name': name, 'email': email, 'password': password}
         p = requests.post(self.url + '/users/login', data=json.dumps(props))
         self.token = p.headers["Token"]
         return json.loads(p.text)
 
-    def channel(self, channel_id):
-        return self.get('/channels/%s/' % channel_id)
-
-    def create_post(self, user_id, channel_id, message,
-                    files=None, state="loading"):
+    def create_post(self, user_id, channel_id, message, files=None):
         create_at = int(time.time() * 1000)
         return self.post('/channels/%s/create' % channel_id, {
             'user_id': user_id,
@@ -57,8 +43,11 @@ class MattermostAPI(object):
             'create_at': create_at,
             'filenames': files or [],
             'pending_post_id': user_id + ':' + str(create_at),
-            'state': state
+            'state': "loading"
         })
+
+    def channel(self, channel_id):
+        return self.get('/channels/%s/' % channel_id)
 
     def get_channel_posts(self, channel_id, since):
         return self.get('/channels/%s/posts/%s' % (channel_id, since))
@@ -101,7 +90,7 @@ class MattermostClient(object):
         self.info = self.api.me()
         return self.user
 
-    def channel_msg(self, channel, message, attachments=None):
+    def channel_msg(self, channel, message):
         c_id = self.channels.get(channel, {}).get("id") or channel
         return self.api.create_post(self.user["id"], c_id, message)
 
