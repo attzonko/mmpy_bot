@@ -132,6 +132,8 @@ PLUGINS = [
     'frontend.plugins',
 ]
 ```
+*For example you can separate git repositories with plugins on your team.*
+
 
 If you are migrating from `Slack` to the `Mattermost`, and previously you are used `SlackBot`,
 you can use this battery without any problem. On most cases your plugins will be working properly
