@@ -1,28 +1,20 @@
-#!/usr/bin/env python
-
-import logging
-import logging.config
+# -*- coding: utf-8 -*-
 import sys
+import logging
 
-from mattermost_bot import settings
-from mattermost_bot.bot import Bot
+from mattermost_bot import bot, settings
 
 
 def main():
-    kw = {
+    logging.basicConfig(**{
         'format': '[%(asctime)s] %(message)s',
         'datefmt': '%m/%d/%Y %H:%M:%S',
         'level': logging.DEBUG if settings.DEBUG else logging.INFO,
         'stream': sys.stdout,
-    }
-    logging.basicConfig(**kw)
+    })
 
-    bot = Bot()
-    bot.run()
-
-
-if __name__ == '__main__':
     try:
-        main()
+        b = bot.Bot()
+        b.run()
     except KeyboardInterrupt:
         pass

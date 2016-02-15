@@ -33,7 +33,7 @@ sdist: clean
 .PHONY: run
 # target: run - Run bot
 run:
-	@python run.py
+	matterbot
 
 .PHONY: sphinx
 # target: sphinx - Make app docs

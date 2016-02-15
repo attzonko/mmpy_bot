@@ -59,14 +59,15 @@ MATTERMOST_BOT_SETTINGS_MODULE=settings.bot.mattermost python main.py
 
 ### Run the bot
 
-```python
-from mattermost_bot.bot import Bot
+Use the built-in cli script and point to your custom settings file.
 
-if __name__ == "__main__":
-    Bot().run()
+```bash
+MATTERMOST_BOT_SETTINGS_MODULE=module.settings matterbot
 ```
 
 Now you can talk to your bot in your mattermost client!
+
+
 
 ### Attachment Support
 
