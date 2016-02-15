@@ -13,6 +13,7 @@ Contents
   usage
   settings
   dev_install
+  deploy
   contributing
   authors
 

@@ -73,3 +73,11 @@ Restart supervisor::
 Check status::
 
     $ supervisorctl status
+
+
+Track bot logs::
+
+    $ tailf /var/log/matterbot.log
+
+
+Enjoy:)
