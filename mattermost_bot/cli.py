@@ -13,5 +13,8 @@ def main():
         'stream': sys.stdout,
     })
 
-    b = bot.Bot()
-    b.run()
+    try:
+        b = bot.Bot()
+        b.run()
+    except KeyboardInterrupt:
+        pass
