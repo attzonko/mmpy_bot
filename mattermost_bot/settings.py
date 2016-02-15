@@ -24,9 +24,9 @@ for key in os.environ:
 settings_module = os.environ.get('MATTERMOST_BOT_SETTINGS_MODULE')
 
 if settings_module is not None:
-    pwd = os.getenv('PWD')
+    pwd = os.getcwd()
     if pwd not in sys.path:
-        sys.path.insert(0, os.getenv('PWD'))
+        sys.path.insert(0, pwd)
     settings = importlib.import_module(settings_module)
     execfile(settings.__file__.replace('.pyc', '.py'))
 
