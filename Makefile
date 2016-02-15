@@ -30,6 +30,11 @@ sdist: clean
 	@python setup.py sdist
 	@ls -l dist
 
+.PHONY: run
+# target: run - Run bot
+run:
+	matterbot
+
 .PHONY: help
 # target: help - Display callable targets
 help:
