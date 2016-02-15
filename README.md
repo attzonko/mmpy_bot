@@ -10,7 +10,7 @@ Documentation available at [Read the Docs](http://mattermost-bot.readthedocs.org
 
 ## What's that
 
-A chat bot for [mattermost](http://www.mattermost.org).
+A chat bot for [Mattermost](http://www.mattermost.org).
 
 ## Features
 
