@@ -20,7 +20,7 @@ Login as `matterbot`::
     sudo -i -u matterbot
 
 
-Clone your project::
+Clone your project (before create git repository with `settings.py`)::
 
     $ git clone https://github.com/USER/REPO.git ~/mybot
 
