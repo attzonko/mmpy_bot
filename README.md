@@ -5,6 +5,11 @@
 [![Downloads from PyPi](https://img.shields.io/pypi/dm/mattermost_bot.svg)](https://pypi.python.org/pypi/mattermost_bot/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://pypi.python.org/pypi/mattermost_bot/)
 
+Documentation available at [Read the Docs](http://mattermost-bot.readthedocs.org/).
+
+
+## What's that
+
 A chat bot for [mattermost](http://www.mattermost.org).
 
 ## Features
