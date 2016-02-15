@@ -4,18 +4,18 @@ Deploy
 Ubuntu 14.04
 ------------
 
-Install supervisor::
+Install supervisor and virtualenv::
 
     $ sudo apt-get update
     $ sudo apt-get install supervisor python-virtualenv git
 
 
-Add user::
+Add `matterbot` user::
 
     $ useradd --shell /bin/bash -m -d /home/matterbot matterbot
 
 
-Login as user::
+Login as `matterbot`::
 
     sudo -i -u matterbot
 
@@ -39,7 +39,7 @@ Install project requirements::
     $ pip install -r requirements.txt
 
 
-Exit::
+Logout::
 
     $ exit
 
@@ -54,7 +54,7 @@ Add following config::
     command=/home/matterbot/mm-env/bin/matterbot
     user=matterbot
     directory=/home/matterbot/mybot
-    environment=MATTERMOST_BOT_SETTINGS_MODULE="bot_settings"
+    environment=MATTERMOST_BOT_SETTINGS_MODULE="settings"
     redirect_stderr=true
     stdout_logfile=/var/log/matterbot.log
     numprocs=1
