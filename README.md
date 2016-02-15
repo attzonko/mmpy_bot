@@ -83,8 +83,8 @@ def webapi_reply(message):
         username='Mattermost-Bot',
         icon_url='https://goo.gl/OF4DBq',
     )
-    # Send message to specified channel
-    # message.send_webapi('', attachments, message.channel)
+    # Optional: Send message to specified channel
+    # message.send_webapi('', attachments, channel_id=message.channel)
 ```
 ## Plugins
 
@@ -150,9 +150,9 @@ And add the plugins module to `PLUGINS` list of mattermost_bot settings, e.g. ma
 ```python
 PLUGINS = [
     'mattermost_bot.plugins',
-    'devops.plugins',
-    'programmers.plugins',
-    'frontend.plugins',
+    'devops.plugins',          # e.g. git submodule: domain:devops-plugins.git
+    'programmers.plugins',     # e.g. python package: package_name.plugins
+    'frontend.plugins',        # e.g. project tree: apps.bot.plugins
 ]
 ```
 *For example you can separate git repositories with plugins on your team.*

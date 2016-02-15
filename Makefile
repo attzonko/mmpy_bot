@@ -35,6 +35,13 @@ sdist: clean
 run:
 	@python run.py
 
+.PHONY: sphinx
+# target: sphinx - Make app docs
+sphinx:
+	@rm -rf ./docs/.build/html/
+	@cd docs && sphinx-build -b html -d .build/doctrees . .build/html
+	@xdg-open docs/.build/html/index.html >& /dev/null || open docs/.build/html/index.html >& /dev/null || true
+
 .PHONY: help
 # target: help - Display callable targets
 help:
