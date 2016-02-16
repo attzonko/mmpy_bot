@@ -14,5 +14,5 @@ Recommended way to install is via pip::
 Check `mattermost_bot` version::
 
     import mattermost_bot
-    print mattermost_bot.get_version()
+    print(mattermost_bot.get_version())
 

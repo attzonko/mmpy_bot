@@ -11,10 +11,10 @@ Installation for development
     $ pip install -r requirements.txt
     $ pip install -r docs/requirements.txt
     $ touch local_settings.py               # configure your local settings
-    $ matterbot
+    $ matterbot                             # run bot
 
 
 .. code-block:: python
 
     >>> import mattermost_bot
-    >>> print mattermost_bot.get_version()
+    >>> print(mattermost_bot.get_version())
