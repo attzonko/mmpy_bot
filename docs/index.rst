@@ -12,6 +12,7 @@ Contents
   installation
   usage
   settings
+  plugins
   dev_install
   deploy
   contributing
