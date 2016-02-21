@@ -10,17 +10,17 @@ Install supervisor and virtualenv::
     $ sudo apt-get install supervisor python-virtualenv git
 
 
-Add `matterbot` user::
+Add ``matterbot`` user::
 
     $ useradd --shell /bin/bash -m -d /home/matterbot matterbot
 
 
-Login as `matterbot`::
+Login as ``matterbot``::
 
     sudo -i -u matterbot
 
 
-Clone your project (before create git repository with `settings.py`)::
+Clone your project (before create git repository with ``settings.py``)::
 
     $ git clone https://github.com/USER/REPO.git ~/mybot
 

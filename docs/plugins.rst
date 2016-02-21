@@ -7,10 +7,10 @@ Plugins
 
 A chat bot is meaningless unless you can extend/customize it to fit your own use cases.
 
-To write a new plugin, simply create a function decorated by `mattermost_bot.bot.respond_to` or `mattermost_bot.bot.listen_to`:
+To write a new plugin, simply create a function decorated by ``mattermost_bot.bot.respond_to`` or ``mattermost_bot.bot.listen_to``:
 
-- A function decorated with `respond_to` is called when a message matching the pattern is sent to the bot (direct message or @botname in a channel/group chat)
-- A function decorated with `listen_to` is called when a message matching the pattern is sent on a channel/group chat (not directly sent to the bot)
+- A function decorated with ``respond_to`` is called when a message matching the pattern is sent to the bot (direct message or @botname in a channel/group chat)
+- A function decorated with ``listen_to`` is called when a message matching the pattern is sent on a channel/group chat (not directly sent to the bot)
 
 .. code-block:: python
 
@@ -66,7 +66,7 @@ If you would like to have a command like 'stats' and 'stats start_date end_date'
 
 
 
-And add the plugins module to `PLUGINS` list of mattermost_bot settings, e.g. `mattermost_bot_settings.py`:
+And add the plugins module to ``PLUGINS`` list of mattermost_bot settings, e.g. ``mattermost_bot_settings.py``:
 
 .. code-block:: python
 

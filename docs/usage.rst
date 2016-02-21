@@ -6,7 +6,7 @@ Usage
 Basic
 -----
 
-Register new user on Mattermost. Copy email/password/team and url into `settings.py` file::
+Register new user on Mattermost. Copy email/password/team and url into ``settings.py`` file::
 
     BOT_URL = 'http://<mm.example.com>/api/v1'  # with 'http://' and with '/api/v1' path
     BOT_LOGIN = '<bot-email-address>'
@@ -23,7 +23,7 @@ Run the bot::
 Integration with Django
 -----------------------
 
-Create bot_settings on your project and after you can create `django` command::
+Create bot_settings on your project and after you can create ``django`` command::
 
     import logging
     import sys
@@ -52,7 +52,7 @@ Create bot_settings on your project and after you can create `django` command::
                 pass
 
 
-Modify `manage.py`::
+Modify ``manage.py``::
 
     #!/usr/bin/env python
     import os

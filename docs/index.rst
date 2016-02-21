@@ -13,8 +13,9 @@ Contents
   usage
   settings
   plugins
-  dev_install
   deploy
+  use_cases
+  dev_install
   contributing
   authors
 
