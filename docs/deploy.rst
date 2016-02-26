@@ -54,6 +54,7 @@ Add following config::
     command=/home/matterbot/mm-env/bin/matterbot
     user=matterbot
     directory=/home/matterbot/mybot
+    # should be a real settings file on MATTERMOST_BOT_SETTINGS_MODULE
     environment=MATTERMOST_BOT_SETTINGS_MODULE="settings"
     redirect_stderr=true
     stdout_logfile=/var/log/matterbot.log

@@ -43,10 +43,10 @@ Then you need to configure the `BOT_URL`, `BOT_LOGIN`, `BOT_PASSWORD`, `BOT_TEAM
 mattermost_bot_settings.py:
 
 ```python
-BOT_URL = 'http://<mm.example.com>/api/v1'  # with 'http://' and with '/api/v1' path
+BOT_URL = 'http://<mm.example.com>/api/v1'  # with 'http://' and with '/api/v1' path. without trailing slash
 BOT_LOGIN = '<bot-email-address>'
 BOT_PASSWORD = '<bot-password>'
-BOT_TEAM = '<your-team>'
+BOT_TEAM = '<your-team>'  # possible in lowercase
 ```
 
 Alternatively, you can use the environment variable `MATTERMOST_BOT_URL`,
@@ -55,7 +55,7 @@ Alternatively, you can use the environment variable `MATTERMOST_BOT_URL`,
 or `MATTERMOST_BOT_SETTINGS_MODULE` environment variable, which provide settings module
 
 ```bash
-MATTERMOST_BOT_SETTINGS_MODULE=settings.bot.mattermost python main.py
+MATTERMOST_BOT_SETTINGS_MODULE=settings.bot_conf matterbot
 ```
 
 
@@ -64,7 +64,17 @@ MATTERMOST_BOT_SETTINGS_MODULE=settings.bot.mattermost python main.py
 Use the built-in cli script and point to your custom settings file.
 
 ```bash
-MATTERMOST_BOT_SETTINGS_MODULE=module.settings matterbot
+MATTERMOST_BOT_SETTINGS_MODULE=mattermost_bot_settings matterbot
+```
+
+or you can create your own startup file. For example `run.py`:
+
+```python
+from mattermost_bot.bot import Bot
+
+
+if __name__ == "__main__":
+    Bot().run()
 ```
 
 Now you can talk to your bot in your mattermost client!
