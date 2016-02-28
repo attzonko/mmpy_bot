@@ -2,9 +2,10 @@
 
 from __future__ import absolute_import
 
+import importlib
+import traceback
 import logging
 import re
-import traceback
 
 from six import iteritems
 
@@ -72,6 +73,10 @@ class MessageDispatcher(object):
                     self._client.channel_msg(msg['channel_id'], reply)
 
         if not responded and category == 'respond_to':
+            if settings.DEFAULT_REPLY_MODULE is not None:
+                mod = importlib.import_module(settings.DEFAULT_REPLY_MODULE)
+                if hasattr(mod, 'default_reply'):
+                    return getattr(mod, 'default_reply')(self, msg)
             self._default_reply(msg)
 
     def _on_new_message(self, msg):

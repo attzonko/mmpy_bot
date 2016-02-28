@@ -27,3 +27,6 @@ Settings
 
     # Threads num
     WORKERS_NUM = 10
+
+    # You can specify you custom module
+    DEFAULT_REPLY_MODULE = None
