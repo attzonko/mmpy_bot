@@ -46,10 +46,10 @@ def web_api_reply(message):
 
 
 @listen_to('hello_comment', re.IGNORECASE)
-def web_api_reply(message):
+def hello_comment(message):
     message.comment('some comments ...')
 
 
 @listen_to('hello_react', re.IGNORECASE)
-def web_api_reply(message):
+def hello_react(message):
     message.react(':+1:')
