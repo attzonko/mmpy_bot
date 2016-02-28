@@ -18,6 +18,7 @@ IGNORE_NOTIFIES = ['@channel', '@all']
 WORKERS_NUM = 10
 
 DEFAULT_REPLY_MODULE = None
+DEFAULT_REPLY = None
 
 '''
 If you use Mattermost Web API to send messages (with send_webapi()

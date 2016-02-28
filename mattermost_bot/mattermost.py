@@ -33,7 +33,7 @@ class MattermostAPI(object):
         self.token = p.headers["Token"]
         return json.loads(p.text)
 
-    def create_post(self, user_id, channel_id, message, files=None):
+    def create_post(self, user_id, channel_id, message, files=None, pid=""):
         create_at = int(time.time() * 1000)
         return self.post('/channels/%s/create' % channel_id, {
             'user_id': user_id,
@@ -42,7 +42,9 @@ class MattermostAPI(object):
             'create_at': create_at,
             'filenames': files or [],
             'pending_post_id': user_id + ':' + str(create_at),
-            'state': "loading"
+            'state': "loading",
+            'parent_id': pid,
+            'root_id': pid,
         })
 
     def channel(self, channel_id):
@@ -113,9 +115,9 @@ class MattermostClient(object):
         self.info = self.api.me()
         return self.user
 
-    def channel_msg(self, channel, message):
+    def channel_msg(self, channel, message, pid=""):
         c_id = self.channels.get(channel, {}).get("id") or channel
-        return self.api.create_post(self.user["id"], c_id, message)
+        return self.api.create_post(self.user["id"], c_id, message, pid=pid)
 
     def get_users(self):
         return self.api.get_profiles()

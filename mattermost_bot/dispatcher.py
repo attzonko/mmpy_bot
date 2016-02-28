@@ -104,6 +104,10 @@ class MessageDispatcher(object):
             self._on_new_message(self.event)
 
     def _default_reply(self, msg):
+        if settings.DEFAULT_REPLY:
+            return self._client.channel_msg(
+                msg['channel_id'], settings.DEFAULT_REPLY)
+
         default_reply = [
             u'Bad command "%s", You can ask me one of the '
             u'following questions:\n' % self.get_message(msg),
@@ -122,6 +126,9 @@ class Message(object):
     channels = {}
 
     def __init__(self, client, body, pool):
+        from mattermost_bot.bot import PluginsManager
+
+        self._plugins = PluginsManager()
         self._client = client
         self._body = body
         self._pool = pool
@@ -206,6 +213,19 @@ class Message(object):
 
     def send(self, text, channel_id=None):
         self._client.channel_msg(channel_id or self._body['channel_id'], text)
+
+    def react(self, emoji_name):
+        self._client.channel_msg(
+            self._body['channel_id'], emoji_name,
+            pid=self._body['props']['post']['id'])
+
+    def comment(self, message):
+        self.react(message)
+
+    def docs_reply(self, docs_format='    • `{0}` {1}'):
+        reply = [docs_format.format(v.__name__, v.__doc__ or "")
+                 for p, v in iteritems(self._plugins.commands['respond_to'])]
+        return '\n'.join(reply)
 
     @property
     def channel(self):

@@ -29,7 +29,7 @@ Settings
     WORKERS_NUM = 10
 
     '''
-    # You can specify you custom module.
+    # Custom default reply module
 
     Example:
     filename:
@@ -43,6 +43,9 @@ Settings
         DEFAULT_REPLY_MODULE = 'my_default_reply'
     '''
     DEFAULT_REPLY_MODULE = None
+
+    # or simple string for default answer
+    DEFAULT_REPLY = None
 
     '''
     If you use Mattermost Web API to send messages (with send_webapi()

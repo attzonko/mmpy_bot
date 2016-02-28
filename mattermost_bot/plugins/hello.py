@@ -43,3 +43,13 @@ def web_api_reply(message):
         username='Mattermost-Bot',
         icon_url='https://goo.gl/OF4DBq',
     )
+
+
+@listen_to('hello_comment', re.IGNORECASE)
+def web_api_reply(message):
+    message.comment('some comments ...')
+
+
+@listen_to('hello_react', re.IGNORECASE)
+def web_api_reply(message):
+    message.react(':+1:')
