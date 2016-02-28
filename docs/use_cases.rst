@@ -11,7 +11,7 @@ Support | QA
 
 ``smsto John|Alex|All Your text ...`` - Emergency sms
 
-``task|bug|feature @username <low|normal|default|high|urgent> Task subject ...\\nDescription`` - create task on bug tracker/etc
+``task|bug|feature @username <low|normal|default|high|urgent> Task subject ...\nDescription`` - create task on bug tracker/etc
 
 ``contact info <@username>`` - Show everyone's/username emergency contact info
 

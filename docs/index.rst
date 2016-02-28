@@ -15,6 +15,7 @@ Contents
   plugins
   deploy
   use_cases
+  demo_installation
   dev_install
   contributing
   authors
