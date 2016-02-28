@@ -15,6 +15,8 @@ from mattermost_bot import settings
 logger = logging.getLogger(__name__)
 
 MESSAGE_MATCHER = re.compile(r'^(@.*?\:?)\s(.*)', re.MULTILINE | re.DOTALL)
+BOT_ICON = settings.BOT_ICON if hasattr(settings, 'BOT_ICON') else None
+BOT_EMOJI = settings.BOT_EMOJI if hasattr(settings, 'BOT_EMOJI') else None
 
 
 class MessageDispatcher(object):
@@ -193,6 +195,8 @@ class Message(object):
         url = self._get_webhook_url_by_id(self._get_first_webhook())
         kwargs['username'] = kwargs.get(
             'username', self.get_username(self._client.user['id']))
+        kwargs['icon_url'] = kwargs.get('icon_url', BOT_ICON)
+        kwargs['icon_emoji'] = kwargs.get('icon_emoji', BOT_EMOJI)
         self._client.api.in_webhook(
             url, self.get_channel_name(channel_id), text,
             attachments=attachments, **kwargs)

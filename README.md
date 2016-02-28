@@ -104,6 +104,9 @@ def webapi_reply(message):
     # Optional: Send message to specified channel
     # message.send_webapi('', attachments, channel_id=message.channel)
 ```
+
+*Integrations must be allowed for non admins users.*
+
 ## Plugins
 
 A chat bot is meaningless unless you can extend/customize it to fit your own use cases.
