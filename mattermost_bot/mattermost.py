@@ -123,13 +123,21 @@ class MattermostClient(object):
         return self.api.get_profiles()
 
     def connect_websocket(self):
+        from websocket._exceptions import WebSocketBadStatusException
+
         host = self.api.url.replace('http', 'ws').replace('https', 'wss')
         url = host + '/websocket?session_token_index=0&1'
+        try:
+            self._connect_websocket(url, cookie_name='MMTOKEN')
+        except WebSocketBadStatusException:
+            self._connect_websocket(url, cookie_name='MMAUTHTOKEN')
+        return self.websocket.getstatus() == 101
+
+    def _connect_websocket(self, url, cookie_name):
         self.websocket = websocket.create_connection(
             url, header=[
-                "Cookie: MMTOKEN=%s" % self.api.token,
+                "Cookie: %s=%s" % (cookie_name, self.api.token)
             ])
-        return self.websocket.getstatus() == 101
 
     def messages(self, ignore_own_msg=False, filter_action=None):
         if not self.connect_websocket():
