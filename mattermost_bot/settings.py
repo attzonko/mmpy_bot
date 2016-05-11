@@ -41,7 +41,11 @@ if settings_module is not None:
     if pwd not in sys.path:
         sys.path.insert(0, pwd)
     settings = importlib.import_module(settings_module)
-    execfile(settings.__file__.replace('.pyc', '.py'))
+    filename = settings.__file__.replace('.pyc', '.py')
+    try:
+        execfile(filename)
+    except NameError:
+        exec(open(filename).read())
 
 try:
     from mattermost_bot_settings import *
