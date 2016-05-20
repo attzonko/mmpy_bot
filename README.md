@@ -20,7 +20,7 @@ A chat bot for [Mattermost](http://www.mattermost.org).
 * Messages can be handled concurrently
 * Automatically reconnect to mattermost when connection is lost
 * Python3 Support
-* Mattermost >= 1.x
+* Mattermost >= 3.0 (for versions < 3.0, please use app version <= 1.0.15)
 
 ## Installation
 
@@ -43,7 +43,7 @@ Then you need to configure the `BOT_URL`, `BOT_LOGIN`, `BOT_PASSWORD`, `BOT_TEAM
 mattermost_bot_settings.py:
 
 ```python
-BOT_URL = 'http://<mm.example.com>/api/v1'  # with 'http://' and with '/api/v1' path. without trailing slash
+BOT_URL = 'http://<mm.example.com>/api/v3'  # with 'http://' and with '/api/v3' path. without trailing slash. '/api/v1' - for version < 3.0
 BOT_LOGIN = '<bot-email-address>'
 BOT_PASSWORD = '<bot-password>'
 BOT_TEAM = '<your-team>'  # possible in lowercase
@@ -171,9 +171,9 @@ And add the plugins module to `PLUGINS` list of mattermost_bot settings, e.g. ma
 ```python
 PLUGINS = [
     'mattermost_bot.plugins',
-    'devops.plugins',          # e.g. git submodule: domain:devops-plugins.git
+    'devops.plugins',          # e.g. git submodule:  domain:devops-plugins.git
     'programmers.plugins',     # e.g. python package: package_name.plugins
-    'frontend.plugins',        # e.g. project tree: apps.bot.plugins
+    'frontend.plugins',        # e.g. project tree:   apps.bot.plugins
 ]
 ```
 *For example you can separate git repositories with plugins on your team.*
@@ -182,6 +182,3 @@ PLUGINS = [
 If you are migrating from `Slack` to the `Mattermost`, and previously you are used `SlackBot`,
 you can use this battery without any problem. On most cases your plugins will be working properly
 if you are used standard API or with minimal modifications.
-
-
-Source based on [SlackBot](https://github.com/lins05/slackbot).

@@ -54,6 +54,3 @@ except ImportError:
         from local_settings import *
     except ImportError:
         pass
-
-if not BOT_URL.endswith('/api/v1'):
-    BOT_URL = '%s%sapi/v1' % (BOT_URL, '' if BOT_URL.endswith('/') else '/')

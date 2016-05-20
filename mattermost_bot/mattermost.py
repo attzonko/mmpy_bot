@@ -12,6 +12,8 @@ class MattermostAPI(object):
     def __init__(self, url):
         self.url = url
         self.token = ""
+        self.initial = None
+        self.team_id = None
 
     def _get_headers(self):
         return {"Authorization": "Bearer " + self.token}
@@ -28,48 +30,54 @@ class MattermostAPI(object):
         ).text)
 
     def login(self, name, email, password):
-        props = {'name': name, 'email': email, 'password': password}
-        p = requests.post(self.url + '/users/login', data=json.dumps(props))
+        props = {'name': name, 'login_id': email, 'password': password}
+        p = requests.post(
+            self.url + '/users/login', data=json.dumps(props))
         self.token = p.headers["Token"]
+        self.load_initial_data()
         return json.loads(p.text)
+
+    def load_initial_data(self):
+        self.initial = self.get('/users/initial_load')
+        self.team_id = self.initial['teams'][0]['id']
 
     def create_post(self, user_id, channel_id, message, files=None, pid=""):
         create_at = int(time.time() * 1000)
-        return self.post('/channels/%s/create' % channel_id, {
-            'user_id': user_id,
-            'channel_id': channel_id,
-            'message': message,
-            'create_at': create_at,
-            'filenames': files or [],
-            'pending_post_id': user_id + ':' + str(create_at),
-            'state': "loading",
-            'parent_id': pid,
-            'root_id': pid,
-        })
+        return self.post(
+            '/teams/%s/channels/%s/posts/create' % (self.team_id, channel_id),
+            {
+                'user_id': user_id,
+                'channel_id': channel_id,
+                'message': message,
+                'create_at': create_at,
+                'filenames': files or [],
+                'pending_post_id': user_id + ':' + str(create_at),
+                'state': "loading",
+                'parent_id': pid,
+                'root_id': pid,
+            })
 
     def channel(self, channel_id):
-        return self.get('/channels/%s/' % channel_id)
-
-    def get_channel_posts(self, channel_id, since):
-        return self.get('/channels/%s/posts/%s' % (channel_id, since))
+        return self.get('/teams/%s/channels/%s/' % (self.team_id, channel_id))
 
     def get_channels(self):
-        return self.get('/channels/').get('channels')
+        return self.get('/teams/%s/channels/' % self.team_id).get('channels')
 
     def get_profiles(self):
-        return self.get('/users/profiles')
+        return self.get('/users/profiles/%s' % self.team_id)
 
     def me(self):
         return self.get('/users/me')
 
     def user(self, user_id):
-        return self.get('/users/%s' % user_id)
+        return self.get_profiles()[user_id]
 
     def hooks_list(self):
-        return self.get('/hooks/incoming/list')
+        return self.get('/teams/%s/hooks/incoming/list' % self.team_id)
 
     def hooks_create(self, **kwargs):
-        return self.post('/hooks/incoming/create', kwargs)
+        return self.post(
+            '/teams/%s/hooks/incoming/create' % self.team_id, kwargs)
 
     @staticmethod
     def in_webhook(url, channel, text, username=None, as_user=None,
@@ -123,14 +131,9 @@ class MattermostClient(object):
         return self.api.get_profiles()
 
     def connect_websocket(self):
-        from websocket._exceptions import WebSocketBadStatusException
-
         host = self.api.url.replace('http', 'ws').replace('https', 'wss')
-        url = host + '/websocket?session_token_index=0&1'
-        try:
-            self._connect_websocket(url, cookie_name='MMTOKEN')
-        except WebSocketBadStatusException:
-            self._connect_websocket(url, cookie_name='MMAUTHTOKEN')
+        url = host + '/users/websocket'
+        self._connect_websocket(url, cookie_name='MMAUTHTOKEN')
         return self.websocket.getstatus() == 101
 
     def _connect_websocket(self, url, cookie_name):
@@ -161,4 +164,3 @@ class MattermostClient(object):
 
     def ping(self):
         self.websocket.ping()
-
