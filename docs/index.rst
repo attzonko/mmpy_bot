@@ -15,6 +15,7 @@ Contents
   plugins
   deploy
   use_cases
+  decorators
   demo_installation
   dev_install
   contributing
