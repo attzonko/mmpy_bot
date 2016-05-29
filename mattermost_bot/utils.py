@@ -42,3 +42,16 @@ def allow_only_direct_message():
         return wrapper
 
     return plugin
+
+
+def allowed_users(*allowed_users_list):
+    def plugin(func):
+        def wrapper(message, *args, **kw):
+            user = message.get_username()
+            if user not in allowed_users_list:
+                return message.reply("`Permission denied`")
+            return func(message, *args, **kw)
+
+        return wrapper
+
+    return plugin
