@@ -206,7 +206,8 @@ class Message(object):
         kwargs['icon_emoji'] = kwargs.get('icon_emoji', BOT_EMOJI)
         self._client.api.in_webhook(
             url, self.get_channel_name(channel_id), text,
-            attachments=attachments, **kwargs)
+            attachments=attachments, ssl_verify=self._client.api.ssl_verify,
+            **kwargs)
 
     def reply(self, text):
         self.send(self._gen_reply(text))

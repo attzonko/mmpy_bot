@@ -1,5 +1,6 @@
 import json
 import logging
+import ssl
 import time
 
 import requests
@@ -9,30 +10,38 @@ logger = logging.getLogger(__name__)
 
 
 class MattermostAPI(object):
-    def __init__(self, url):
+    def __init__(self, url, ssl_verify):
         self.url = url
         self.token = ""
         self.initial = None
         self.team_id = None
+        self.ssl_verify = ssl_verify
 
     def _get_headers(self):
         return {"Authorization": "Bearer " + self.token}
 
     def get(self, request):
         return json.loads(
-            requests.get(self.url + request, headers=self._get_headers()).text)
+            requests.get(
+                self.url + request,
+                headers=self._get_headers(),
+                verify=self.ssl_verify
+            ).text)
 
     def post(self, request, data=None):
         return json.loads(requests.post(
             self.url + request,
             headers=self._get_headers(),
-            data=json.dumps(data)
+            data=json.dumps(data),
+            verify=self.ssl_verify
         ).text)
 
     def login(self, name, email, password):
         props = {'name': name, 'login_id': email, 'password': password}
         p = requests.post(
-            self.url + '/users/login', data=json.dumps(props))
+            self.url + '/users/login', data=json.dumps(props),
+            verify=self.ssl_verify
+        )
         self.token = p.headers["Token"]
         self.load_initial_data()
         return json.loads(p.text)
@@ -83,7 +92,7 @@ class MattermostAPI(object):
     def in_webhook(url, channel, text, username=None, as_user=None,
                    parse=None, link_names=None, attachments=None,
                    unfurl_links=None, unfurl_media=None, icon_url=None,
-                   icon_emoji=None):
+                   icon_emoji=None, ssl_verify=True):
         return requests.post(
             url, data={
                 'payload': json.dumps({
@@ -98,15 +107,15 @@ class MattermostAPI(object):
                     'unfurl_media': unfurl_media,
                     'icon_url': icon_url,
                     'icon_emoji': icon_emoji})
-            })
+            }, verify=ssl_verify)
 
 
 class MattermostClient(object):
-    def __init__(self, url, team, email, password):
+    def __init__(self, url, team, email, password, ssl_verify=True):
         self.users = {}
         self.channels = {}
         self.mentions = {}
-        self.api = MattermostAPI(url)
+        self.api = MattermostAPI(url, ssl_verify)
         self.user = None
         self.info = None
         self.websocket = None
@@ -140,7 +149,10 @@ class MattermostClient(object):
         self.websocket = websocket.create_connection(
             url, header=[
                 "Cookie: %s=%s" % (cookie_name, self.api.token)
-            ])
+            ], sslopt={
+                "cert_reqs": ssl.CERT_REQUIRED if self.api.ssl_verify \
+                    else ssl.CERT_NONE
+            })
 
     def messages(self, ignore_own_msg=False, filter_action=None):
         if not self.connect_websocket():
