@@ -43,6 +43,7 @@ Then you need to configure the `BOT_URL`, `BOT_LOGIN`, `BOT_PASSWORD`, `BOT_TEAM
 mattermost_bot_settings.py:
 
 ```python
+SSL_VERIFY = True  # Whether to perform SSL cert verification
 BOT_URL = 'http://<mm.example.com>/api/v3'  # with 'http://' and with '/api/v3' path. without trailing slash. '/api/v1' - for version < 3.0
 BOT_LOGIN = '<bot-email-address>'
 BOT_PASSWORD = '<bot-password>'
@@ -50,7 +51,8 @@ BOT_TEAM = '<your-team>'  # possible in lowercase
 ```
 
 Alternatively, you can use the environment variable `MATTERMOST_BOT_URL`,
-`MATTERMOST_BOT_LOGIN`, `MATTERMOST_BOT_PASSWORD`, `MATTERMOST_BOT_TEAM`.
+`MATTERMOST_BOT_LOGIN`, `MATTERMOST_BOT_PASSWORD`, `MATTERMOST_BOT_TEAM`,
+`MATTERMOST_BOT_SSL_VERIFY`
 
 or `MATTERMOST_BOT_SETTINGS_MODULE` environment variable, which provide settings module
 
