@@ -5,7 +5,7 @@ import re
 from mattermost_bot.bot import respond_to
 
 
-@respond_to('busy', re.IGNORECASE)
+@respond_to('^busy|jobs$', re.IGNORECASE)
 def busy_reply(message):
     busy = message.get_busy_workers() - 1
     message.reply('Num of busy workers is `%d`' % busy)

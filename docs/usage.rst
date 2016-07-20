@@ -8,7 +8,7 @@ Basic
 
 Register new user on Mattermost. Copy email/password/team and url into ``mattermost_bot_settings.py`` file::
 
-    BOT_URL = 'http://<mm.example.com>/api/v1'  # with 'http://' and with '/api/v1' path
+    BOT_URL = 'http://<mm.example.com>/api/v3'  # with 'http://' and with '/api/v3' path
     BOT_LOGIN = '<bot-email-address>'
     BOT_PASSWORD = '<bot-password>'
     BOT_TEAM = '<your-team>'
@@ -55,8 +55,10 @@ Create bot_settings on your project and after you can create ``django`` command:
 Modify ``manage.py``::
 
     #!/usr/bin/env python
+
     import os
     import sys
+
 
     if __name__ == "__main__":
         os.environ.setdefault("DJANGO_SETTINGS_MODULE", "project.settings")

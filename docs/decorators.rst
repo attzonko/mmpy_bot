@@ -1,7 +1,7 @@
 .. _decorators:
 
-Builtin decorators
-==================
+Built-in decorators
+===================
 
 
 Allowed users::

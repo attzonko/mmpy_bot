@@ -4,7 +4,7 @@ Installation
 Compatibility
 -------------
 * Python: 2.6, 3.4+
-* Mattermost: 3.x+
+* Mattermost: 3.0+
 
 
 Recommended way to install is via pip::
