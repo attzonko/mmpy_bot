@@ -20,7 +20,16 @@ A chat bot for [Mattermost](http://www.mattermost.org).
 * Messages can be handled concurrently
 * Automatically reconnect to mattermost when connection is lost
 * Python3 Support
-* Mattermost >= 3.0 (for versions < 3.0, please use app version <= 1.0.15)
+
+
+## Compatibility
+
+|    Mattermost    |  MatterBot |
+|------------------|:----------:|
+|        3.3       |   1.0.18   |
+| >= 3.0 && <= 3.2 |   1.0.17   |
+|      < 3.0       |  < 1.0.16  |
+
 
 ## Installation
 

@@ -5,6 +5,7 @@ from __future__ import absolute_import
 import importlib
 import traceback
 import logging
+import json
 import re
 
 from six import iteritems
@@ -25,14 +26,14 @@ class MessageDispatcher(object):
         self._pool = WorkerPool(self.dispatch_msg, settings.WORKERS_NUM)
         self._plugins = plugins
         self._channel_info = {}
+        self.event = None
 
     def start(self):
         self._pool.start()
 
     @staticmethod
     def get_message(msg):
-        return msg.get(
-            'props', {}).get('post', {}).get('message', '').strip()
+        return msg.get('data', {}).get('post', {}).get('message', '').strip()
 
     def ignore(self, _msg):
         msg = self.get_message(_msg)
@@ -41,7 +42,7 @@ class MessageDispatcher(object):
                 return True
 
     def is_mentioned(self, msg):
-        mentions = msg.get('props', {}).get('mentions', [])
+        mentions = msg.get('data', {}).get('mentions', [])
         return self._client.user['id'] in mentions
 
     def is_personal(self, msg):
@@ -96,11 +97,20 @@ class MessageDispatcher(object):
         if self.is_mentioned(msg):
             m = MESSAGE_MATCHER.match(text)
             if m:
-                msg['props']['post']['message'] = m.group(2).strip()
+                msg['data']['post']['message'] = m.group(2).strip()
         return msg
+
+    def load_json(self):
+        if self.event.get('data', {}).get('post'):
+            self.event['data']['post'] = json.loads(
+                self.event['data']['post'])
+        if self.event.get('data', {}).get('mentions'):
+            self.event['data']['mentions'] = json.loads(
+                self.event['data']['mentions'])
 
     def loop(self):
         for self.event in self._client.messages(True, 'posted'):
+            self.load_json()
             self._on_new_message(self.event)
 
     def _default_reply(self, msg):
@@ -162,7 +172,7 @@ class Message(object):
         return self._client.api.team_id
 
     def get_message(self):
-        return self._body['props']['post']['message'].strip()
+        return self._body['data']['post']['message'].strip()
 
     def is_direct_message(self):
         return self._body['message_type'] == 'D'
@@ -171,7 +181,7 @@ class Message(object):
         return self._pool.get_busy_workers()
 
     def get_mentions(self):
-        return self._body['props'].get('mentions')
+        return self._body['data'].get('mentions')
 
     def _gen_at_message(self, text):
         return '@{}: {}'.format(self.get_username(), text)
@@ -218,7 +228,7 @@ class Message(object):
     def react(self, emoji_name):
         self._client.channel_msg(
             self._body['channel_id'], emoji_name,
-            pid=self._body['props']['post']['id'])
+            pid=self._body['data']['post']['id'])
 
     def comment(self, message):
         self.react(message)

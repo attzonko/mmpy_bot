@@ -111,7 +111,7 @@ class MattermostAPI(object):
 
 
 class MattermostClient(object):
-    def __init__(self, url, team, email, password, ssl_verify=True):
+    def __init__(self, url, team, email, password, ssl_verify=True, login=1):
         self.users = {}
         self.channels = {}
         self.mentions = {}
@@ -124,7 +124,8 @@ class MattermostClient(object):
         self.email = email
         self.password = password
 
-        self.login(team, email, password)
+        if login:
+            self.login(team, email, password)
 
     def login(self, team, email, password):
         self.email = email
@@ -162,7 +163,7 @@ class MattermostClient(object):
             if data:
                 try:
                     post = json.loads(data)
-                    if filter_action and post.get('action') != filter_action:
+                    if filter_action and post.get('event') != filter_action:
                         continue
                     if ignore_own_msg is True and post.get("user_id"):
                         if self.user["id"] == post.get("user_id"):
