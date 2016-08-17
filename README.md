@@ -1,7 +1,6 @@
 [![PyPI](https://badge.fury.io/py/mattermost_bot.svg)](https://pypi.python.org/pypi/mattermost_bot)
 [![Codacy](https://api.codacy.com/project/badge/grade/b06f3af1d8a04c6faa9a76a4ae3cb483)](https://www.codacy.com/app/gotlium/mattermost_bot)
 [![Code Health](https://landscape.io/github/LPgenerator/mattermost_bot/master/landscape.svg?style=flat)](https://landscape.io/github/LPgenerator/mattermost_bot/master)
-[![Downloads from PyPi](https://img.shields.io/pypi/dm/mattermost_bot.svg)](https://pypi.python.org/pypi/mattermost_bot/)
 [![Python Support](https://img.shields.io/badge/python-2.7,3.5-blue.svg)](https://pypi.python.org/pypi/mattermost_bot/)
 [![Mattermost](https://img.shields.io/badge/mattermost-1.4+-blue.svg)](http://www.mattermost.org)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://pypi.python.org/pypi/mattermost_bot/)
@@ -15,10 +14,10 @@ A chat bot for [Mattermost](http://www.mattermost.org).
 
 ## Features
 
-* Based on MatterMost [WebSocket API](https://github.com/mattermost/platform)
+* Based on Mattermost [WebSocket API](https://github.com/mattermost/platform)
 * Simple plugins mechanism
 * Messages can be handled concurrently
-* Automatically reconnect to mattermost when connection is lost
+* Automatically reconnect to Mattermost when connection is lost
 * Python3 Support
 
 
