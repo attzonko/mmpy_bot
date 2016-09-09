@@ -226,7 +226,7 @@ class Message(object):
         return self._client.channel_msg(channel_id or self._body['channel_id'],
                                         text)
 
-    def update(self, text, message_id=None, channel_id=None):
+    def update(self, text, message_id, channel_id=None):
         return self._client.update_msg(
             message_id, channel_id or self._body['channel_id'], text
         )
