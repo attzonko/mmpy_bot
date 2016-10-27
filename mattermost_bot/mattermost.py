@@ -66,6 +66,15 @@ class MattermostAPI(object):
                 'root_id': pid,
             })
 
+    def update_post(self, message_id, user_id, channel_id, message, files=None, pid=""):
+        return self.post(
+            '/teams/%s/channels/%s/posts/update' % (self.team_id, channel_id),
+            {
+                'id': message_id,
+                'channel_id': channel_id,
+                'message': message,
+            })
+
     def channel(self, channel_id):
         return self.get('/teams/%s/channels/%s/' % (self.team_id, channel_id))
 
@@ -136,6 +145,11 @@ class MattermostClient(object):
     def channel_msg(self, channel, message, pid=""):
         c_id = self.channels.get(channel, {}).get("id") or channel
         return self.api.create_post(self.user["id"], c_id, message, pid=pid)
+
+    def update_msg(self, message_id, channel, message, pid=""):
+        c_id = self.channels.get(channel, {}).get("id") or channel
+        return self.api.update_post(message_id, self.user["id"],
+                                    c_id, message, pid=pid)
 
     def get_users(self):
         return self.api.get_profiles()

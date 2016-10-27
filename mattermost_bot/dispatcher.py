@@ -223,7 +223,13 @@ class Message(object):
         self.send(self._gen_reply(text))
 
     def send(self, text, channel_id=None):
-        self._client.channel_msg(channel_id or self._body['channel_id'], text)
+        return self._client.channel_msg(channel_id or self._body['channel_id'],
+                                        text)
+
+    def update(self, text, message_id, channel_id=None):
+        return self._client.update_msg(
+            message_id, channel_id or self._body['channel_id'], text
+        )
 
     def react(self, emoji_name):
         self._client.channel_msg(
