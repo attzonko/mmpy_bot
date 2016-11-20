@@ -79,10 +79,23 @@ class MattermostAPI(object):
         return self.get('/teams/%s/channels/%s/' % (self.team_id, channel_id))
 
     def get_channels(self):
-        return self.get('/teams/%s/channels/' % self.team_id).get('channels')
+        return self.get('/teams/%s/channels/' % self.team_id)
 
-    def get_profiles(self):
-        return self.get('/users/profiles/%s' % self.team_id)
+    def get_profiles(self, pagination_size=100):
+        profiles = {}
+        start = 0
+        end = start + pagination_size
+
+        current_page = self.get('/teams/%s/users/0/%s'
+                                % (self.team_id, pagination_size))
+        profiles.update(current_page)
+        while len(current_page.keys()) == pagination_size:
+            start = end
+            end += pagination_size
+            current_page = self.get('/teams/%s/users/%s/%s'
+                                    % (self.team_id, start, end))
+            profiles.update(current_page)
+        return profiles
 
     def me(self):
         return self.get('/users/me')
