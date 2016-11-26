@@ -46,7 +46,7 @@ class MessageDispatcher(object):
         return self._client.user['id'] in mentions
 
     def is_personal(self, msg):
-        channel_id = msg['channel_id']
+        channel_id = msg['data']['post']['channel_id']
         if channel_id in self._channel_info:
             channel_type = self._channel_info[channel_id]
         else:
@@ -116,7 +116,7 @@ class MessageDispatcher(object):
     def _default_reply(self, msg):
         if settings.DEFAULT_REPLY:
             return self._client.channel_msg(
-                msg['channel_id'], settings.DEFAULT_REPLY)
+                msg['data']['post']['channel_id'], settings.DEFAULT_REPLY)
 
         default_reply = [
             u'Bad command "%s", You can ask me one of the '
@@ -128,7 +128,7 @@ class MessageDispatcher(object):
             docs_fmt.format(p.pattern, v.__doc__ or "")
             for p, v in iteritems(self._plugins.commands['respond_to'])]
 
-        self._client.channel_msg(msg['channel_id'], '\n'.join(default_reply))
+        self._client.channel_msg(msg['data']['post']['channel_id'], '\n'.join(default_reply))
 
 
 class Message(object):
@@ -144,7 +144,7 @@ class Message(object):
         self._pool = pool
 
     def get_user_info(self, key, user_id=None):
-        user_id = user_id or self._body['user_id']
+        user_id = user_id or self._body['data']['post']['user_id']
         if not Message.users or user_id not in Message.users:
             Message.users = self._client.get_users()
         return Message.users[user_id].get(key)
@@ -159,7 +159,7 @@ class Message(object):
         return self.get_user_info('id', user_id)
 
     def get_channel_name(self, channel_id=None):
-        channel_id = channel_id or self._body['channel_id']
+        channel_id = channel_id or self._body['data']['post']['channel_id']
         if channel_id in self.channels:
             channel_name = self.channels[channel_id]
         else:
@@ -223,17 +223,17 @@ class Message(object):
         self.send(self._gen_reply(text))
 
     def send(self, text, channel_id=None):
-        return self._client.channel_msg(channel_id or self._body['channel_id'],
+        return self._client.channel_msg(channel_id or self._body['data']['post']['channel_id'],
                                         text)
 
     def update(self, text, message_id, channel_id=None):
         return self._client.update_msg(
-            message_id, channel_id or self._body['channel_id'], text
+            message_id, channel_id or self._body['data']['post']['channel_id'], text
         )
 
     def react(self, emoji_name):
         self._client.channel_msg(
-            self._body['channel_id'], emoji_name,
+            self._body['data']['post']['channel_id'], emoji_name,
             pid=self._body['data']['post']['id'])
 
     def comment(self, message):
@@ -246,7 +246,7 @@ class Message(object):
 
     @property
     def channel(self):
-        return self._body['channel_id']
+        return self._body['data']['post']['channel_id']
 
     @property
     def body(self):
