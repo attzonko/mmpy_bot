@@ -147,6 +147,11 @@ class Message(object):
         self._pool = pool
 
     def get_user_info(self, key, user_id=None):
+        if key == 'username':
+            sender_name = self._get_sender_name()
+            if sender_name:
+                return sender_name
+
         user_id = user_id or self._body['data']['post']['user_id']
         if not Message.users or user_id not in Message.users:
             Message.users = self._client.get_users()
@@ -193,6 +198,9 @@ class Message(object):
         if self._body['message_type'] == '?':
             return self._gen_at_message(text)
         return text
+
+    def _get_sender_name(self):
+        return self._body['data'].get('sender_name', '').strip()
 
     def _get_first_webhook(self):
         hooks = self._client.api.hooks_list()
