@@ -192,12 +192,12 @@ class MattermostClient(object):
                     post = json.loads(data)
                     if filter_action and post.get('event') != filter_action:
                         continue
-                    if ignore_own_msg is True and post.get("user_id"):
-                        if self.user["id"] == post.get("user_id"):
-                            continue
-                    if post.get('props', {}).get('post'):
-                        post['props']['post'] = json.loads(
-                            post['props']['post'])
+
+                    if post.get('data', {}).get('post'):
+                        dp = json.loads(post['data']['post'])
+                        if ignore_own_msg is True and dp.get("user_id"):
+                            if self.user["id"] == dp["user_id"]:
+                                continue
                     yield post
                 except ValueError:
                     pass

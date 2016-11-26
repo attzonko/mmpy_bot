@@ -63,6 +63,7 @@ class MessageDispatcher(object):
         msg['message_type'] = '?'
         if self.is_personal(msg):
             msg['message_type'] = 'D'
+
         for func, args in self._plugins.get_plugins(category, text):
             if func:
                 responded = True
@@ -73,7 +74,8 @@ class MessageDispatcher(object):
                     reply = '[%s] I have problem when handling "%s"\n' % (
                         func.__name__, text)
                     reply += '```\n%s\n```' % traceback.format_exc()
-                    self._client.channel_msg(msg['channel_id'], reply)
+                    self._client.channel_msg(
+                        msg['data']['post']['channel_id'], reply)
 
         if not responded and category == 'respond_to':
             if settings.DEFAULT_REPLY_MODULE is not None:
@@ -128,7 +130,8 @@ class MessageDispatcher(object):
             docs_fmt.format(p.pattern, v.__doc__ or "")
             for p, v in iteritems(self._plugins.commands['respond_to'])]
 
-        self._client.channel_msg(msg['data']['post']['channel_id'], '\n'.join(default_reply))
+        self._client.channel_msg(
+            msg['data']['post']['channel_id'], '\n'.join(default_reply))
 
 
 class Message(object):
@@ -223,12 +226,13 @@ class Message(object):
         self.send(self._gen_reply(text))
 
     def send(self, text, channel_id=None):
-        return self._client.channel_msg(channel_id or self._body['data']['post']['channel_id'],
-                                        text)
+        return self._client.channel_msg(
+            channel_id or self._body['data']['post']['channel_id'], text)
 
     def update(self, text, message_id, channel_id=None):
         return self._client.update_msg(
-            message_id, channel_id or self._body['data']['post']['channel_id'], text
+            message_id, channel_id or self._body['data']['post']['channel_id'],
+            text
         )
 
     def react(self, emoji_name):
