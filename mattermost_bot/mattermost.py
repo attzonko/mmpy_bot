@@ -5,6 +5,7 @@ import time
 
 import requests
 import websocket
+import websocket._exceptions
 
 logger = logging.getLogger(__name__)
 
@@ -186,7 +187,12 @@ class MattermostClient(object):
         if not self.connect_websocket():
             return
         while True:
-            data = self.websocket.recv()
+            try:
+                data = self.websocket.recv()
+            except websocket._exceptions.WebSocketException:
+                if not self.connect_websocket():
+                    raise
+                continue
             if data:
                 try:
                     post = json.loads(data)
