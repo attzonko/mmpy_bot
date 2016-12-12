@@ -14,7 +14,7 @@ A chat bot for [Mattermost](http://www.mattermost.org).
 
 ## Features
 
-* Based on Mattermost [WebSocket API](https://github.com/mattermost/platform)
+* Based on Mattermost [WebSocket API](https://api.mattermost.com)
 * Simple plugins mechanism
 * Messages can be handled concurrently
 * Automatically reconnect to Mattermost when connection is lost

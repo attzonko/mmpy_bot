@@ -61,9 +61,12 @@ Add following config::
     numprocs=1
     autostart=true
     autorestart=true
-    startretries=3
+    startretries=25
     logfile_maxbytes=50MB
     logfile_backups=3
+    killasgroup=true
+    stopasgroup=true
+    priority=998
 
 
 Restart supervisor::
@@ -78,7 +81,7 @@ Check status::
 
 Track bot logs::
 
-    $ tailf /var/log/matterbot.log
+    $ tail -f /var/log/matterbot.log
 
 
 Enjoy:)

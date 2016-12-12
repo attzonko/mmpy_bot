@@ -3,7 +3,7 @@ Installation
 
 Compatibility
 -------------
-* Python: 2.6, 3.4+
+* Python: 2.6, 3.5+
 * Mattermost: 3.0+
 
 
