@@ -43,9 +43,12 @@ class MattermostAPI(object):
             self.url + '/users/login', data=json.dumps(props),
             verify=self.ssl_verify
         )
-        self.token = p.headers["Token"]
-        self.load_initial_data()
-        return json.loads(p.text)
+        if p.status_code == 200:
+            self.token = p.headers["Token"]
+            self.load_initial_data()
+            return json.loads(p.text)
+        else:
+            p.raise_for_status()
 
     def load_initial_data(self):
         self.initial = self.get('/users/initial_load')
