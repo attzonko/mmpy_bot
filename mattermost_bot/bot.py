@@ -80,8 +80,8 @@ class PluginsManager(object):
 
     def get_plugins(self, category, text):
         has_matching_plugin = False
-        for matcher in self.commands[category]:
-            m = matcher.search(text)
+        for matcher in self.commands[category]
+            m = matcher.r.search(text)
             if m:
                 has_matching_plugin = True
                 yield self.commands[category][matcher], m.groups()
@@ -90,9 +90,14 @@ class PluginsManager(object):
             yield None, None
 
 
+class Matcher(object):
+    """This allows us to map the same regex to multiple handlers."""
+    def __init__(self, regex):
+        self.r = regex
+
 def respond_to(regexp, flags=0):
     def wrapper(func):
-        PluginsManager.commands['respond_to'][re.compile(regexp, flags)] = func
+        PluginsManager.commands['respond_to'][Matcher(re.compile(regexp, flags))] = func
         logger.info(
             'registered respond_to plugin "%s" to "%s"', func.__name__, regexp)
         return func
@@ -102,7 +107,7 @@ def respond_to(regexp, flags=0):
 
 def listen_to(regexp, flags=0):
     def wrapper(func):
-        PluginsManager.commands['listen_to'][re.compile(regexp, flags)] = func
+        PluginsManager.commands['listen_to'][Matcher(re.compile(regexp, flags))] = func
         logger.info(
             'registered listen_to plugin "%s" to "%s"', func.__name__, regexp)
         return func
