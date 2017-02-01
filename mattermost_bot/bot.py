@@ -80,7 +80,7 @@ class PluginsManager(object):
 
     def get_plugins(self, category, text):
         has_matching_plugin = False
-        for matcher in self.commands[category]
+        for matcher in self.commands[category]:
             m = matcher.r.search(text)
             if m:
                 has_matching_plugin = True
