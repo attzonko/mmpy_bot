@@ -37,9 +37,8 @@ class MessageDispatcher(object):
 
     def ignore(self, _msg):
         msg = self.get_message(_msg)
-        for prefix in settings.IGNORE_NOTIFIES:
-            if msg.startswith(prefix):
-                return True
+        if any(item in msg for item in settings.IGNORE_NOTIFIES):
+            return True
 
     def is_mentioned(self, msg):
         mentions = msg.get('data', {}).get('mentions', [])
