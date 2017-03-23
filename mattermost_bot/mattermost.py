@@ -17,6 +17,8 @@ class MattermostAPI(object):
         self.initial = None
         self.team_id = None
         self.ssl_verify = ssl_verify
+        if not ssl_verify:
+            requests.packages.urllib3.disable_warnings(requests.packages.urllib3.exceptions.InsecureRequestWarning)
 
     def _get_headers(self):
         return {"Authorization": "Bearer " + self.token}
