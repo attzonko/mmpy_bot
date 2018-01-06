@@ -15,17 +15,23 @@ from six.moves import _thread
 from mattermost_bot import settings
 from mattermost_bot.dispatcher import MessageDispatcher
 from mattermost_bot.mattermost import MattermostClient
+from mattermost_bot.mattermost_v4 import MattermostClientv4
 
 logger = logging.getLogger(__name__)
 
 
 class Bot(object):
     def __init__(self):
-        self._client = MattermostClient(
-            settings.BOT_URL, settings.BOT_TEAM,
-            settings.BOT_LOGIN, settings.BOT_PASSWORD,
-            settings.SSL_VERIFY
-        )
+        if settings.MATTERMOST_API_VERSION == 4:
+            self._client = MattermostClientv4(
+                settings.BOT_URL, settings.BOT_TEAM,
+                settings.BOT_LOGIN, settings.BOT_PASSWORD,
+                settings.SSL_VERIFY)
+        else:
+            self._client = MattermostClient(
+                settings.BOT_URL, settings.BOT_TEAM,
+                settings.BOT_LOGIN, settings.BOT_PASSWORD,
+                settings.SSL_VERIFY)
         logger.info('connected to mattermost')
         self._plugins = PluginsManager()
         self._dispatcher = MessageDispatcher(self._client, self._plugins)
@@ -49,16 +55,17 @@ class PluginsManager(object):
         'listen_to': {}
     }
 
-    def __init__(self):
-        pass
+    def __init__(self, plugins=[]):
+        self.plugins = plugins
 
     def init_plugins(self):
-        if hasattr(settings, 'PLUGINS'):
-            plugins = settings.PLUGINS
-        else:
-            plugins = 'mattermost_bot.plugins'
+        if self.plugins == []:
+            if hasattr(settings, 'PLUGINS'):
+                self.plugins = settings.PLUGINS
+            else:
+                self.plugins = 'mattermost_bot.plugins'
 
-        for plugin in plugins:
+        for plugin in self.plugins:
             self._load_plugins(plugin)
 
     @staticmethod
