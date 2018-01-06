@@ -9,7 +9,9 @@ PLUGINS = [
 ]
 PLUGINS_ONLY_DOC_STRING = False
 
-BOT_URL = 'http://mm.example.com/api/v3'
+# Default settings
+MATTERMOST_API_VERSION = 4
+BOT_URL = 'http://mm.example.com/api/v4'
 BOT_LOGIN = 'bot@example.com'
 BOT_PASSWORD = None
 BOT_TEAM = 'devops'
@@ -35,7 +37,7 @@ for key in os.environ:
     if key[:15] == 'MATTERMOST_BOT_':
         globals()[key[11:]] = os.environ[key]
 
-settings_module = os.environ.get('MATTERMOST_BOT_SETTINGS_MODULE')
+settings_module = os.environ['MATTERMOST_BOT_SETTINGS_MODULE']
 
 if settings_module is not None:
     pwd = os.getcwd()
