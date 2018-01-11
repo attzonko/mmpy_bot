@@ -17,7 +17,7 @@ BOT_PASSWORD = None
 BOT_TEAM = 'devops'
 SSL_VERIFY = True
 
-IGNORE_NOTIFIES = ['@channel', '@all']
+IGNORE_NOTIFIES = ['@here', '@channel', '@all']
 WORKERS_NUM = 10
 
 DEFAULT_REPLY_MODULE = None
