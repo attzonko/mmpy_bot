@@ -8,6 +8,7 @@ import websocket
 import websocket._exceptions
 
 from mattermost_bot.mattermost import MattermostClient, MattermostAPI
+from pprint import pprint
 
 logger = logging.getLogger(__name__)
 
@@ -76,15 +77,13 @@ class MattermostAPIv4(MattermostAPI):
             team_id = self.default_team_id
 
         start = 0
-        end = start + pagination_size
 
         current_page = self.get('/users?page=0&per_page={}&in_team={}'.format(pagination_size, team_id))
         for user in current_page:
             profiles.update(self.create_user_dict(user))
 
         while len(current_page) == pagination_size:
-            start = end
-            end += pagination_size
+            start = start + 1
 	    current_page = self.get('/users?page={}&per_page={}&in_team={}'.format(start, pagination_size, team_id))
             for user in current_page:
                  profiles.update(self.create_user_dict(user))
