@@ -105,33 +105,15 @@ class MattermostAPI(object):
                 return team_id
         return None
 
-    def get_profiles(self,channel_id=None, pagination_size=100):
-        profiles = {}
-
-        if channel_id is not None:
-            team_id = self.get_team_id(channel_id)
-        else:
-            team_id = self.default_team_id
-
-        start = 0
-        end = start + pagination_size
-
-        current_page = self.get('/teams/%s/users/0/%s'
-                                % (team_id, pagination_size))
-        profiles.update(current_page)
-        while len(current_page.keys()) == pagination_size:
-            start = end
-            end += pagination_size
-            current_page = self.get('/teams/%s/users/%s/%s'
-                                    % (team_id, start, end))
-            profiles.update(current_page)
-        return profiles
+    def get_user_info(self, user_id):
+        user_info = self.post('/users/ids',[user_id])
+        return user_info[user_id]
 
     def me(self):
         return self.get('/users/me')
 
     def user(self, user_id):
-        return self.get_profiles()[user_id]
+        return self.get_user_info(user_id)
 
     def hooks_list(self):
         return self.get('/teams/%s/hooks/incoming/list' % self.default_team_id)
@@ -193,9 +175,6 @@ class MattermostClient(object):
         c_id = self.channels.get(channel, {}).get("id") or channel
         return self.api.update_post(message_id, self.user["id"],
                                     c_id, message, pid=pid)
-
-    def get_users(self, channel_id):
-        return self.api.get_profiles(channel_id)
 
     def connect_websocket(self):
         host = self.api.url.replace('http', 'ws').replace('https', 'wss')

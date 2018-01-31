@@ -48,6 +48,7 @@ class MattermostAPIv4(MattermostAPI):
                         'filenames': files or [],
                         'root_id': pid,
                     })
+
     def update_post(self, message_id, user_id, channel_id, message, files=None, pid=""):
         return self.post(
             '/posts/%s' % message_id,
@@ -69,26 +70,8 @@ class MattermostAPIv4(MattermostAPI):
         new_dict[v4_dict['id']]=v4_dict
         return new_dict
 
-    def get_profiles(self,channel_id=None, pagination_size=100):
-        profiles = {}
-        if channel_id is not None:
-            team_id = self.get_team_id(channel_id)
-        else:
-            team_id = self.default_team_id
-
-        start = 0
-
-        current_page = self.get('/users?page=0&per_page={}&in_team={}'.format(pagination_size, team_id))
-        for user in current_page:
-            profiles.update(self.create_user_dict(user))
-
-        while len(current_page) == pagination_size:
-            start = start + 1
-	    current_page = self.get('/users?page={}&per_page={}&in_team={}'.format(start, pagination_size, team_id))
-            for user in current_page:
-                 profiles.update(self.create_user_dict(user))
-        return profiles
-
+    def get_user_info(self, user_id):
+        return self.get('/users/{}'.format(user_id))
 
 class MattermostClientv4(MattermostClient):
 
