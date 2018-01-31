@@ -165,16 +165,9 @@ class Message(object):
         self._pool = pool
 
     def get_user_info(self, key, user_id=None):
-        channel_id = self._body['data']['post']['channel_id']
-        if key == 'username':
-            sender_name = self._get_sender_name()
-            if sender_name:
-                return sender_name
-
         user_id = user_id or self._body['data']['post']['user_id']
-        if not Message.users or user_id not in Message.users:
-            Message.users = self._client.get_users(channel_id)
-        return Message.users[user_id].get(key)
+        user_info = self._client.api.get_user_info(user_id)
+        return user_info[key]
 
     def get_username(self, user_id=None):
         return self.get_user_info('username', user_id)
