@@ -29,7 +29,7 @@ class MattermostAPIv4(MattermostAPI):
             response.raise_for_status()
 
     def load_initial_data(self):
-        self.teams = self.get('/teams')
+        self.teams = self.get('/users/me/teams')
         self.default_team_id = self.teams[0]['id']
         self.teams_channels_ids = {}
         for team in self.teams:
