@@ -37,7 +37,7 @@ class Driver(object):
 		self.gm_chan = None	# private channel
 		self.events = []
 		self._events_lock = threading.Lock()
-	
+
 	def start(self):
 		self._rtm_connect()
 		self._retrieve_bot_user_ids()
@@ -173,6 +173,7 @@ class Driver(object):
 	def wait_for_bot_private_channel_message(self, match, tosender=True):
 		self._wait_for_bot_message(self.gm_chan, match, tosender=tosender)
 
+	@classmethod
 	def wait_for_bot_online(self):
 		time.sleep(4)
 
