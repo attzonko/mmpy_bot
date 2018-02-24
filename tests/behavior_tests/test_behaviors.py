@@ -2,10 +2,10 @@ import subprocess, time
 import pytest
 from driver import Driver
 
-'''
-Function to run a bot for testing in subprocess
-'''
 def _start_bot_process():
+    """
+    Function to run a bot for testing in subprocess
+    """
     args = ['python', 'tests/behavior_tests/run_bot.py',]
     return subprocess.Popen(args)
 
