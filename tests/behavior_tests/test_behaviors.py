@@ -1,9 +1,6 @@
-import os, subprocess, time
-from os.path import basename
+import subprocess, time
 import pytest
 from driver import Driver
-
-WAIT_SECS = 10
 
 '''
 Function to run a bot for testing in subprocess
@@ -20,12 +17,6 @@ def driver():
     driver.wait_for_bot_online()
     yield driver
     p.terminate()
-
-'''
-Empty test to ensure fixture start_test will be executed
-'''
-def test_bot_get_online(driver):
-    pass
 
 #########################################################
 # Actual test cases bellow
