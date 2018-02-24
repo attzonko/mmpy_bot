@@ -44,7 +44,7 @@ class Driver(object):
 		self._create_dm_channel()
 		self._retrieve_cm_channel()
 		self._retrieve_gm_channel()
-	
+
 	def _rtm_connect(self):
 		self.bot._client.connect_websocket()
 		self._websocket = self.bot._client.websocket
