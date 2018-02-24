@@ -1,5 +1,6 @@
 import time, re, six, threading, logging, sys, json
 from six.moves import _thread
+from websocket._exceptions import WebSocketConnectionClosedException, WebSocketTimeoutException
 from mattermost_bot.bot import Bot, PluginsManager
 from mattermost_bot.mattermost_v4 import MattermostClientv4
 from mattermost_bot.dispatcher import MessageDispatcher
@@ -19,7 +20,6 @@ class DriverBot(Bot):
         self._plugins = PluginsManager()
         self._plugins.init_plugins()
         self._dispatcher = MessageDispatcher(self._client, self._plugins)
-        
 
 class Driver(object):
 
@@ -59,7 +59,11 @@ class Driver(object):
 			# then exception triggered, then returns the accumulated data
 			try:
 				data += '{0}\n'.format(self._websocket.recv())
-			except:
+			except WebSocketConnectionClosedException:
+				return data.rstrip()
+			except WebSocketTimeoutException:
+				return data.rstrip()
+			except Exception:
 				return data.rstrip()
 
 	def _rtm_read_forever(self):
@@ -72,7 +76,7 @@ class Driver(object):
 
 	def _retrieve_bot_user_ids(self):
 		# get bot user info
-		self.users_info = self.bot._client.api.post('/users/usernames', 
+		self.users_info = self.bot._client.api.post('/users/usernames', \
 							[driver_settings.BOT_NAME, bot_settings.BOT_NAME])
 		# get user ids
 		for user in self.users_info:
@@ -83,7 +87,7 @@ class Driver(object):
 
 	def _create_dm_channel(self):
 		"""create direct channel and get id"""
-		response = self.bot._client.api.post('/channels/direct', 
+		response = self.bot._client.api.post('/channels/direct', \
 						[self.bot_userid, self.testbot_userid])
 		self.dm_chan = response['id']
 
@@ -170,24 +174,7 @@ class Driver(object):
 		self._wait_for_bot_message(self.gm_chan, match, tosender=tosender)
 
 	def wait_for_bot_online(self):
-		self._wait_for_bot_presense(True)
-		# sleep to allow bot connection to stabilize
-		time.sleep(2)
-
-	def _wait_for_bot_presense(self, online):
-		for _ in range(10):
-			time.sleep(2)
-			if online and self._is_testbot_online():
-				break
-			if not online and not self._is_testbot_online():
-				break
-		else:
-			raise AssertionError('test bot is still {}'.format('offline' if online else 'online'))
-
-	# [ToDo] implement this method by checking via MM API
-	def _is_testbot_online(self):
-		# check by asking MM through API
-		return True
+		time.sleep(4)
 
 	def clear_events(self):
 		with self._events_lock:

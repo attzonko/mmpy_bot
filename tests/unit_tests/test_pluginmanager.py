@@ -1,28 +1,36 @@
 import sys, logging
-import pytest
+from importlib import reload
 from mattermost_bot.bot import PluginsManager
 
 #logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 def test_load_single_plugin():
-    assert 'single_plugin' not in sys.modules
-    PluginsManager()._load_plugins('single_plugin')
-    assert 'single_plugin' in sys.modules
-    assert 'single_plugin.mock_plugin' in sys.modules
+	reload(sys)
+	PluginsManager()._load_plugins('single_plugin')
+	if 'single_plugin' not in sys.modules:
+		raise AssertionError()
+	if 'single_plugin.mock_plugin' not in sys.modules:
+		raise AssertionError()
 
 def test_load_init_plugins():
+	reload(sys)
 	PluginsManager().init_plugins()
-	assert 'mattermost_bot.plugins' in sys.modules
+	if 'mattermost_bot.plugins' not in sys.modules:
+		raise AssertionError()
 
 def test_load_local_plugins():
-	assert 'local_plugins' not in sys.modules
+	reload(sys)
 	PluginsManager(plugins=['local_plugins']).init_plugins()
-	assert 'local_plugins' in sys.modules
-	assert 'local_plugins.hello' in sys.modules
-	assert 'local_plugins.busy' in sys.modules
+	if 'local_plugins' not in sys.modules:
+		raise AssertionError()
+	if 'local_plugins.hello' not in sys.modules:
+		raise AssertionError()
+	if 'local_plugins.busy' not in sys.modules:
+		raise AssertionError()
 
 def test_get_plugins():
+	reload(sys)
 	manager = PluginsManager(plugins=['single_plugin', 'local_plugins'])
 	manager.init_plugins()
 	matched_func_names = set()
@@ -30,12 +38,17 @@ def test_get_plugins():
 	for func, args in manager.get_plugins('listen_to', 'hello'):
 		if func:
 			matched_func_names.add(func.__name__)
-	assert 'hello_send' in matched_func_names
-	assert 'hello_send_alternative' in matched_func_names
-	# test: not has_matching_plugin
+	if 'hello_send' not in matched_func_names:
+		raise AssertionError()
+	if 'hello_send_alternative' not in matched_func_names:
+		raise AssertionError()
+	# test: not has_matching_plugin (there is no such plugin `hallo`)
+	reload(sys)
 	matched_func_names = set()
 	for func, args in manager.get_plugins('listen_to', 'hallo'):
 		if func:
 			matched_func_names.add(func.__name__)
-	assert 'hello_send' not in matched_func_names
-	assert 'hello_send_alternative' not in matched_func_names
+	if 'hello_send' in matched_func_names:
+		raise AssertionError()
+	if 'hello_send_alternative' in matched_func_names:
+		raise AssertionError()

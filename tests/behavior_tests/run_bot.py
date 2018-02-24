@@ -1,8 +1,4 @@
 #!/usr/bin/env python
-import sys
-import logging
-import logging.config
-
 from mattermost_bot.bot import Bot, PluginsManager
 from mattermost_bot.mattermost_v4 import MattermostClientv4
 from mattermost_bot.dispatcher import MessageDispatcher
@@ -21,16 +17,6 @@ class LocalBot(Bot):
         self._dispatcher = MessageDispatcher(self._client, self._plugins)
 
 def main():
-    '''
-    kw = {
-        'format': '[%(asctime)s] %(message)s',
-        'datefmt': '%m/%d/%Y %H:%M:%S',
-        'level': logging.DEBUG if settings.DEBUG else logging.INFO,
-        'stream': sys.stdout,
-    }
-    logging.basicConfig(**kw)
-    logging.getLogger('requests.packages.urllib3.connectionpool').setLevel(logging.WARNING)
-    '''
     bot = LocalBot()
     bot.run()
 
