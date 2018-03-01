@@ -40,24 +40,25 @@ class MattermostAPI(object):
             verify=self.ssl_verify
         ).text)
 
-    def login(self, name, email, password):
-        props = {'name': name, 'login_id': email, 'password': password}
-        p = requests.post(
-            self.url + '/users/login', data=json.dumps(props),
-            verify=self.ssl_verify
-        )
-        if p.status_code == 200:
-            self.token = p.headers["Token"]
+    def login(self, team, account, password):
+        props = {'login_id': account, 'password': password}
+        response =requests.post(
+            self.url + '/users/login',
+            data = json.dumps(props),
+            verify=self.ssl_verify)
+        if response.status_code == 200:
+            self.token = response.headers["Token"]
             self.load_initial_data()
-            return json.loads(p.text)
+            self.user = json.loads(response.text)
+            return self.user
         else:
-            p.raise_for_status()
+            response.raise_for_status()
 
     def load_initial_data(self):
-        self.initial = self.get('/users/initial_load')
-        self.default_team_id = self.initial['teams'][0]['id']
+        self.teams = self.get('/users/me/teams')
+        self.default_team_id = self.teams[0]['id']
         self.teams_channels_ids = {}
-        for team in self.initial['teams']:
+        for team in self.teams:
             self.teams_channels_ids[team['id']] = []
             # get all channels belonging to each team
             for channel in self.get_channels(team['id']):
@@ -65,39 +66,30 @@ class MattermostAPI(object):
 
     def create_post(self, user_id, channel_id, message, files=None, pid=""):
         create_at = int(time.time() * 1000)
-        team_id = self.get_team_id(channel_id)
         return self.post(
-            '/teams/%s/channels/%s/posts/create' % (team_id, channel_id),
-            {
-                 'user_id': user_id,
-                 'channel_id': channel_id,
-                 'message': message,
-                 'create_at': create_at,
-                 'filenames': files or [],
-                 'pending_post_id': user_id + ':' + str(create_at),
-                 'state': "loading",
-                 'parent_id': pid,
-                 'root_id': pid,
-           })
+                    '/posts',
+                    {
+                        'channel_id': channel_id,
+                        'message': message,
+                        'filenames': files or [],
+                        'root_id': pid,
+                    })
 
     def update_post(self, message_id, user_id, channel_id, message, files=None, pid=""):
-        team_id = self.get_team_id(channel_id)
         return self.post(
-            '/teams/%s/channels/%s/posts/update' % (team_id, channel_id),
+            '/posts/%s' % message_id,
             {
-                'id': message_id,
-                'channel_id': channel_id,
                 'message': message,
             })
 
     def channel(self, channel_id):
-        team_id = self.get_team_id(channel_id)
-        return self.get('/teams/%s/channels/%s/' % (team_id, channel_id))
+        channel = {'channel': self.get('/channels/%s' % channel_id)}
+        return channel
 
     def get_channels(self, team_id=None):
         if team_id is None:
             team_id = self.default_team_id
-        return self.get('/teams/%s/channels/' % team_id)
+        return self.get('/users/me/teams/%s/channels' % team_id)
 
     def get_team_id(self, channel_id):
         for team_id, channels in self.teams_channels_ids.items():
@@ -106,8 +98,7 @@ class MattermostAPI(object):
         return None
 
     def get_user_info(self, user_id):
-        user_info = self.post('/users/ids',[user_id])
-        return user_info[user_id]
+        return self.get('/users/{}'.format(user_id))
 
     def me(self):
         return self.get('/users/me')
@@ -116,11 +107,11 @@ class MattermostAPI(object):
         return self.get_user_info(user_id)
 
     def hooks_list(self):
-        return self.get('/teams/%s/hooks/incoming/list' % self.default_team_id)
+        return self.get('hooks/incoming',
+                        {'team_id': self.default_team_id})
 
     def hooks_create(self, **kwargs):
-        return self.post(
-            '/teams/%s/hooks/incoming/create' % self.default_team_id, kwargs)
+        return self.post('hooks/incoming', **kwargs)
 
     @staticmethod
     def in_webhook(url, channel, text, username=None, as_user=None,
@@ -178,7 +169,7 @@ class MattermostClient(object):
 
     def connect_websocket(self):
         host = self.api.url.replace('http', 'ws').replace('https', 'wss')
-        url = host + '/users/websocket'
+        url = host + '/websocket'
         self._connect_websocket(url, cookie_name='MMAUTHTOKEN')
         return self.websocket.getstatus() == 101
 

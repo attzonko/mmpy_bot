@@ -2,17 +2,17 @@ import time, re, six, threading, logging, sys, json
 from six.moves import _thread
 from websocket._exceptions import WebSocketConnectionClosedException, WebSocketTimeoutException
 from mattermost_bot.bot import Bot, PluginsManager
-from mattermost_bot.mattermost_v4 import MattermostClientv4
+from mattermost_bot.mattermost import MattermostClient
 from mattermost_bot.dispatcher import MessageDispatcher
 import driver_settings, bot_settings
 
 logger = logging.getLogger(__name__)
-logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
+#logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
 class DriverBot(Bot):
 
     def __init__(self):
-        self._client = MattermostClientv4(
+        self._client = MattermostClient(
             driver_settings.BOT_URL, driver_settings.BOT_TEAM,
             driver_settings.BOT_LOGIN, driver_settings.BOT_PASSWORD,
             driver_settings.SSL_VERIFY
