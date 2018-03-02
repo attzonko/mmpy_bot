@@ -15,23 +15,16 @@ from six.moves import _thread
 from mattermost_bot import settings
 from mattermost_bot.dispatcher import MessageDispatcher
 from mattermost_bot.mattermost import MattermostClient
-from mattermost_bot.mattermost_v4 import MattermostClientv4
 
 logger = logging.getLogger(__name__)
 
 
 class Bot(object):
     def __init__(self):
-        if settings.MATTERMOST_API_VERSION == 4:
-            self._client = MattermostClientv4(
-                settings.BOT_URL, settings.BOT_TEAM,
-                settings.BOT_LOGIN, settings.BOT_PASSWORD,
-                settings.SSL_VERIFY)
-        else:
-            self._client = MattermostClient(
-                settings.BOT_URL, settings.BOT_TEAM,
-                settings.BOT_LOGIN, settings.BOT_PASSWORD,
-                settings.SSL_VERIFY)
+        self._client = MattermostClient(
+            settings.BOT_URL, settings.BOT_TEAM,
+            settings.BOT_LOGIN, settings.BOT_PASSWORD,
+            settings.SSL_VERIFY)
         logger.info('connected to mattermost')
         self._plugins = PluginsManager()
         self._dispatcher = MessageDispatcher(self._client, self._plugins)
