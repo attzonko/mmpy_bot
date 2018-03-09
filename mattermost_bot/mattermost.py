@@ -44,8 +44,16 @@ class MattermostAPI(object):
         props = {'name': name, 'login_id': email, 'password': password}
         p = requests.post(
             self.url + '/users/login', data=json.dumps(props),
-            verify=self.ssl_verify
+            verify=self.ssl_verify, allow_redirects=False
         )
+        if p.status_code in [301, 302, 307]:
+            # reset self.url to the new URL
+            self.url = response.headers['Location'].replace('/users/login', '')
+            # re-try login if redirected
+            p = requests.post(
+                self.url + '/users/login', data = json.dumps(props),
+                verify=self.ssl_verify, allow_redirects=False
+            )
         if p.status_code == 200:
             self.token = p.headers["Token"]
             self.load_initial_data()
