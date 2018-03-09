@@ -37,7 +37,7 @@ for key in os.environ:
     if key[:15] == 'MATTERMOST_BOT_':
         globals()[key[11:]] = os.environ[key]
 
-settings_module = os.environ['MATTERMOST_BOT_SETTINGS_MODULE']
+settings_module = os.environ.get('MATTERMOST_BOT_SETTINGS_MODULE')
 
 if settings_module is not None:
     pwd = os.getcwd()
