@@ -1,6 +1,6 @@
 import sys, logging
 from importlib import reload
-from mattermost_bot.bot import PluginsManager
+from mmpy_bot.bot import PluginsManager
 
 #logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -16,7 +16,7 @@ def test_load_single_plugin():
 def test_load_init_plugins():
 	reload(sys)
 	PluginsManager().init_plugins()
-	if 'mattermost_bot.plugins' not in sys.modules:
+	if 'mmpy_bot.plugins' not in sys.modules:
 		raise AssertionError()
 
 def test_load_local_plugins():

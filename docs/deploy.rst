@@ -35,7 +35,7 @@ Install project requirements::
 
     $ cd ~/mybot
     $ . ~/mm-env/bin/activate
-    $ pip install mattermost_bot
+    $ pip install mmpy_bot
     $ pip install -r requirements.txt
 
 

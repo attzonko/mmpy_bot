@@ -1,6 +1,6 @@
 # -*- encoding: utf-8 -*-
 
-from mattermost_bot.bot import respond_to, listen_to
+from mmpy_bot.bot import respond_to, listen_to
 
 
 @respond_to('^\!info$')

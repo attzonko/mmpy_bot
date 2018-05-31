@@ -6,8 +6,8 @@ Built-in decorators
 
 Allowed users::
 
-    from mattermost_bot.utils import allowed_users
-    from mattermost_bot.bot import respond_to
+    from mmpy_bot.utils import allowed_users
+    from mmpy_bot.bot import respond_to
 
 
     @respond_to('^is-allowed$')
@@ -19,8 +19,8 @@ Allowed users::
 
 Direct messages::
 
-    from mattermost_bot.utils import allow_only_direct_message
-    from mattermost_bot.bot import respond_to
+    from mmpy_bot.utils import allow_only_direct_message
+    from mmpy_bot.bot import respond_to
 
 
     @respond_to('^direct-msg$')
@@ -42,10 +42,10 @@ to some users. We can create constants with allowed users on bot settings::
 
 So now we can close access to some functions on plugins::
 
-    from mattermost_bot.utils import allow_only_direct_message
-    from mattermost_bot.utils import allowed_users
-    from mattermost_bot.bot import respond_to
-    from mattermost_bot import settings
+    from mmpy_bot.utils import allow_only_direct_message
+    from mmpy_bot.utils import allowed_users
+    from mmpy_bot.bot import respond_to
+    from mmpy_bot import settings
 
 
     @respond_to('^selfupdate')

@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-from mattermost_bot import get_version
+from mmpy_bot import get_version
 
 install_requires = (
     'websocket-client>=0.22.0',
@@ -14,26 +14,27 @@ excludes = (
 )
 
 setup(
-    name='mattermost_bot',
+    name="mmpy_bot",
     version=get_version(),
+    author="Alex Tzonkov",
+    author_email="alex.tzonkov@gmail.com",
     license='MIT',
-    description='Simple bot for MatterMost',
+    description="A python based bot for Mattermost",
     keywords="chat bot mattermost",
     long_description=open('README.md').read(),
-    author="GoTLiuM InSPiRiT",
-    author_email='gotlium@gmail.com',
-    url='http://github.com/LPgenerator/mattermost_bot',
+    long_description_content_type="text/markdown",
+    url="https://github.com/attzonko/mmpy_bot",
     platforms=['Any'],
     packages=find_packages(exclude=excludes),
     install_requires=install_requires,
     entry_points={
         'console_scripts': [
-            'matterbot = mattermost_bot.cli:main',
+            'mmpy_bot = mmpy_bot.cli:main',
         ],
     },
     classifiers=[
         'Development Status :: 5 - Production/Stable',
-        'License :: OSI Approved :: GNU General Public License (GPL)',
+        "License :: OSI Approved :: MIT License",
         'Intended Audience :: Developers',
         'Operating System :: OS Independent',
         'Programming Language :: Python',

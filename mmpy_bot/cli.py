@@ -2,7 +2,7 @@
 import sys
 import logging
 
-from mattermost_bot import bot, settings
+from mmpy_bot import bot, settings
 
 
 def main():

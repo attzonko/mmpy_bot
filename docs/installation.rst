@@ -9,11 +9,11 @@ Compatibility
 
 Recommended way to install is via pip::
 
-  pip install -U mattermost_bot
+  pip install -U mmpy_bot
 
 
-Check `mattermost_bot` version::
+Check `mmpy_bot` version::
 
-    import mattermost_bot
-    print(mattermost_bot.get_version())
+    import mmpy_bot
+    print(mmpy_bot.get_version())
 

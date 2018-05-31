@@ -3,14 +3,14 @@
 Settings
 ========
 
-``mattermost_bot`` has some configuration:
+``mmpy_bot`` has some configuration:
 
 .. code-block:: python
 
     DEBUG = False
 
     PLUGINS = [
-        'mattermost_bot.plugins',
+        'mmpy_bot.plugins',
     ]
 
     # Docs + regexp or docs string only

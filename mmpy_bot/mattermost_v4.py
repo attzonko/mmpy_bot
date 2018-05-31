@@ -7,7 +7,7 @@ import requests
 import websocket
 import websocket._exceptions
 
-from mattermost_bot.mattermost import MattermostClient, MattermostAPI
+from mmpy_bot.mattermost import MattermostClient, MattermostAPI
 from pprint import pprint
 
 logger = logging.getLogger(__name__)

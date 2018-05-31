@@ -20,9 +20,9 @@ Create project directory and virtual environment::
 
 Install stable package from PyPi::
 
-    pip install mattermost_bot
+    pip install mmpy_bot
 
-Create settings file `mattermost_bot_settings.py` with the following lines::
+Create settings file `mmpy_bot_settings.py` with the following lines::
 
     DEBUG = True
     BOT_URL = 'http://mm.example.com:8065/api/v3'
@@ -32,4 +32,4 @@ Create settings file `mattermost_bot_settings.py` with the following lines::
 
 Run your bot by following command::
 
-    MATTERMOST_BOT_SETTINGS_MODULE=mattermost_bot_settings matterbot
+    MATTERMOST_BOT_SETTINGS_MODULE=mmpy_bot_settings matterbot

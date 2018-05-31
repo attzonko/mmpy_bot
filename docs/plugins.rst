@@ -7,7 +7,7 @@ Plugins
 
 A chat bot is meaningless unless you can extend/customize it to fit your own use cases.
 
-To write a new plugin, simply create a function decorated by ``mattermost_bot.bot.respond_to`` or ``mattermost_bot.bot.listen_to``:
+To write a new plugin, simply create a function decorated by ``mmpy_bot.bot.respond_to`` or ``mmpy_bot.bot.listen_to``:
 
 - A function decorated with ``respond_to`` is called when a message matching the pattern is sent to the bot (direct message or @botname in a channel/group chat)
 - A function decorated with ``listen_to`` is called when a message matching the pattern is sent on a channel/group chat (not directly sent to the bot)
@@ -16,8 +16,8 @@ To write a new plugin, simply create a function decorated by ``mattermost_bot.bo
 
     import re
 
-    from mattermost_bot.bot import listen_to
-    from mattermost_bot.bot import respond_to
+    from mmpy_bot.bot import listen_to
+    from mmpy_bot.bot import respond_to
 
 
     @respond_to('hi', re.IGNORECASE)
@@ -43,7 +43,7 @@ To extract params from the message, you can use regular expression:
 
 .. code-block:: python
 
-    from mattermost_bot.bot import respond_to
+    from mmpy_bot.bot import respond_to
 
 
     @respond_to('Give me (.*)')
@@ -55,7 +55,7 @@ If you would like to have a command like 'stats' and 'stats start_date end_date'
 
 .. code-block:: python
 
-    from mattermost_bot.bot import respond_to
+    from mmpy_bot.bot import respond_to
     import re
 
 
@@ -66,12 +66,12 @@ If you would like to have a command like 'stats' and 'stats start_date end_date'
 
 
 
-And add the plugins module to ``PLUGINS`` list of mattermost_bot settings, e.g. ``mattermost_bot_settings.py``:
+And add the plugins module to ``PLUGINS`` list of mmpy_bot settings, e.g. ``mmpy_bot_settings.py``:
 
 .. code-block:: python
 
     PLUGINS = [
-        'mattermost_bot.plugins',
+        'mmpy_bot.plugins',
         'devops.plugins',          # e.g. git submodule: domain:devops-plugins.git
         'programmers.plugins',     # e.g. python package: package_name.plugins
         'frontend.plugins',        # e.g. project tree: apps.bot.plugins
@@ -85,7 +85,7 @@ Attachment Support
 
 .. code-block:: python
 
-    from mattermost_bot.bot import respond_to
+    from mmpy_bot.bot import respond_to
 
 
     @respond_to('webapi')

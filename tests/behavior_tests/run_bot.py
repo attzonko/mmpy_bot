@@ -1,7 +1,7 @@
 #!/usr/bin/env python
-from mattermost_bot.bot import Bot, PluginsManager
-from mattermost_bot.mattermost_v4 import MattermostClientv4
-from mattermost_bot.dispatcher import MessageDispatcher
+from mmpy_bot.bot import Bot, PluginsManager
+from mmpy_bot.mattermost_v4 import MattermostClientv4
+from mmpy_bot.dispatcher import MessageDispatcher
 import bot_settings
 
 class LocalBot(Bot):
