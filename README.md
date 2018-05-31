@@ -25,7 +25,7 @@ A python based chat bot for [Mattermost](http://www.mattermost.org).
 
 |    Mattermost    |  mmpy_bot   |
 |------------------|:-----------:|
-|     >= 4.0       |  > 1.0.0    |
+|     >= 4.0       |  > 1.2.0    |
 |     <  4.0       | unsupported |
 
 
