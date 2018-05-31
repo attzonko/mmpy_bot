@@ -1,6 +1,6 @@
 [![PyPI](https://badge.fury.io/py/mmpy-bot.svg)](https://pypi.org/project/mmpy-bot/)
 [![Codacy](https://api.codacy.com/project/badge/grade/b06f3af1d8a04c6faa9a76a4ae3cb483)](https://www.codacy.com/app/attzonko/mmpy_bot)
-[![Code Health](https://landscape.io/github/attzonko/mmpy_bot/master/landscape.svg?style=flat)(https://landscape.io/github/attzonko/mmpy_bot/master)
+[![Maintainability](https://api.codeclimate.com/v1/badges/809c8d66aea982d9e3da/maintainability)](https://codeclimate.com/github/attzonko/mmpy_bot/maintainability)
 [![Python Support](https://img.shields.io/badge/python-2.7,3.5-blue.svg)](https://pypi.org/project/mmpy-bot/)
 [![Mattermost](https://img.shields.io/badge/mattermost-1.4+-blue.svg)](http://www.mattermost.org)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://pypi.org/project/mmpy-bot/)
