@@ -1,20 +1,20 @@
-[![PyPI](https://badge.fury.io/py/mattermost_bot.svg)](https://pypi.python.org/pypi/mattermost_bot)
-[![Codacy](https://api.codacy.com/project/badge/grade/b06f3af1d8a04c6faa9a76a4ae3cb483)](https://www.codacy.com/app/attzonko/mattermost_bot)
-[![Code Health](https://landscape.io/github/LPgenerator/mattermost_bot/master/landscape.svg?style=flat)](https://landscape.io/github/LPgenerator/mattermost_bot/master)
-[![Python Support](https://img.shields.io/badge/python-2.7,3.5-blue.svg)](https://pypi.python.org/pypi/mattermost_bot/)
+[![PyPI](https://badge.fury.io/py/mmpy_bot.svg)](https://pypi.python.org/pypi/mmpy_bot)
+[![Codacy](https://api.codacy.com/project/badge/grade/b06f3af1d8a04c6faa9a76a4ae3cb483)](https://www.codacy.com/app/attzonko/mmpy_bot)
+[![Code Health](https://landscape.io/github/LPgenerator/mmpy_bot/master/landscape.svg?style=flat)](https://landscape.io/github/LPgenerator/mattermost_bot/master)
+[![Python Support](https://img.shields.io/badge/python-2.7,3.5-blue.svg)](https://pypi.python.org/pypi/mmpy_bot/)
 [![Mattermost](https://img.shields.io/badge/mattermost-1.4+-blue.svg)](http://www.mattermost.org)
-[![License](https://img.shields.io/badge/license-MIT-green.svg)](https://pypi.python.org/pypi/mattermost_bot/)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](https://pypi.python.org/pypi/mmpy_bot/)
 
-Documentation available at [Read the Docs](http://mattermost-bot.readthedocs.org/).
+Documentation available at [Read the Docs](http://mmpy_bot.readthedocs.org/).
 
 
-## What's that
+## What is This
 
-A chat bot for [Mattermost](http://www.mattermost.org).
+A python based chat bot for [Mattermost](http://www.mattermost.org).
 
 ## Features
 
-* Based on Mattermost [WebSocket API](https://api.mattermost.com) - Updated to work with APIv4.0
+* Based on Mattermost [WebSocket API(V4.0.0)](https://api.mattermost.com)
 * Simple plugins mechanism
 * Messages can be handled concurrently
 * Automatically reconnect to Mattermost when connection is lost
@@ -23,18 +23,16 @@ A chat bot for [Mattermost](http://www.mattermost.org).
 
 ## Compatibility
 
-|    Mattermost    |  MatterBot |
-|------------------|:----------:|
-|     >= 3.5       |  > 1.0.19  |
-| >= 3.3 && <= 3.4 |   1.0.18   |
-| >= 3.0 && <= 3.2 |   1.0.17   |
-|      < 3.0       |  < 1.0.16  |
+|    Mattermost    |  mmpy_bot   |
+|------------------|:-----------:|
+|     >= 4.0       |  > 1.0.0    |
+|     <  4.0       | unsupported |
 
 
 ## Installation
 
 ```
-pip install mattermost_bot
+pip install mmpy_bot
 ```
 
 ## Usage
@@ -46,10 +44,10 @@ First you need create the mattermost email/password for your bot.
 ### Configuration
 
 Then you need to configure the `BOT_URL`, `BOT_LOGIN`, `BOT_PASSWORD`, `BOT_TEAM` in a python module
-`mattermost_bot_settings.py`, which must be located in a python import path.
+`mmpy_bot_settings.py`, which must be located in a python import path.
 
 
-mattermost_bot_settings.py:
+mmpy_bot_settings.py:
 
 ```python
 SSL_VERIFY = True  # Whether to perform SSL cert verification
@@ -75,13 +73,13 @@ MATTERMOST_BOT_SETTINGS_MODULE=settings.bot_conf matterbot
 Use the built-in cli script and point to your custom settings file.
 
 ```bash
-MATTERMOST_BOT_SETTINGS_MODULE=mattermost_bot_settings matterbot
+MATTERMOST_BOT_SETTINGS_MODULE=mmpy_bot_settings matterbot
 ```
 
 or you can create your own startup file. For example `run.py`:
 
 ```python
-from mattermost_bot.bot import Bot
+from mmpy_bot.bot import Bot
 
 
 if __name__ == "__main__":
@@ -95,7 +93,7 @@ Now you can talk to your bot in your mattermost client!
 ## Attachment Support
 
 ```python
-from mattermost_bot.bot import respond_to
+from mmpy_bot.bot import respond_to
 
 
 @respond_to('webapi')
@@ -122,7 +120,7 @@ def webapi_reply(message):
 
 A chat bot is meaningless unless you can extend/customize it to fit your own use cases.
 
-To write a new plugin, simply create a function decorated by `mattermost_bot.bot.respond_to` or `mattermost_bot.bot.listen_to`:
+To write a new plugin, simply create a function decorated by `mmpy_bot.bot.respond_to` or `mmpy_bot.bot.listen_to`:
 
 - A function decorated with `respond_to` is called when a message matching the pattern is sent to the bot (direct message or @botname in a channel/group chat)
 - A function decorated with `listen_to` is called when a message matching the pattern is sent on a channel/group chat (not directly sent to the bot)
@@ -130,8 +128,8 @@ To write a new plugin, simply create a function decorated by `mattermost_bot.bot
 ```python
 import re
 
-from mattermost_bot.bot import listen_to
-from mattermost_bot.bot import respond_to
+from mmpy_bot.bot import listen_to
+from mmpy_bot.bot import respond_to
 
 
 @respond_to('hi', re.IGNORECASE)
@@ -155,7 +153,7 @@ def help_me(message):
 
 To extract params from the message, you can use regular expression:
 ```python
-from mattermost_bot.bot import respond_to
+from mmpy_bot.bot import respond_to
 
 
 @respond_to('Give me (.*)')
@@ -166,7 +164,7 @@ def give_me(message, something):
 If you would like to have a command like 'stats' and 'stats start_date end_date', you can create reg ex like so:
 
 ```python
-from mattermost_bot.bot import respond_to
+from mmpy_bot.bot import respond_to
 import re
 
 
@@ -177,11 +175,11 @@ def stats(message, start_date=None, end_date=None):
 ```
 
 
-And add the plugins module to `PLUGINS` list of mattermost_bot settings, e.g. mattermost_bot_settings.py:
+And add the plugins module to `PLUGINS` list of mmpy_bot settings, e.g. mmpy_bot_settings.py:
 
 ```python
 PLUGINS = [
-    'mattermost_bot.plugins',
+    'mmpy_bot.plugins',
     'devops.plugins',          # e.g. git submodule:  domain:devops-plugins.git
     'programmers.plugins',     # e.g. python package: package_name.plugins
     'frontend.plugins',        # e.g. project tree:   apps.bot.plugins
@@ -209,7 +207,7 @@ Install `PyTest` in development environment.
 pip install -U pytest
 ```
 
-There are two test categories in `mattermost_bot\tests`: __unit_tests__ and __behavior_tests__. The __behavior_tests__ is done by interactions between a __DriverBot__ and a __TestBot__.
+There are two test categories in `mmpy_bot\tests`: __unit_tests__ and __behavior_tests__. The __behavior_tests__ is done by interactions between a __DriverBot__ and a __TestBot__.
 
 To run the __behavior_tests__, you have to configure `behavior_tests\bot_settings.py` and `behavior_tests\driver_settings.py`. Example configuration:
 

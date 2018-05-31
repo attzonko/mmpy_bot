@@ -12,10 +12,10 @@ from glob import glob
 
 from six.moves import _thread
 
-from mattermost_bot import settings
-from mattermost_bot.dispatcher import MessageDispatcher
-from mattermost_bot.mattermost import MattermostClient
-from mattermost_bot.mattermost_v4 import MattermostClientv4
+from mmpy_bot import settings
+from mmpy_bot.dispatcher import MessageDispatcher
+from mmpy_bot.mattermost import MattermostClient
+from mmpy_bot.mattermost_v4 import MattermostClientv4
 
 logger = logging.getLogger(__name__)
 
@@ -63,7 +63,7 @@ class PluginsManager(object):
             if hasattr(settings, 'PLUGINS'):
                 self.plugins = settings.PLUGINS
             else:
-                self.plugins = 'mattermost_bot.plugins'
+                self.plugins = 'mmpy_bot.plugins'
 
         for plugin in self.plugins:
             self._load_plugins(plugin)

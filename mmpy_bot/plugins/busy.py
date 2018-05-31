@@ -2,7 +2,7 @@
 
 import re
 
-from mattermost_bot.bot import respond_to
+from mmpy_bot.bot import respond_to
 
 
 @respond_to('^busy|jobs$', re.IGNORECASE)

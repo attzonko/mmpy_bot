@@ -1,9 +1,9 @@
 import time, re, six, threading, logging, sys, json
 from six.moves import _thread
 from websocket._exceptions import WebSocketConnectionClosedException, WebSocketTimeoutException
-from mattermost_bot.bot import Bot, PluginsManager
-from mattermost_bot.mattermost_v4 import MattermostClientv4
-from mattermost_bot.dispatcher import MessageDispatcher
+from mmpy_bot.bot import Bot, PluginsManager
+from mmpy_bot.mattermost_v4 import MattermostClientv4
+from mmpy_bot.dispatcher import MessageDispatcher
 import driver_settings, bot_settings
 
 logger = logging.getLogger(__name__)

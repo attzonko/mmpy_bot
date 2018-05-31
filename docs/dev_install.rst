@@ -4,9 +4,9 @@ Installation for development
 .. code-block:: bash
 
     $ sudo apt-get install virtualenvwrapper
-    $ mkvirtualenv mattermost_bot
-    $ git clone https://github.com/LPgenerator/mattermost_bot.git
-    $ cd mattermost_bot
+    $ mkvirtualenv mmpy_bot
+    $ git clone https://github.com/attzonko/mmpy_bot.git
+    $ cd mmpy_bot
     $ python setup.py develop
     $ pip install -r requirements.txt
     $ pip install -r docs/requirements.txt
@@ -16,5 +16,5 @@ Installation for development
 
 .. code-block:: python
 
-    >>> import mattermost_bot
-    >>> print(mattermost_bot.get_version())
+    >>> import mmpy_bot
+    >>> print(mmpy_bot.get_version())

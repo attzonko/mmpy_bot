@@ -6,7 +6,7 @@ Usage
 Basic
 -----
 
-Register new user on Mattermost. Copy email/password/team and url into ``mattermost_bot_settings.py`` file::
+Register new user on Mattermost. Copy email/password/team and url into ``mmpy_bot_settings.py`` file::
 
     BOT_URL = 'http://<mm.example.com>/api/v3'  # with 'http://' and with '/api/v3' path
     BOT_LOGIN = '<bot-email-address>'
@@ -17,7 +17,7 @@ Register new user on Mattermost. Copy email/password/team and url into ``matterm
 
 Run the bot::
 
-    $ MATTERMOST_BOT_SETTINGS_MODULE=mattermost_bot_settings matterbot
+    $ MATTERMOST_BOT_SETTINGS_MODULE=mmpy_bot_settings matterbot
 
 
 Integration with Django
@@ -31,7 +31,7 @@ Create bot_settings on your project and after you can create ``django`` command:
     from django.core.management.base import BaseCommand
     from django.conf import settings
 
-    from mattermost_bot import bot, settings
+    from mmpy_bot import bot, settings
 
 
     class Command(BaseCommand):
@@ -62,7 +62,7 @@ Modify ``manage.py``::
 
     if __name__ == "__main__":
         os.environ.setdefault("DJANGO_SETTINGS_MODULE", "project.settings")
-        os.environ.setdefault("MATTERMOST_BOT_SETTINGS_MODULE", "project.mattermost_bot_settings")
+        os.environ.setdefault("MATTERMOST_BOT_SETTINGS_MODULE", "project.mmpy_bot_settings")
 
         from django.core.management import execute_from_command_line
 

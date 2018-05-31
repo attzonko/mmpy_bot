@@ -10,8 +10,8 @@ import re
 
 from six import iteritems
 
-from mattermost_bot.utils import WorkerPool
-from mattermost_bot import settings
+from mmpy_bot.utils import WorkerPool
+from mmpy_bot import settings
 
 logger = logging.getLogger(__name__)
 
@@ -157,7 +157,7 @@ class Message(object):
     channels = {}
 
     def __init__(self, client, body, pool):
-        from mattermost_bot.bot import PluginsManager
+        from mmpy_bot.bot import PluginsManager
 
         self._plugins = PluginsManager()
         self._client = client

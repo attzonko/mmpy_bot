@@ -5,10 +5,15 @@ Credits
 Development Lead
 ----------------
 
-* GoTLiuM InSPiRiT <gotlium@gmail.com>
+* Alex Tzonkov <alex.tzonkov@gmail.com>
 
 Contributors
 ------------
+* Victor Hu <selain@nature.ee.ncku.edu.tw>
+
+Past Contributors
+------------------
+* GoTLiuM InSPiRiT <gotlium@gmail.com>
 
 * Grokzen <grokzen@gmail.com>
 * Philipp Schmitt <philipp@schmitt.co>

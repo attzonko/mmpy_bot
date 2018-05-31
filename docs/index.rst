@@ -1,4 +1,4 @@
-mattermost_bot
+mmpy_bot
 ==============
 
 A chat bot for Mattermost
@@ -31,8 +31,8 @@ Feel free to submit issues_, pull requests are also welcome.
 
 Good contributions follow :ref:`simple guidelines <contributing>`
 
-.. _Github: https://github.com/LPgenerator/mattermost_bot
-.. _issues: https://github.com/LPgenerator/mattermost_bot/issues
+.. _Github: https://github.com/attzonko/mmpy_bot
+.. _issues: https://github.com/attzonko/mmpy_bot/issues
 
 .. |br| raw:: html
 

@@ -5,7 +5,7 @@ import os
 DEBUG = False
 
 PLUGINS = [
-    'mattermost_bot.plugins',
+    'mmpy_bot.plugins',
 ]
 PLUGINS_ONLY_DOC_STRING = False
 
@@ -51,7 +51,7 @@ if settings_module is not None:
         exec(open(filename).read())
 
 try:
-    from mattermost_bot_settings import *
+    from mmpy_bot_settings import *
 except ImportError:
     try:
         from local_settings import *
