@@ -1,16 +1,12 @@
 import json
 import logging
-import ssl
-import time
 
 import requests
-import websocket
-import websocket._exceptions
 
 from mmpy_bot.mattermost import MattermostClient, MattermostAPI
-from pprint import pprint
 
 logger = logging.getLogger(__name__)
+
 
 class MattermostAPIv4(MattermostAPI):
 
@@ -18,7 +14,7 @@ class MattermostAPIv4(MattermostAPI):
         props = {'login_id': account, 'password': password}
         response = requests.post(
             self.url + '/users/login',
-            data = json.dumps(props),
+            data=json.dumps(props),
             verify=self.ssl_verify,
             allow_redirects=False)
         if response.status_code in [301, 302, 307]:
@@ -27,7 +23,7 @@ class MattermostAPIv4(MattermostAPI):
             # re-try login if redirected
             response = requests.post(
                 self.url + '/users/login',
-                data = json.dumps(props),
+                data=json.dumps(props),
                 verify=self.ssl_verify,
                 allow_redirects=False)
         if response.status_code == 200:
@@ -49,7 +45,7 @@ class MattermostAPIv4(MattermostAPI):
                 self.teams_channels_ids[team['id']].append(channel['id'])
 
     def create_post(self, user_id, channel_id, message, files=None, pid=""):
-        create_at = int(time.time() * 1000)
+        # create_at = int(time.time() * 1000)
         return self.post(
                     '/posts',
                     {
@@ -59,7 +55,8 @@ class MattermostAPIv4(MattermostAPI):
                         'root_id': pid,
                     })
 
-    def update_post(self, message_id, user_id, channel_id, message, files=None, pid=""):
+    def update_post(self, message_id, user_id, channel_id,
+                    message, files=None, pid=""):
         return self.post(
             '/posts/%s' % message_id,
             {
@@ -77,11 +74,12 @@ class MattermostAPIv4(MattermostAPI):
 
     def create_user_dict(self, v4_dict):
         new_dict = {}
-        new_dict[v4_dict['id']]=v4_dict
+        new_dict[v4_dict['id']] = v4_dict
         return new_dict
 
     def get_user_info(self, user_id):
         return self.get('/users/{}'.format(user_id))
+
 
 class MattermostClientv4(MattermostClient):
 

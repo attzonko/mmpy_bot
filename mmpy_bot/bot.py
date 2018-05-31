@@ -99,7 +99,8 @@ class PluginsManager(object):
 
 def respond_to(regexp, flags=0):
     def wrapper(func):
-        PluginsManager.commands['respond_to'][re.compile(regexp, flags | re.DEBUG)] = func
+        r = re.compile(regexp, flags | re.DEBUG)
+        PluginsManager.commands['respond_to'][r] = func
         logger.info(
             'registered respond_to plugin "%s" to "%s"', func.__name__, regexp)
         return func
@@ -109,7 +110,8 @@ def respond_to(regexp, flags=0):
 
 def listen_to(regexp, flags=0):
     def wrapper(func):
-        PluginsManager.commands['listen_to'][re.compile(regexp, flags | re.DEBUG)] = func
+        r = re.compile(regexp, flags | re.DEBUG)
+        PluginsManager.commands['listen_to'][r] = func
         logger.info(
             'registered listen_to plugin "%s" to "%s"', func.__name__, regexp)
         return func

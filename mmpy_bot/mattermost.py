@@ -15,11 +15,12 @@ class MattermostAPI(object):
         self.url = url
         self.token = ""
         self.initial = None
-        self.default_team_id = None # the first team in API returned value
-        self.teams_channels_ids = None  # struct: {team_id:[channel_id,...], ...}
+        self.default_team_id = None  # the first team in API returned value
+        self.teams_channels_ids = None  # struct:{team_id:[channel_id,...],...}
         self.ssl_verify = ssl_verify
         if not ssl_verify:
-            requests.packages.urllib3.disable_warnings(requests.packages.urllib3.exceptions.InsecureRequestWarning)
+            requests.packages.urllib3.disable_warnings(
+                requests.packages.urllib3.exceptions.InsecureRequestWarning)
 
     def _get_headers(self):
         return {"Authorization": "Bearer " + self.token}
@@ -48,10 +49,10 @@ class MattermostAPI(object):
         )
         if p.status_code in [301, 302, 307]:
             # reset self.url to the new URL
-            self.url = response.headers['Location'].replace('/users/login', '')
+            self.url = p.headers['Location'].replace('/users/login', '')
             # re-try login if redirected
             p = requests.post(
-                self.url + '/users/login', data = json.dumps(props),
+                self.url + '/users/login', data=json.dumps(props),
                 verify=self.ssl_verify, allow_redirects=False
             )
         if p.status_code == 200:
@@ -75,8 +76,7 @@ class MattermostAPI(object):
         create_at = int(time.time() * 1000)
         team_id = self.get_team_id(channel_id)
         return self.post(
-            '/teams/%s/channels/%s/posts/create' % (team_id, channel_id),
-            {
+            '/teams/%s/channels/%s/posts/create' % (team_id, channel_id), {
                  'user_id': user_id,
                  'channel_id': channel_id,
                  'message': message,
@@ -85,10 +85,10 @@ class MattermostAPI(object):
                  'pending_post_id': user_id + ':' + str(create_at),
                  'state': "loading",
                  'parent_id': pid,
-                 'root_id': pid,
-           })
+                 'root_id': pid, })
 
-    def update_post(self, message_id, user_id, channel_id, message, files=None, pid=""):
+    def update_post(self, message_id, user_id,
+                    channel_id, message, files=None, pid=""):
         team_id = self.get_team_id(channel_id)
         return self.post(
             '/teams/%s/channels/%s/posts/update' % (team_id, channel_id),
@@ -114,7 +114,7 @@ class MattermostAPI(object):
         return None
 
     def get_user_info(self, user_id):
-        user_info = self.post('/users/ids',[user_id])
+        user_info = self.post('/users/ids', [user_id])
         return user_info[user_id]
 
     def me(self):
@@ -177,7 +177,8 @@ class MattermostClient(object):
 
     def channel_msg(self, channel, message, pid=""):
         c_id = self.channels.get(channel, {}).get("id") or channel
-        return self.api.create_post(self.user["id"], c_id, "{}".format(message), pid=pid)
+        return self.api.create_post(self.user["id"],
+                                    c_id, "{}".format(message), pid=pid)
 
     def update_msg(self, message_id, channel, message, pid=""):
         c_id = self.channels.get(channel, {}).get("id") or channel
@@ -192,12 +193,10 @@ class MattermostClient(object):
 
     def _connect_websocket(self, url, cookie_name):
         self.websocket = websocket.create_connection(
-            url, header=[
-                "Cookie: %s=%s" % (cookie_name, self.api.token)
-            ], sslopt={
-                "cert_reqs": ssl.CERT_REQUIRED if self.api.ssl_verify \
-                    else ssl.CERT_NONE
-            })
+            url, header=["Cookie: %s=%s" % (cookie_name, self.api.token)],
+            sslopt={
+                "cert_reqs": ssl.CERT_REQUIRED if self.api.ssl_verify
+                else ssl.CERT_NONE})
 
     def messages(self, ignore_own_msg=False, filter_actions=[]):
         if not self.connect_websocket():
@@ -231,4 +230,3 @@ class MattermostClient(object):
 
     def ping(self):
         self.websocket.ping()
-
