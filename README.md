@@ -64,7 +64,7 @@ Alternatively, you can use the environment variable `MATTERMOST_BOT_URL`,
 or `MATTERMOST_BOT_SETTINGS_MODULE` environment variable, which provide settings module
 
 ```bash
-MATTERMOST_BOT_SETTINGS_MODULE=settings.bot_conf matterbot
+MATTERMOST_BOT_SETTINGS_MODULE=settings.bot_conf mmpy_bot
 ```
 
 
@@ -73,7 +73,7 @@ MATTERMOST_BOT_SETTINGS_MODULE=settings.bot_conf matterbot
 Use the built-in cli script and point to your custom settings file.
 
 ```bash
-MATTERMOST_BOT_SETTINGS_MODULE=mmpy_bot_settings matterbot
+MATTERMOST_BOT_SETTINGS_MODULE=mmpy_bot_settings mmpy_bot
 ```
 
 or you can create your own startup file. For example `run.py`:
