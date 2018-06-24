@@ -80,6 +80,9 @@ class MattermostAPIv4(MattermostAPI):
     def get_user_info(self, user_id):
         return self.get('/users/{}'.format(user_id))
 
+    def hooks_list(self):
+        return self.get('/hooks/incoming')
+
 
 class MattermostClientv4(MattermostClient):
 

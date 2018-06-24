@@ -41,6 +41,8 @@ pip install mmpy_bot
 
 First you need create the mattermost email/password for your bot.
 
+For use all API(V4.0.0), you need add bot user to system admin group to avoid 403 error. 
+
 ### Configuration
 
 Then you need to configure the `BOT_URL`, `BOT_LOGIN`, `BOT_PASSWORD`, `BOT_TEAM` in a python module
@@ -174,6 +176,15 @@ def stats(message, start_date=None, end_date=None):
     pass
 ```
 
+If you don't want to expose some bot commands to public, you can add `@allowed_users()` like so:
+
+```python
+@respond_to('^admin$')
+@allow_only_direct_message() #only trigger by direct message, remove this line if you want call this in channel
+@allowed_users('YourNameHere')
+def users_access(message):
+    pass
+```
 
 And add the plugins module to `PLUGINS` list of mmpy_bot settings, e.g. mmpy_bot_settings.py:
 
