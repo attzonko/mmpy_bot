@@ -43,6 +43,9 @@ class MessageDispatcher(object):
     def is_mentioned(self, msg):
         mentions = msg.get('data', {}).get('mentions', [])
         return self._client.user['id'] in mentions
+    
+    def get_file_link(self, file_id):
+        return self._client.api.get_file_link(file_id)
 
     def is_personal(self, msg):
         try:
