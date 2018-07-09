@@ -82,6 +82,9 @@ class MattermostAPIv4(MattermostAPI):
 
     def hooks_list(self):
         return self.get('/hooks/incoming')
+    
+    def get_file_link(self, file_id):
+        return self.get('/files/{}/link'.format(file_id))
 
 
 class MattermostClientv4(MattermostClient):
