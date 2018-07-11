@@ -22,6 +22,10 @@ def hello_reply_formatting(message):
 def hello_send(message):
     message.send('hello channel!')
 
+@listen_to('hello$')
+def hello_send_alternative(message):
+    message.send('hello channel!')
+
 @listen_to('hello_decorators')
 @respond_to('hello_decorators')
 def hello_decorators(message):

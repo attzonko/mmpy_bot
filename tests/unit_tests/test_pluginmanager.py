@@ -34,11 +34,13 @@ def test_get_plugins():
 	manager = PluginsManager(plugins=['single_plugin', 'local_plugins'])
 	manager.init_plugins()
 	matched_func_names = set()
-	# test: has_matching_plugin
+	# test: has_matching_plugin, one plugin function for one regexp pattern only
 	for func, args in manager.get_plugins('listen_to', 'hello'):
 		if func:
 			matched_func_names.add(func.__name__)
-	if 'hello_send' not in matched_func_names:
+	if 'hello_send' in matched_func_names:
+		raise AssertionError('hello_send should be replaced by hello_send_alternative')
+	if 'hello_send_alternative' not in matched_func_names:
 		raise AssertionError()
 	# test: not has_matching_plugin (there is no such plugin `hallo`)
 	reload(sys)
