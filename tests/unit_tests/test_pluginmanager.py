@@ -40,8 +40,6 @@ def test_get_plugins():
 			matched_func_names.add(func.__name__)
 	if 'hello_send' not in matched_func_names:
 		raise AssertionError()
-	if 'hello_send_alternative' not in matched_func_names:
-		raise AssertionError()
 	# test: not has_matching_plugin (there is no such plugin `hallo`)
 	reload(sys)
 	matched_func_names = set()
@@ -49,6 +47,4 @@ def test_get_plugins():
 		if func:
 			matched_func_names.add(func.__name__)
 	if 'hello_send' in matched_func_names:
-		raise AssertionError()
-	if 'hello_send_alternative' in matched_func_names:
 		raise AssertionError()

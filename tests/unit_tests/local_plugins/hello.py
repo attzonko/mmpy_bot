@@ -22,10 +22,6 @@ def hello_reply_formatting(message):
 def hello_send(message):
     message.send('hello channel!')
 
-@listen_to('hello$')
-def hello_send_alternative(message):
-    message.send('hello channel!')
-
 @listen_to('hello_decorators')
 @respond_to('hello_decorators')
 def hello_decorators(message):
@@ -56,7 +52,7 @@ def hello_comment(message):
 @listen_to('hello_react', re.IGNORECASE)
 def hello_react(message):
     message.react(':+1:')
-    
+
 @listen_to('picture$', re.IGNORECASE)
 def search_picture(message):
     # check if have file
