@@ -57,17 +57,3 @@ def hello_comment(message):
 def hello_react(message):
     message.react(':+1:')
 
-@listen_to('picture$', re.IGNORECASE)
-def search_picture(message):
-    # check if have file
-    if 'image' not in message.body['data']:
-        message.reply('no pic file!')
-        return
-    # handle the first file, get file public link
-    file_id = message.body['data']['post']['file_ids'][0]
-    file_link = message.get_file_link(file_id)
-    if 'link' not in file_link:
-        message.reply(file_link['message'])
-        return
-    file_link = file_link['link']
-    message.reply(file_link)
