@@ -56,7 +56,7 @@ def hello_comment(message):
 @listen_to('hello_react', re.IGNORECASE)
 def hello_react(message):
     message.react(':+1:')
-    
+
 @listen_to('picture$', re.IGNORECASE)
 def search_picture(message):
     # check if have file
