@@ -62,8 +62,8 @@ class PluginsManager(object):
         if self.plugins == []:
             if hasattr(settings, 'PLUGINS'):
                 self.plugins = settings.PLUGINS
-            else:
-                self.plugins = 'mmpy_bot.plugins'
+            if self.plugins == []:
+                self.plugins.append('mmpy_bot.plugins')
 
         for plugin in self.plugins:
             self._load_plugins(plugin)
