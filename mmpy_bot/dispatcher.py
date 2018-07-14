@@ -36,9 +36,17 @@ class MessageDispatcher(object):
         return msg.get('data', {}).get('post', {}).get('message', '').strip()
 
     def ignore(self, _msg):
+        return self._ignore_notifies(_msg) or self._ignore_sender(_msg)
+        
+    def _ignore_notifies(self, _msg):
+        # ignore message containing specified item, such as "@all"
         msg = self.get_message(_msg)
-        if any(item in msg for item in settings.IGNORE_NOTIFIES):
-            return True
+        return True if any(item in msg for item in settings.IGNORE_NOTIFIES) else False
+
+    def _ignore_sender(self, _msg):
+        # ignore message from senders specified in settings
+        sender_name = _msg.get('data', {}).get('sender_name', '').strip()
+        return True if sender_name.lower() in (name.lower() for name in settings.IGNORE_USERS) else False
 
     def is_mentioned(self, msg):
         mentions = msg.get('data', {}).get('mentions', [])

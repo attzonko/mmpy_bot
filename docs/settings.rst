@@ -24,6 +24,8 @@ Settings
 
     # Ignore broadcast message
     IGNORE_NOTIFIES = ['@channel', '@all']
+    # Ignore message from specified senders (case-insensitive), ex: IGNORE_USERS = ['john', 'Mary']
+    IGNORE_USERS = []
 
     # Threads num
     WORKERS_NUM = 10
