@@ -186,6 +186,8 @@ class Message(object):
         return user_info[key]
 
     def get_username(self, user_id=None):
+        if user_id is None:
+            return self._get_sender_name()
         return self.get_user_info('username', user_id)
 
     def get_user_mail(self, user_id=None):
