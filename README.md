@@ -211,6 +211,7 @@ You will need a Mattermost server to run test cases.
  * Create a team, ex. `test-team`, and add `driverbot` and `testbot` into the team
  * Make sure the default public channel `off-topic` exists
  * Create a private channel (ex. `test`) in team `test-team`, and add `driverbot` and `testbot` into the private channel
+ * Give `drivebot` ADMIN previledge on your testing server, and set `pytest_config.DRIVER_ADMIN_PRIVILEGE = True` if you like to test webhooks and other behaviors which requires admin previledge.
 
 Install `PyTest` in development environment.
 

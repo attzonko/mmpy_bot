@@ -41,6 +41,14 @@ class MattermostAPI(object):
             verify=self.ssl_verify
         ).text)
 
+    def delete(self, request, data=None):
+        return json.loads(requests.post(
+            self.url + request,
+            headers=self._get_headers(),
+            data=json.dumps(data),
+            verify=self.ssl_verify
+        ).text)
+
     def login(self, name, email, password):
         props = {'name': name, 'login_id': email, 'password': password}
         p = requests.post(
@@ -128,7 +136,11 @@ class MattermostAPI(object):
 
     def hooks_create(self, **kwargs):
         return self.post(
-            '/teams/%s/hooks/incoming/create' % self.default_team_id, kwargs)
+            '/teams/{}/hooks/incoming/create'.format(self.default_team_id), kwargs)
+
+    def hooks_delete(self, webhook_id):
+        return self.delete(
+            '/teams/{}/hooks/incoming/delete'.format(self.default_team_id), {'id': webhook_id})
 
     @staticmethod
     def in_webhook(url, channel, text, username=None, as_user=None,

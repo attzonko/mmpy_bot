@@ -173,6 +173,63 @@ class Driver(object):
 	def wait_for_bot_private_channel_message(self, match, tosender=True):
 		self._wait_for_bot_message(self.gm_chan, match, tosender=tosender)
 
+	def create_webhook(self):
+		team = self.bot._client.api.get_team_by_name(
+						team_name=driver_settings.BOT_TEAM)
+		channel = self.bot._client.api.get_channel_by_name(
+						team_id=team['id'], 
+						channel_name=driver_settings.BOT_CHANNEL)
+		response = self.bot._client.api.hooks_create(channel_id=channel['id'], 
+													 username='pytest_name')
+		if 'status_code' in response:
+			AssertionError('channel creation failed. error response: {}'.format(response))
+		elif 'create_at' not in response.keys():
+			AssertionError('something wrong. webhook creation info is not returned: {}'.format(response))
+		else:
+			return response
+
+	def get_webhook(self, webhook_id):
+		response = self.bot._client.api.hooks_get(webhook_id=webhook_id)
+		if 'status_code' in response:
+			AssertionError('hooks_get failed. error response: {}'.format(response))
+		elif response['id'] != webhook_id:
+			AssertionError('something wrong with hooks_get. the result does not match.')
+		else:
+			return response
+
+	def delete_webhook(self, webhook_id):
+		try:
+			response = self.bot._client.api.hooks_delete(webhook_id=webhook_id)
+			if 'status_code' in response and response['status_code'] == 200:
+				return response
+			else:
+				AssertionError('hooks_delete failed. error response: {}'.format(response))
+		except Exception as e:
+			if e.args[0] == 'API_NOT_FOUND':
+				return None
+			else:
+				AssertionError('something wrong with hooks_get')
+
+	def list_webhooks(self):
+		response = self.bot._client.api.hooks_list()
+		if isinstance(response, dict) and 'status_code' in response.keys():
+			AssertionError('list webhooks failed. error response: {}'.format(response))
+		elif isinstance(response, list):
+			return response
+		else:
+			AssertionError('something wrong. the returning response is not correct: {}'.format(response))
+
+	def send_post_webhook(self, webhook_id):
+		url = driver_settings.BOT_URL.split('/api')[0]
+		response = self.bot._client.api.in_webhook(url='{}/hooks/{}'.format(url, webhook_id), 
+                               	   				   channel=driver_settings.BOT_CHANNEL, 
+                               	   				   text='hello',
+                               	   			 	   username='pytest_name')
+		if 'status_code' in response and response['status_code'] == 200:
+			return response
+		else:
+			AssertionError('send post through webhook failed. error response: %s' % response)
+
 	@classmethod
 	def wait_for_bot_online(self):
 		time.sleep(4)
