@@ -41,10 +41,12 @@ def test_bot_direct_message_with_at_prefix(driver):
     driver.wait_for_bot_direct_message('hello sender!')
 
 # [ToDo] Implement this test together with the file upload function
+@pytest.mark.skip(reason="no way of currently testing this")
 def test_bot_upload_file(driver):
     pass
 
 # [ToDo] Needs to find a better way in validating file upload by URL
+@pytest.mark.skip(reason="no way of currently testing this")
 def test_bot_upload_file_from_link(driver):
     #url = 'http://www.mattermost.org/wp-content/uploads/2016/03/logoHorizontal_WS.png'
     #fname = basename(url)
