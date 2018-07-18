@@ -100,7 +100,7 @@ class MattermostAPIv4(MattermostAPI):
     def hooks_delete(self, webhook_id):
         response = self.delete('/hooks/incoming/{}'.format(webhook_id))
         if response['status_code'] == 404:
-            raise Exception('API_NOT_FOUND', 'The API /api/v4/hooks/incoming/{hook_id} might bot be supported by your server.')
+            raise Exception('API_NOT_FOUND', 'The API /api/v4/hooks/incoming/{hook_id} might not be supported by your server.')
         return response
 
     @staticmethod
