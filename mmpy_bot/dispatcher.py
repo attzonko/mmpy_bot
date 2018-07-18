@@ -207,6 +207,9 @@ class Message(object):
     def get_mentions(self):
         return self._body['data'].get('mentions')
 
+    def get_file_link(self, file_id):
+        return self._client.api.get_file_link(file_id)
+
     def _gen_at_message(self, text):
         return '@{}: {}'.format(self.get_username(), text)
 
