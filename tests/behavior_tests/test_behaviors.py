@@ -1,6 +1,7 @@
 import subprocess, time
 import pytest
 from driver import Driver
+import pytest_config
 
 def _start_bot_process():
     """
@@ -80,3 +81,18 @@ def test_bot_reply_to_private_channel_message(driver):
     driver.wait_for_bot_private_channel_message('hello sender!')
     driver.send_private_channel_message('hello', colon=False)
     driver.wait_for_bot_private_channel_message('hello sender!')
+
+@pytest.mark.skipif(pytest_config.DRIVER_ADMIN_PRIVILEGE is False,
+                    reason="Needs admin privilege to create webhook.")
+def test_bot_create_get_list_post_delete_webhook(driver):
+    # test create webhook
+    created = driver.create_webhook()
+    # test get webhook
+    driver.get_webhook(created['id'])
+    # test list webhook
+    hooklist = driver.list_webhooks()
+    assert created in hooklist, 'something wrong, the hook {} should be found.'.format(created)
+    # test send post through webhook
+    driver.send_post_webhook(created['id'])
+    # test delete webhook
+    driver.delete_webhook(created['id'])

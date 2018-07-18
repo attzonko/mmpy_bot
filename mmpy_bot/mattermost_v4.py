@@ -64,13 +64,19 @@ class MattermostAPIv4(MattermostAPI):
             })
 
     def channel(self, channel_id):
-        channel = {'channel': self.get('/channels/%s' % channel_id)}
+        channel = {'channel': self.get('/channels/{}'.format(channel_id))}
         return channel
+
+    def get_team_by_name(self, team_name):
+        return self.get('/teams/name/{}'.format(team_name))
+
+    def get_channel_by_name(self, channel_name, team_id=None):
+        return self.get('/teams/{}/channels/name/{}'.format(team_id, channel_name))
 
     def get_channels(self, team_id=None):
         if team_id is None:
             team_id = self.default_team_id
-        return self.get('/users/me/teams/%s/channels' % team_id)
+        return self.get('/users/me/teams/{}/channels'.format(team_id))
 
     def create_user_dict(self, v4_dict):
         new_dict = {}
@@ -82,6 +88,41 @@ class MattermostAPIv4(MattermostAPI):
 
     def hooks_list(self):
         return self.get('/hooks/incoming')
+
+    def hooks_create(self, **kwargs):
+        return self.post(
+            '/hooks/incoming', kwargs)
+
+    def hooks_get(self, webhook_id):
+        return self.get(
+            '/hooks/incoming/{}'.format(webhook_id))
+
+    def hooks_delete(self, webhook_id):
+        response = self.delete('/hooks/incoming/{}'.format(webhook_id))
+        if response['status_code'] == 404:
+            raise Exception('API_NOT_FOUND', 'The API /api/v4/hooks/incoming/{hook_id} might bot be supported by your server.')
+        return response
+
+    @staticmethod
+    def in_webhook(url, channel, text, username=None, as_user=None,
+                   parse=None, link_names=None, attachments=None,
+                   unfurl_links=None, unfurl_media=None, icon_url=None,
+                   icon_emoji=None, ssl_verify=True):
+        return requests.post(
+            url, data={
+                'payload': json.dumps({
+                    'channel': channel,
+                    'text': text,
+                    'username': username,
+                    'as_user': as_user,
+                    'parse': parse,
+                    'link_names': link_names,
+                    'attachments': attachments,
+                    'unfurl_links': unfurl_links,
+                    'unfurl_media': unfurl_media,
+                    'icon_url': icon_url,
+                    'icon_emoji': icon_emoji})
+            }, verify=ssl_verify)
     
     def get_file_link(self, file_id):
         return self.get('/files/{}/link'.format(file_id))
