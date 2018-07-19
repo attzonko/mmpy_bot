@@ -85,15 +85,15 @@ class MattermostAPI(object):
         team_id = self.get_team_id(channel_id)
         return self.post(
             '/teams/%s/channels/%s/posts/create' % (team_id, channel_id), {
-                 'user_id': user_id,
-                 'channel_id': channel_id,
-                 'message': message,
-                 'create_at': create_at,
-                 'filenames': files or [],
-                 'pending_post_id': user_id + ':' + str(create_at),
-                 'state': "loading",
-                 'parent_id': pid,
-                 'root_id': pid, })
+                'user_id': user_id,
+                'channel_id': channel_id,
+                'message': message,
+                'create_at': create_at,
+                'filenames': files or [],
+                'pending_post_id': user_id + ':' + str(create_at),
+                'state': "loading",
+                'parent_id': pid,
+                'root_id': pid, })
 
     def update_post(self, message_id, user_id,
                     channel_id, message, files=None, pid=""):
@@ -136,11 +136,13 @@ class MattermostAPI(object):
 
     def hooks_create(self, **kwargs):
         return self.post(
-            '/teams/{}/hooks/incoming/create'.format(self.default_team_id), kwargs)
+            '/teams/{}/hooks/incoming/create'.format(
+                self.default_team_id), kwargs)
 
     def hooks_delete(self, webhook_id):
         return self.delete(
-            '/teams/{}/hooks/incoming/delete'.format(self.default_team_id), {'id': webhook_id})
+            '/teams/{}/hooks/incoming/delete'.format(
+                self.default_team_id), {'id': webhook_id})
 
     @staticmethod
     def in_webhook(url, channel, text, username=None, as_user=None,

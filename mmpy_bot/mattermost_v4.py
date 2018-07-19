@@ -47,13 +47,13 @@ class MattermostAPIv4(MattermostAPI):
     def create_post(self, user_id, channel_id, message, files=None, pid=""):
         # create_at = int(time.time() * 1000)
         return self.post(
-                    '/posts',
-                    {
-                        'channel_id': channel_id,
-                        'message': message,
-                        'filenames': files or [],
-                        'root_id': pid,
-                    })
+            '/posts',
+            {
+                'channel_id': channel_id,
+                'message': message,
+                'filenames': files or [],
+                'root_id': pid,
+            })
 
     def update_post(self, message_id, user_id, channel_id,
                     message, files=None, pid=""):
@@ -71,7 +71,8 @@ class MattermostAPIv4(MattermostAPI):
         return self.get('/teams/name/{}'.format(team_name))
 
     def get_channel_by_name(self, channel_name, team_id=None):
-        return self.get('/teams/{}/channels/name/{}'.format(team_id, channel_name))
+        return self.get('/teams/{}/channels/name/{}'.format(
+            team_id, channel_name))
 
     def get_channels(self, team_id=None):
         if team_id is None:
@@ -100,7 +101,9 @@ class MattermostAPIv4(MattermostAPI):
     def hooks_delete(self, webhook_id):
         response = self.delete('/hooks/incoming/{}'.format(webhook_id))
         if response['status_code'] == 404:
-            raise Exception('API_NOT_FOUND', 'The API /api/v4/hooks/incoming/{hook_id} might not be supported by your server.')
+            raise Exception('API_NOT_FOUND',
+                            'The API /api/v4/hooks/incoming/{hook_id} '
+                            'might not be supported by your server.')
         return response
 
     @staticmethod
@@ -123,7 +126,7 @@ class MattermostAPIv4(MattermostAPI):
                     'icon_url': icon_url,
                     'icon_emoji': icon_emoji})
             }, verify=ssl_verify)
-    
+
     def get_file_link(self, file_id):
         return self.get('/files/{}/link'.format(file_id))
 
