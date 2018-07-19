@@ -91,7 +91,8 @@ def test_bot_create_get_list_post_delete_webhook(driver):
     driver.get_webhook(created['id'])
     # test list webhook
     hooklist = driver.list_webhooks()
-    assert created in hooklist, 'something wrong, the hook {} should be found.'.format(created)
+    if created not in hooklist:
+        raise AssertionError('something wrong, the hook {} should be found.'.format(created))
     # test send post through webhook
     driver.send_post_webhook(created['id'])
     # test delete webhook

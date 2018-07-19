@@ -177,9 +177,9 @@ class Driver(object):
 		team = self.bot._client.api.get_team_by_name(
 						team_name=driver_settings.BOT_TEAM)
 		channel = self.bot._client.api.get_channel_by_name(
-						team_id=team['id'], 
+						team_id=team['id'],
 						channel_name=driver_settings.BOT_CHANNEL)
-		response = self.bot._client.api.hooks_create(channel_id=channel['id'], 
+		response = self.bot._client.api.hooks_create(channel_id=channel['id'],
 													 username='pytest_name')
 		if 'status_code' in response:
 			AssertionError('channel creation failed. error response: {}'.format(response))
@@ -221,8 +221,8 @@ class Driver(object):
 
 	def send_post_webhook(self, webhook_id):
 		url = driver_settings.BOT_URL.split('/api')[0]
-		response = self.bot._client.api.in_webhook(url='{}/hooks/{}'.format(url, webhook_id), 
-                               	   				   channel=driver_settings.BOT_CHANNEL, 
+		response = self.bot._client.api.in_webhook(url='{}/hooks/{}'.format(url, webhook_id),
+                               	   				   channel=driver_settings.BOT_CHANNEL,
                                	   				   text='hello',
                                	   			 	   username='pytest_name')
 		if 'status_code' in response and response['status_code'] == 200:
