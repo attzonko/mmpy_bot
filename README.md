@@ -256,3 +256,15 @@ SSL_VERIFY = True
 Please notice that `BOT_URL`, `BOT_TEAM`, `BOT_CHANNEL`, and `BOT_PRIVATE_CHANNEL` must be the same in both setting files.
 
 After the settings files are done, switch to root dir of mattermost, and run `pytest` to execute test cases.
+
+## Test coverage
+
+Install [`pytest-cov`](https://pypi.org/project/pytest-cov/)
+```
+pip install pytest-cov
+```
+Set necessary configuration as described in section **Run the tests**. Then switch to root dir of mattermost, and run:
+```
+py.test --cov=mmpy_bot tests\
+```
+It automatically runs tests and measure code coverage of modules under mmpy_bot roo dir.
