@@ -1,7 +1,7 @@
 import subprocess, time
 import pytest
-from driver import Driver
-import pytest_config
+from tests.behavior_tests.driver import Driver
+from tests.behavior_tests import pytest_config
 
 def _start_bot_process():
     """
