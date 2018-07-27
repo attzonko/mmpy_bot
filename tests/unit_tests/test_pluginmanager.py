@@ -7,10 +7,10 @@ logger = logging.getLogger(__name__)
 
 def test_load_single_plugin():
 	reload(sys)
-	PluginsManager()._load_plugins('single_plugin')
-	if 'single_plugin' not in sys.modules:
+	PluginsManager()._load_plugins('tests.unit_tests.single_plugin')
+	if 'tests.unit_tests.single_plugin' not in sys.modules:
 		raise AssertionError()
-	if 'single_plugin.mock_plugin' not in sys.modules:
+	if 'tests.unit_tests.single_plugin.mock_plugin' not in sys.modules:
 		raise AssertionError()
 
 def test_load_init_plugins():
@@ -21,17 +21,19 @@ def test_load_init_plugins():
 
 def test_load_local_plugins():
 	reload(sys)
-	PluginsManager(plugins=['local_plugins']).init_plugins()
-	if 'local_plugins' not in sys.modules:
+	PluginsManager(plugins=['tests.unit_tests.local_plugins']).init_plugins()
+	if 'tests.unit_tests.local_plugins' not in sys.modules:
 		raise AssertionError()
-	if 'local_plugins.hello' not in sys.modules:
+	if 'tests.unit_tests.local_plugins.hello' not in sys.modules:
 		raise AssertionError()
-	if 'local_plugins.busy' not in sys.modules:
+	if 'tests.unit_tests.local_plugins.busy' not in sys.modules:
 		raise AssertionError()
 
 def test_get_plugins():
 	reload(sys)
-	manager = PluginsManager(plugins=['single_plugin', 'local_plugins'])
+	manager = PluginsManager(plugins=[
+		'tests.unit_tests.single_plugin',
+		'tests.unit_tests.local_plugins'])
 	manager.init_plugins()
 	matched_func_names = set()
 	# test: has_matching_plugin, there should be two handlers for `hello`
