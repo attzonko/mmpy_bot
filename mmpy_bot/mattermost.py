@@ -45,7 +45,7 @@ class MattermostAPI(object):
         return new_dict
 
     def delete(self, request, data=None):
-        return json.loads(requests.post(
+        return json.loads(requests.delete(
             self.url + request,
             headers=self._get_headers(),
             data=json.dumps(data),
