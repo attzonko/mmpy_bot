@@ -108,5 +108,3 @@ def test_bot_create_get_list_post_delete_webhook(driver):
         raise AssertionError('something wrong, the hook {} should be found.'.format(created))
     # test send post through webhook
     driver.send_post_webhook(created['id'])
-    # test delete webhook
-    driver.delete_webhook(created['id'])
