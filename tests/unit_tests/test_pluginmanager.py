@@ -32,7 +32,7 @@ def test_load_local_plugins():
 def test_get_plugins():
 	reload(sys)
 	manager = PluginsManager(plugins=[
-		'tests.unit_tests.single_plugin', 
+		'tests.unit_tests.single_plugin',
 		'tests.unit_tests.local_plugins'])
 	manager.init_plugins()
 	matched_func_names = set()
