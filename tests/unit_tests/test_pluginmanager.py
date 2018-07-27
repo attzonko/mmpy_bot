@@ -31,8 +31,9 @@ def test_load_local_plugins():
 
 def test_get_plugins():
 	reload(sys)
-	manager = PluginsManager(plugins=['tests.unit_tests.single_plugin', 
-		                              'tests.unit_tests.local_plugins'])
+	manager = PluginsManager(plugins=[
+		'tests.unit_tests.single_plugin', 
+		'tests.unit_tests.local_plugins'])
 	manager.init_plugins()
 	matched_func_names = set()
 	# test: has_matching_plugin, there should be two handlers for `hello`
