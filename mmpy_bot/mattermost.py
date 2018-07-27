@@ -119,8 +119,8 @@ class MattermostAPI(object):
             if response.status_code == 200:
                 self.token = response.headers["Token"]
                 self.load_initial_data()
-                self.user = json.loads(response.text)
-                return self.user
+                user = json.loads(response.text)
+                return user
             else:
                 response.raise_for_status()
 
