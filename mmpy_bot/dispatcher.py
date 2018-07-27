@@ -121,12 +121,10 @@ class MessageDispatcher(object):
         return msg
 
     def load_json(self):
-        if self.event.get('data', {}).get('post'):
-            self.event['data']['post'] = json.loads(
-                self.event['data']['post'])
-        if self.event.get('data', {}).get('mentions'):
-            self.event['data']['mentions'] = json.loads(
-                self.event['data']['mentions'])
+        for item in ['post', 'mentions']:
+            if self.event.get('data', {}).get(item):
+                self.event['data'][iteritems] = json.loads(
+                    self.event['data'][item])
 
     def loop(self):
         for self.event in \
