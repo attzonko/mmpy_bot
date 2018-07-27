@@ -179,10 +179,6 @@ class MattermostAPI(object):
                 'message': message,
             })
 
-    def user(self, user_id):
-        return self.get_user_info(user_id)
-
-
 class MattermostClient(object):
     def __init__(self, url, team, email, password, ssl_verify=True, login=1):
         self.users = {}
