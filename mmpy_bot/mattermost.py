@@ -44,14 +44,6 @@ class MattermostAPI(object):
         new_dict[v4_dict['id']] = v4_dict
         return new_dict
 
-    def delete(self, request, data=None):
-        return json.loads(requests.post(
-            self.url + request,
-            headers=self._get_headers(),
-            data=json.dumps(data),
-            verify=self.ssl_verify
-        ).text)
-
     def get(self, request):
         return json.loads(
             requests.get(
@@ -88,14 +80,6 @@ class MattermostAPI(object):
         return self.post(
             '/hooks/incoming', kwargs)
 
-    def hooks_delete(self, webhook_id):
-        response = self.delete('/hooks/incoming/{}'.format(webhook_id))
-        if response['status_code'] == 404:
-            raise Exception('API_NOT_FOUND',
-                            'The API /api/v4/hooks/incoming/{hook_id} '
-                            'might not be supported by your server.')
-        return response
-
     def hooks_get(self, webhook_id):
         return self.get(
             '/hooks/incoming/{}'.format(webhook_id))
@@ -126,20 +110,12 @@ class MattermostAPI(object):
 
     def login(self, team, account, password):
             props = {'login_id': account, 'password': password}
-            response = requests.post(
-                self.url + '/users/login',
-                data=json.dumps(props),
-                verify=self.ssl_verify,
-                allow_redirects=False)
+            response = self._login(props)
             if response.status_code in [301, 302, 307]:
                 # reset self.url to the new URL
                 self.url = response.headers['Location'].replace('/users/login', '')
                 # re-try login if redirected
-                response = requests.post(
-                    self.url + '/users/login',
-                    data=json.dumps(props),
-                    verify=self.ssl_verify,
-                    allow_redirects=False)
+                response = self._login(props)
             if response.status_code == 200:
                 self.token = response.headers["Token"]
                 self.load_initial_data()
@@ -147,6 +123,13 @@ class MattermostAPI(object):
                 return self.user
             else:
                 response.raise_for_status()
+
+    def _login(self, props):
+        return requests.post(
+            self.url + '/users/login',
+            data=json.dumps(props),
+            verify=self.ssl_verify,
+            allow_redirects=False)
 
     def load_initial_data(self):
         self.teams = self.get('/users/me/teams')
@@ -178,6 +161,10 @@ class MattermostAPI(object):
             {
                 'message': message,
             })
+
+    def user(self, user_id):
+        return self.get_user_info(user_id)
+
 
 class MattermostClient(object):
     def __init__(self, url, team, email, password, ssl_verify=True, login=1):
