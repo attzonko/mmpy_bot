@@ -44,14 +44,6 @@ class MattermostAPI(object):
         new_dict[v4_dict['id']] = v4_dict
         return new_dict
 
-    def delete(self, request, data=None):
-        return json.loads(requests.delete(
-            self.url + request,
-            headers=self._get_headers(),
-            data=json.dumps(data),
-            verify=self.ssl_verify
-        ).text)
-
     def get(self, request):
         return json.loads(
             requests.get(
@@ -87,14 +79,6 @@ class MattermostAPI(object):
     def hooks_create(self, **kwargs):
         return self.post(
             '/hooks/incoming', kwargs)
-
-    def hooks_delete(self, webhook_id):
-        response = self.delete('/hooks/incoming/{}'.format(webhook_id))
-        if response['status_code'] == 404:
-            raise Exception('API_NOT_FOUND',
-                            'The API /api/v4/hooks/incoming/{hook_id} '
-                            'might not be supported by your server.')
-        return response
 
     def hooks_get(self, webhook_id):
         return self.get(
