@@ -1,4 +1,5 @@
 [![PyPI](https://badge.fury.io/py/mmpy-bot.svg)](https://pypi.org/project/mmpy-bot/)
+[![Travis-Ci](https://travis-ci.com/attzonko/mmpy_bot.svg?branch=master)](https://travis-ci.com/attzonko/mmpy_bot)
 [![Codacy](https://api.codacy.com/project/badge/grade/b06f3af1d8a04c6faa9a76a4ae3cb483)](https://www.codacy.com/app/attzonko/mmpy_bot)
 [![Maintainability](https://api.codeclimate.com/v1/badges/809c8d66aea982d9e3da/maintainability)](https://codeclimate.com/github/attzonko/mmpy_bot/maintainability)
 [![Python Support](https://img.shields.io/badge/python-3+-blue.svg)](https://pypi.org/project/mmpy-bot/)
@@ -211,6 +212,7 @@ You will need a Mattermost server to run test cases.
  * Create a team, ex. `test-team`, and add `driverbot` and `testbot` into the team
  * Make sure the default public channel `off-topic` exists
  * Create a private channel (ex. `test`) in team `test-team`, and add `driverbot` and `testbot` into the private channel
+ * Give `drivebot` ADMIN previledge on your testing server, and set `pytest_config.DRIVER_ADMIN_PRIVILEGE = True` if you like to test webhooks and other behaviors which requires admin previledge.
 
 Install `PyTest` in development environment.
 
@@ -255,3 +257,15 @@ SSL_VERIFY = True
 Please notice that `BOT_URL`, `BOT_TEAM`, `BOT_CHANNEL`, and `BOT_PRIVATE_CHANNEL` must be the same in both setting files.
 
 After the settings files are done, switch to root dir of mattermost, and run `pytest` to execute test cases.
+
+## Test coverage
+
+Install [`pytest-cov`](https://pypi.org/project/pytest-cov/)
+```
+pip install pytest-cov
+```
+Set necessary configuration as described in section **Run the tests**. Then switch to root dir of mattermost, and run:
+```
+py.test --cov=mmpy_bot tests\
+```
+It automatically runs tests and measure code coverage of modules under mmpy_bot roo dir.

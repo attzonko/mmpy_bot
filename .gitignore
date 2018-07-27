@@ -8,4 +8,5 @@ build
 *.egg-info*
 .build
 .pytest_cache
+.coverage
 .vscode

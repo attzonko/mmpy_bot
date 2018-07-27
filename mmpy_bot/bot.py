@@ -15,23 +15,18 @@ from six.moves import _thread
 from mmpy_bot import settings
 from mmpy_bot.dispatcher import MessageDispatcher
 from mmpy_bot.mattermost import MattermostClient
-from mmpy_bot.mattermost_v4 import MattermostClientv4
 
 logger = logging.getLogger(__name__)
 
 
 class Bot(object):
     def __init__(self):
-        if settings.MATTERMOST_API_VERSION == 4:
-            self._client = MattermostClientv4(
-                settings.BOT_URL, settings.BOT_TEAM,
-                settings.BOT_LOGIN, settings.BOT_PASSWORD,
-                settings.SSL_VERIFY)
-        else:
-            self._client = MattermostClient(
-                settings.BOT_URL, settings.BOT_TEAM,
-                settings.BOT_LOGIN, settings.BOT_PASSWORD,
-                settings.SSL_VERIFY)
+        if settings.MATTERMOST_API_VERSION < 4:
+            raise ValueError('mmpy-bot only supports API Version 4+')
+        self._client = MattermostClient(
+            settings.BOT_URL, settings.BOT_TEAM,
+            settings.BOT_LOGIN, settings.BOT_PASSWORD,
+            settings.SSL_VERIFY)
         logger.info('connected to mattermost')
         self._plugins = PluginsManager()
         self._dispatcher = MessageDispatcher(self._client, self._plugins)
@@ -55,8 +50,8 @@ class PluginsManager(object):
         'listen_to': {}
     }
 
-    def __init__(self, plugins=[]):
-        self.plugins = plugins
+    def __init__(self, plugins=None):
+        self.plugins = plugins or []
 
     def init_plugins(self):
         if self.plugins == []:
@@ -88,7 +83,7 @@ class PluginsManager(object):
     def get_plugins(self, category, text):
         has_matching_plugin = False
         for matcher in self.commands[category]:
-            m = matcher.search(text)
+            m = matcher.regex.search(text)
             if m:
                 has_matching_plugin = True
                 yield self.commands[category][matcher], m.groups()
@@ -97,10 +92,16 @@ class PluginsManager(object):
             yield None, None
 
 
+class Matcher(object):
+    """This allows us to map the same regex to multiple handlers."""
+    def __init__(self, regex):
+        self.regex = regex
+
+
 def respond_to(regexp, flags=0):
     def wrapper(func):
-        r = re.compile(regexp, flags | re.DEBUG)
-        PluginsManager.commands['respond_to'][r] = func
+        m = Matcher(re.compile(regexp, flags))
+        PluginsManager.commands['respond_to'][m] = func
         logger.info(
             'registered respond_to plugin "%s" to "%s"', func.__name__, regexp)
         return func
@@ -110,8 +111,8 @@ def respond_to(regexp, flags=0):
 
 def listen_to(regexp, flags=0):
     def wrapper(func):
-        r = re.compile(regexp, flags | re.DEBUG)
-        PluginsManager.commands['listen_to'][r] = func
+        m = Matcher(re.compile(regexp, flags))
+        PluginsManager.commands['listen_to'][m] = func
         logger.info(
             'registered listen_to plugin "%s" to "%s"', func.__name__, regexp)
         return func

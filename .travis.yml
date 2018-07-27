@@ -1,0 +1,16 @@
+dist: trusty
+sudo: false
+
+language: python
+python:
+  - "3.6"
+
+branches:
+  only:
+    - master
+
+install:
+  - pip install -r requirements.txt
+  - pip install .
+
+script: pytest

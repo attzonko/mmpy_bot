@@ -41,16 +41,18 @@ class MessageDispatcher(object):
 
     def ignore(self, _msg):
         return self._ignore_notifies(_msg) or self._ignore_sender(_msg)
-        
+
     def _ignore_notifies(self, _msg):
         # ignore message containing specified item, such as "@all"
         msg = self.get_message(_msg)
-        return True if any(item in msg for item in settings.IGNORE_NOTIFIES) else False
+        return True if any(
+            item in msg for item in settings.IGNORE_NOTIFIES) else False
 
     def _ignore_sender(self, _msg):
         # ignore message from senders specified in settings
         sender_name = self.get_sender(_msg)
-        return True if sender_name.lower() in (name.lower() for name in settings.IGNORE_USERS) else False
+        return True if sender_name.lower() in (
+            name.lower() for name in settings.IGNORE_USERS) else False
 
     def is_mentioned(self, msg):
         mentions = msg.get('data', {}).get('mentions', [])
@@ -119,12 +121,10 @@ class MessageDispatcher(object):
         return msg
 
     def load_json(self):
-        if self.event.get('data', {}).get('post'):
-            self.event['data']['post'] = json.loads(
-                self.event['data']['post'])
-        if self.event.get('data', {}).get('mentions'):
-            self.event['data']['mentions'] = json.loads(
-                self.event['data']['mentions'])
+        for item in ['post', 'mentions']:
+            if self.event.get('data', {}).get(item):
+                self.event['data'][item] = json.loads(
+                    self.event['data'][item])
 
     def loop(self):
         for self.event in \
@@ -186,6 +186,8 @@ class Message(object):
         return user_info[key]
 
     def get_username(self, user_id=None):
+        if user_id is None:
+            return self._get_sender_name()
         return self.get_user_info('username', user_id)
 
     def get_user_mail(self, user_id=None):
@@ -205,7 +207,7 @@ class Message(object):
         return channel_name
 
     def get_team_id(self):
-        return self._client.api.team_id
+        return self._body['data'].get('team_id', '').strip()
 
     def get_message(self):
         return self._body['data']['post']['message'].strip()
