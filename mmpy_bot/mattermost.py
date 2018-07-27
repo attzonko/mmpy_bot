@@ -1,8 +1,6 @@
 import json
 import logging
 import ssl
-import time
-
 import requests
 import websocket
 import websocket._exceptions
@@ -25,21 +23,26 @@ class MattermostAPI(object):
     def _get_headers(self):
         return {"Authorization": "Bearer " + self.token}
 
-    def get(self, request):
-        return json.loads(
-            requests.get(
-                self.url + request,
-                headers=self._get_headers(),
-                verify=self.ssl_verify
-            ).text)
+    def channel(self, channel_id):
+        channel = {'channel': self.get('/channels/{}'.format(channel_id))}
+        return channel
 
-    def post(self, request, data=None):
-        return json.loads(requests.post(
-            self.url + request,
-            headers=self._get_headers(),
-            data=json.dumps(data),
-            verify=self.ssl_verify
-        ).text)
+    def create_post(self, user_id, channel_id, message, files=None, pid=""):
+        # create_at = int(time.time() * 1000)
+        return self.post(
+            '/posts',
+            {
+                'channel_id': channel_id,
+                'message': message,
+                'filenames': files or [],
+                'root_id': pid,
+            })
+
+    @staticmethod
+    def create_user_dict(self, v4_dict):
+        new_dict = {}
+        new_dict[v4_dict['id']] = v4_dict
+        return new_dict
 
     def delete(self, request, data=None):
         return json.loads(requests.post(
@@ -49,71 +52,28 @@ class MattermostAPI(object):
             verify=self.ssl_verify
         ).text)
 
-    def login(self, name, email, password):
-        props = {'name': name, 'login_id': email, 'password': password}
-        p = requests.post(
-            self.url + '/users/login', data=json.dumps(props),
-            verify=self.ssl_verify, allow_redirects=False
-        )
-        if p.status_code in [301, 302, 307]:
-            # reset self.url to the new URL
-            self.url = p.headers['Location'].replace('/users/login', '')
-            # re-try login if redirected
-            p = requests.post(
-                self.url + '/users/login', data=json.dumps(props),
-                verify=self.ssl_verify, allow_redirects=False
-            )
-        if p.status_code == 200:
-            self.token = p.headers["Token"]
-            self.load_initial_data()
-            return json.loads(p.text)
-        else:
-            p.raise_for_status()
+    def get(self, request):
+        return json.loads(
+            requests.get(
+                self.url + request,
+                headers=self._get_headers(),
+                verify=self.ssl_verify
+            ).text)
 
-    def load_initial_data(self):
-        self.initial = self.get('/users/initial_load')
-        self.default_team_id = self.initial['teams'][0]['id']
-        self.teams_channels_ids = {}
-        for team in self.initial['teams']:
-            self.teams_channels_ids[team['id']] = []
-            # get all channels belonging to each team
-            for channel in self.get_channels(team['id']):
-                self.teams_channels_ids[team['id']].append(channel['id'])
-
-    def create_post(self, user_id, channel_id, message, files=None, pid=""):
-        create_at = int(time.time() * 1000)
-        team_id = self.get_team_id(channel_id)
-        return self.post(
-            '/teams/%s/channels/%s/posts/create' % (team_id, channel_id), {
-                'user_id': user_id,
-                'channel_id': channel_id,
-                'message': message,
-                'create_at': create_at,
-                'filenames': files or [],
-                'pending_post_id': user_id + ':' + str(create_at),
-                'state': "loading",
-                'parent_id': pid,
-                'root_id': pid, })
-
-    def update_post(self, message_id, user_id,
-                    channel_id, message, files=None, pid=""):
-        team_id = self.get_team_id(channel_id)
-        return self.post(
-            '/teams/%s/channels/%s/posts/update' % (team_id, channel_id),
-            {
-                'id': message_id,
-                'channel_id': channel_id,
-                'message': message,
-            })
-
-    def channel(self, channel_id):
-        team_id = self.get_team_id(channel_id)
-        return self.get('/teams/%s/channels/%s/' % (team_id, channel_id))
+    def get_channel_by_name(self, channel_name, team_id=None):
+        return self.get('/teams/{}/channels/name/{}'.format(
+            team_id, channel_name))
 
     def get_channels(self, team_id=None):
         if team_id is None:
             team_id = self.default_team_id
-        return self.get('/teams/%s/channels/' % team_id)
+        return self.get('/users/me/teams/{}/channels'.format(team_id))
+
+    def get_file_link(self, file_id):
+        return self.get('/files/{}/link'.format(file_id))
+
+    def get_team_by_name(self, team_name):
+            return self.get('/teams/name/{}'.format(team_name))
 
     def get_team_id(self, channel_id):
         for team_id, channels in self.teams_channels_ids.items():
@@ -122,27 +82,26 @@ class MattermostAPI(object):
         return None
 
     def get_user_info(self, user_id):
-        user_info = self.post('/users/ids', [user_id])
-        return user_info[user_id]
-
-    def me(self):
-        return self.get('/users/me')
-
-    def user(self, user_id):
-        return self.get_user_info(user_id)
-
-    def hooks_list(self):
-        return self.get('/teams/%s/hooks/incoming/list' % self.default_team_id)
+        return self.get('/users/{}'.format(user_id))
 
     def hooks_create(self, **kwargs):
         return self.post(
-            '/teams/{}/hooks/incoming/create'.format(
-                self.default_team_id), kwargs)
+            '/hooks/incoming', kwargs)
 
     def hooks_delete(self, webhook_id):
-        return self.delete(
-            '/teams/{}/hooks/incoming/delete'.format(
-                self.default_team_id), {'id': webhook_id})
+        response = self.delete('/hooks/incoming/{}'.format(webhook_id))
+        if response['status_code'] == 404:
+            raise Exception('API_NOT_FOUND',
+                            'The API /api/v4/hooks/incoming/{hook_id} '
+                            'might not be supported by your server.')
+        return response
+
+    def hooks_get(self, webhook_id):
+        return self.get(
+            '/hooks/incoming/{}'.format(webhook_id))
+
+    def hooks_list(self):
+        return self.get('/hooks/incoming')
 
     @staticmethod
     def in_webhook(url, channel, text, username=None, as_user=None,
@@ -165,6 +124,60 @@ class MattermostAPI(object):
                     'icon_emoji': icon_emoji})
             }, verify=ssl_verify)
 
+    def login(self, team, account, password):
+            props = {'login_id': account, 'password': password}
+            response = requests.post(
+                self.url + '/users/login',
+                data=json.dumps(props),
+                verify=self.ssl_verify,
+                allow_redirects=False)
+            if response.status_code in [301, 302, 307]:
+                # reset self.url to the new URL
+                self.url = response.headers['Location'].replace('/users/login', '')
+                # re-try login if redirected
+                response = requests.post(
+                    self.url + '/users/login',
+                    data=json.dumps(props),
+                    verify=self.ssl_verify,
+                    allow_redirects=False)
+            if response.status_code == 200:
+                self.token = response.headers["Token"]
+                self.load_initial_data()
+                self.user = json.loads(response.text)
+                return self.user
+            else:
+                response.raise_for_status()
+
+    def load_initial_data(self):
+        self.teams = self.get('/users/me/teams')
+        if len(self.teams) == 0:
+            raise AssertionError('User account of this bot does not join any team yet.')
+        self.default_team_id = self.teams[0]['id']
+        self.teams_channels_ids = {}
+        for team in self.teams:
+            self.teams_channels_ids[team['id']] = []
+            # get all channels belonging to each team
+            for channel in self.get_channels(team['id']):
+                self.teams_channels_ids[team['id']].append(channel['id'])
+
+    def me(self):
+        return self.get('/users/me')
+
+    def post(self, request, data=None):
+        return json.loads(requests.post(
+            self.url + request,
+            headers=self._get_headers(),
+            data=json.dumps(data),
+            verify=self.ssl_verify
+        ).text)
+
+    def update_post(self, message_id, user_id, channel_id,
+                    message, files=None, pid=""):
+        return self.post(
+            '/posts/%s' % message_id,
+            {
+                'message': message,
+            })
 
 class MattermostClient(object):
     def __init__(self, url, team, email, password, ssl_verify=True, login=1):
@@ -201,7 +214,7 @@ class MattermostClient(object):
 
     def connect_websocket(self):
         host = self.api.url.replace('http', 'ws').replace('https', 'wss')
-        url = host + '/users/websocket'
+        url = host + '/websocket'
         self._connect_websocket(url, cookie_name='MMAUTHTOKEN')
         return self.websocket.getstatus() == 101
 
@@ -212,7 +225,8 @@ class MattermostClient(object):
                 "cert_reqs": ssl.CERT_REQUIRED if self.api.ssl_verify
                 else ssl.CERT_NONE})
 
-    def messages(self, ignore_own_msg=False, filter_actions=[]):
+    def messages(self, ignore_own_msg=False, filter_actions=None):
+        filter_actions = filter_actions or []
         if not self.connect_websocket():
             return
         while True:

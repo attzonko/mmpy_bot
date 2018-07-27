@@ -15,23 +15,18 @@ from six.moves import _thread
 from mmpy_bot import settings
 from mmpy_bot.dispatcher import MessageDispatcher
 from mmpy_bot.mattermost import MattermostClient
-from mmpy_bot.mattermost_v4 import MattermostClientv4
 
 logger = logging.getLogger(__name__)
 
 
 class Bot(object):
     def __init__(self):
-        if settings.MATTERMOST_API_VERSION == 4:
-            self._client = MattermostClientv4(
-                settings.BOT_URL, settings.BOT_TEAM,
-                settings.BOT_LOGIN, settings.BOT_PASSWORD,
-                settings.SSL_VERIFY)
-        else:
-            self._client = MattermostClient(
-                settings.BOT_URL, settings.BOT_TEAM,
-                settings.BOT_LOGIN, settings.BOT_PASSWORD,
-                settings.SSL_VERIFY)
+        if settings.MATTERMOST_API_VERSION < 4:
+            raise ValueError('mmpy-bot only supports API Version 4+')
+        self._client = MattermostClient(
+            settings.BOT_URL, settings.BOT_TEAM,
+            settings.BOT_LOGIN, settings.BOT_PASSWORD,
+            settings.SSL_VERIFY)
         logger.info('connected to mattermost')
         self._plugins = PluginsManager()
         self._dispatcher = MessageDispatcher(self._client, self._plugins)
@@ -55,8 +50,8 @@ class PluginsManager(object):
         'listen_to': {}
     }
 
-    def __init__(self, plugins=[]):
-        self.plugins = plugins
+    def __init__(self, plugins=None):
+        self.plugins = plugins or []
 
     def init_plugins(self):
         if self.plugins == []:
