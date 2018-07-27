@@ -126,20 +126,12 @@ class MattermostAPI(object):
 
     def login(self, team, account, password):
             props = {'login_id': account, 'password': password}
-            response = requests.post(
-                self.url + '/users/login',
-                data=json.dumps(props),
-                verify=self.ssl_verify,
-                allow_redirects=False)
+            response = self._login(props)
             if response.status_code in [301, 302, 307]:
                 # reset self.url to the new URL
                 self.url = response.headers['Location'].replace('/users/login', '')
                 # re-try login if redirected
-                response = requests.post(
-                    self.url + '/users/login',
-                    data=json.dumps(props),
-                    verify=self.ssl_verify,
-                    allow_redirects=False)
+                response = self._login(props)
             if response.status_code == 200:
                 self.token = response.headers["Token"]
                 self.load_initial_data()
@@ -147,6 +139,13 @@ class MattermostAPI(object):
                 return self.user
             else:
                 response.raise_for_status()
+
+    def _login(self, props):
+        return requests.post(
+            self.url + '/users/login',
+            data=json.dumps(props),
+            verify=self.ssl_verify,
+            allow_redirects=False)
 
     def load_initial_data(self):
         self.teams = self.get('/users/me/teams')
