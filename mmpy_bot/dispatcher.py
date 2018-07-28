@@ -151,7 +151,7 @@ class MessageDispatcher(object):
             key = v.__module__.title().split('.')[1]
             if key not in modules:
                 modules[key] = []
-            modules[key].append((p.pattern, v.__doc__))
+            modules[key].append((p.regex.pattern, v.__doc__))
 
         if settings.PLUGINS_ONLY_DOC_STRING:
             docs_fmt = u'\t{1}'
