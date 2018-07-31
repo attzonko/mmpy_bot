@@ -173,7 +173,6 @@ class MattermostClient(object):
         self.mentions = {}
         self.api = MattermostAPI(url, ssl_verify, token)
         self.user = None
-        # self.info = None
         self.websocket = None
         self.email = None
         self.team = team
@@ -188,7 +187,6 @@ class MattermostClient(object):
     def login(self, team, email, password):
         self.email = email
         self.user = self.api.login(team, email, password)
-        # self.info = self.api.me()
         return self.user
 
     def channel_msg(self, channel, message, pid=""):
