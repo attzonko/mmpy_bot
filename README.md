@@ -57,12 +57,13 @@ SSL_VERIFY = True  # Whether to perform SSL cert verification
 BOT_URL = 'http://<mm.example.com>/api/v4'  # with 'http://' and with '/api/v4' path. without trailing slash.
 BOT_LOGIN = '<bot-email-address>'
 BOT_PASSWORD = '<bot-password>'
+BOT_TOKEN = None # or '<bot-personal-access-token>' if you have set bot personal access token.
 BOT_TEAM = '<your-team>'  # possible in lowercase
 ```
 
 Alternatively, you can use the environment variable `MATTERMOST_BOT_URL`,
 `MATTERMOST_BOT_LOGIN`, `MATTERMOST_BOT_PASSWORD`, `MATTERMOST_BOT_TEAM`,
-`MATTERMOST_BOT_SSL_VERIFY`
+`MATTERMOST_BOT_SSL_VERIFY`, `MATTERMOST_BOT_TOKEN`
 
 or `MATTERMOST_BOT_SETTINGS_MODULE` environment variable, which provide settings module
 

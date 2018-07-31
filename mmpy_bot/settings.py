@@ -14,6 +14,7 @@ MATTERMOST_API_VERSION = 4
 BOT_URL = 'http://mm.example.com/api/v4'
 BOT_LOGIN = 'bot@example.com'
 BOT_PASSWORD = None
+BOT_TOKEN = None
 BOT_TEAM = 'devops'
 SSL_VERIFY = True
 

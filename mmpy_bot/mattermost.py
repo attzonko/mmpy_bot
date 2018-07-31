@@ -9,9 +9,9 @@ logger = logging.getLogger(__name__)
 
 
 class MattermostAPI(object):
-    def __init__(self, url, ssl_verify):
+    def __init__(self, url, ssl_verify, token):
         self.url = url
-        self.token = ""
+        self.token = token
         self.initial = None
         self.default_team_id = None  # the first team in API returned value
         self.teams_channels_ids = None  # struct:{team_id:[channel_id,...],...}
@@ -146,7 +146,7 @@ class MattermostAPI(object):
     def me(self):
         return self.get('/users/me')
 
-    def post(self, request, data=None):
+    def post(self, request, data):
         return json.loads(requests.post(
             self.url + request,
             headers=self._get_headers(),
@@ -167,26 +167,26 @@ class MattermostAPI(object):
 
 
 class MattermostClient(object):
-    def __init__(self, url, team, email, password, ssl_verify=True, login=1):
+    def __init__(self, url, team, email, password, ssl_verify=True, token=None):
         self.users = {}
         self.channels = {}
         self.mentions = {}
-        self.api = MattermostAPI(url, ssl_verify)
+        self.api = MattermostAPI(url, ssl_verify, token)
         self.user = None
-        self.info = None
         self.websocket = None
         self.email = None
         self.team = team
         self.email = email
         self.password = password
 
-        if login:
+        if token:
+            self.user = self.api.me()
+        else:
             self.login(team, email, password)
 
     def login(self, team, email, password):
         self.email = email
         self.user = self.api.login(team, email, password)
-        self.info = self.api.me()
         return self.user
 
     def channel_msg(self, channel, message, pid=""):
