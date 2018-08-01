@@ -1,14 +1,17 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import absolute_import
-
-import imp
 import importlib
 import logging
 import os
 import re
 import time
 from glob import glob
+
+try:
+    from imp import find_module
+except ImportError:
+   from importlib.abc import find_module
 
 from six.moves import _thread
 
@@ -70,7 +73,7 @@ class PluginsManager(object):
         for mod in plugin.split('.'):
             if path_name is not None:
                 path_name = [path_name]
-            _, path_name, _ = imp.find_module(mod, path_name)
+            _, path_name, _ = find_module(mod, path_name)
         for py_file in glob('{}/[!_]*.py'.format(path_name)):
             module = '.'.join((plugin, os.path.split(py_file)[-1][:-3]))
             try:
