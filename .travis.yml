@@ -16,6 +16,24 @@ branches:
   only:
     - master
 
+matrix:
+  include:
+  - python: "2.7"
+    env: BOT_CHANNEL=PUB_2_7
+    env: BOT_PRIVATE_CHANNEL=PRIV_2_7
+  - python: "3.4"
+    env: BOT_CHANNEL=PUB_3_4
+    env: BOT_PRIVATE_CHANNEL=PRIV_3_4
+  - python: "3.5"
+    env: BOT_CHANNEL=PUB_3_5
+    env: BOT_PRIVATE_CHANNEL=PRIV_3_5
+  - python: "3.6"
+    env: BOT_CHANNEL=PUB_3_6
+    env: BOT_PRIVATE_CHANNEL=PRIV_3_6
+  - python: "3.7"
+    env: BOT_CHANNEL=PUB_3_7
+    env: BOT_PRIVATE_CHANNEL=PRIV_3_7
+
 install:
   - pip install -r requirements.txt
   - pip install pytest-cov
