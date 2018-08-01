@@ -1,6 +1,12 @@
 import sys
 import logging
-from importlib import reload
+
+# Handle backwards compatibility with 2.7
+try:
+    from importlib import reload
+except ImportError:
+    pass
+
 from mmpy_bot.bot import PluginsManager
 
 # logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
