@@ -59,7 +59,7 @@ def allowed_users(*allowed_users_list):
 
 
 def _python_3():
-    if sys.version > '3':
+    if sys.version > '3.4':
         return True
     else:
         return False
