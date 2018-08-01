@@ -4,7 +4,6 @@ env:
   global:
     - CC_TEST_REPORTER_ID=b0fed3b6b9b09683bf744113f1effa146b532c2fc05f21d0b3f29787807bca01
 
-  - "2.7"
 branches:
   only:
     - master
