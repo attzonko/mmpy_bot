@@ -4,36 +4,23 @@ env:
   global:
     - CC_TEST_REPORTER_ID=b0fed3b6b9b09683bf744113f1effa146b532c2fc05f21d0b3f29787807bca01
 
-language: python
-python:
-  - "2.7"
-  - "3.4"
-  - "3.5"
-  - "3.6"
-  - "3.7"
-
 branches:
   only:
     - master
 
+language: python
+
 matrix:
   include:
   - python: "2.7"
-    env: BOT_CHANNEL=PUB_2_7
-    env: BOT_PRIVATE_CHANNEL=PRIV_2_7
+    env: BOT_CHANNEL=PUB_2_7 BOT_PRIVATE_CHANNEL=PRIV_2_7
   - python: "3.4"
-    env: BOT_CHANNEL=PUB_3_4
-    env: BOT_PRIVATE_CHANNEL=PRIV_3_4
+    env: BOT_CHANNEL=PUB_3_4 BOT_PRIVATE_CHANNEL=PRIV_3_4
   - python: "3.5"
-    env: BOT_CHANNEL=PUB_3_5
-    env: BOT_PRIVATE_CHANNEL=PRIV_3_5
+    env: BOT_CHANNEL=PUB_3_5 BOT_PRIVATE_CHANNEL=PRIV_3_5
   - python: "3.6"
-    env: BOT_CHANNEL=PUB_3_6
-    env: BOT_PRIVATE_CHANNEL=PRIV_3_6
-  - python: "3.7"
-    env: BOT_CHANNEL=PUB_3_7
-    env: BOT_PRIVATE_CHANNEL=PRIV_3_7
-
+    env: BOT_CHANNEL=PUB_3_6 BOT_PRIVATE_CHANNEL=PRIV_3_6
+    
 install:
   - pip install -r requirements.txt
   - pip install pytest-cov
