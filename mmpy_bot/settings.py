@@ -1,6 +1,7 @@
 import importlib
 import sys
 import os
+from mmpy_bot.utils import _python_3
 
 DEBUG = False
 
@@ -48,7 +49,10 @@ if settings_module is not None:
     settings = importlib.import_module(settings_module)
     filename = settings.__file__.replace('.pyc', '.py')
     try:
-        execfile(filename)
+        if _python_3():
+            exec(open(filename).read())
+        else:
+            execfile(filename)
     except NameError:
         exec(open(filename).read())
 

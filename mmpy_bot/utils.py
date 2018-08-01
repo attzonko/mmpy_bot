@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import logging
+import sys
 
 from six.moves import _thread, queue
 
@@ -55,3 +56,10 @@ def allowed_users(*allowed_users_list):
         return wrapper
 
     return plugin
+
+
+def _python_3():
+    if sys.version > '3':
+        return True
+    else:
+        return False
