@@ -2,7 +2,6 @@
 
 from __future__ import absolute_import
 
-import imp
 import importlib
 import logging
 import os
@@ -15,6 +14,12 @@ from six.moves import _thread
 from mmpy_bot import settings
 from mmpy_bot.dispatcher import MessageDispatcher
 from mmpy_bot.mattermost import MattermostClient
+from mmpy_bot.utils import _python_3
+
+if _python_3():
+    import importlib.util
+else:
+    import imp
 
 logger = logging.getLogger(__name__)
 
@@ -54,10 +59,10 @@ class PluginsManager(object):
         self.plugins = plugins or []
 
     def init_plugins(self):
-        if self.plugins == []:
+        if not self.plugins:
             if hasattr(settings, 'PLUGINS'):
                 self.plugins = settings.PLUGINS
-            if self.plugins == []:
+            if not self.plugins:
                 self.plugins.append('mmpy_bot.plugins')
 
         for plugin in self.plugins:
@@ -66,11 +71,14 @@ class PluginsManager(object):
     @staticmethod
     def _load_plugins(plugin):
         logger.info('loading plugin "%s"', plugin)
-        path_name = None
-        for mod in plugin.split('.'):
-            if path_name is not None:
-                path_name = [path_name]
-            _, path_name, _ = imp.find_module(mod, path_name)
+        if _python_3():
+            path_name = importlib.util.find_spec(plugin).submodule_search_locations[0]
+        else:
+            path_name = None
+            for mod in plugin.split('.'):
+                if path_name is not None:
+                    path_name = [path_name]
+                _, path_name, _ = imp.find_module(mod, path_name)
         for py_file in glob('{}/[!_]*.py'.format(path_name)):
             module = '.'.join((plugin, os.path.split(py_file)[-1][:-3]))
             try:
