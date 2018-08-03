@@ -56,7 +56,8 @@ def allowed_users(*allowed_users_list):
 
     return plugin
 
-def allowed_userids(*allowed_userids_list):
+
+def allowed_user_ids(*allowed_userids_list):
     def plugin(func):
         def wrapper(message, *args, **kw):
             user = message.get_user_id()
