@@ -55,3 +55,15 @@ def allowed_users(*allowed_users_list):
         return wrapper
 
     return plugin
+
+def allowed_userids(*allowed_userids_list):
+    def plugin(func):
+        def wrapper(message, *args, **kw):
+            user = message.get_user_id()
+            if user not in allowed_userids_list:
+                return message.reply("`Permission denied`")
+            return func(message, *args, **kw)
+
+        return wrapper
+
+    return plugin
