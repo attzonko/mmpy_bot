@@ -108,3 +108,14 @@ def test_bot_create_get_list_post_delete_webhook(driver):
         raise AssertionError('something wrong, the hook {} should be found.'.format(created))
     # test send post through webhook
     driver.send_post_webhook(created['id'])
+
+
+def test_allowed_users(driver):
+    driver.send_channel_message('allowed_driver', tobot=True)
+    driver.wait_for_bot_channel_message('Driver allowed!', tosender=True)
+    driver.send_channel_message('not_allowed_driver', tobot=True)
+    try:
+        driver.wait_for_bot_channel_message('Driver not allowed!', tosender=True)
+        raise AssertionError('response "Hello not allowed!" was not expected.')
+    except AssertionError:
+        pass
