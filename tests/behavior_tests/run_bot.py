@@ -14,6 +14,7 @@ class LocalBot(Bot):
             bot_settings.SSL_VERIFY
         )
         self._plugins = PluginsManager()
+        self._plugins.plugins = bot_settings.PLUGINS
         self._plugins.init_plugins()
         self._dispatcher = MessageDispatcher(self._client, self._plugins)
 

@@ -183,7 +183,7 @@ If you don't want to expose some bot commands to public, you can add `@allowed_u
 ```python
 @respond_to('^admin$')
 @allow_only_direct_message() #only trigger by direct message, remove this line if you want call this in channel
-@allowed_users('YourNameHere')
+@allowed_users('Your username or email address here')
 def users_access(message):
     pass
 ```
