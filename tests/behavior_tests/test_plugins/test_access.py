@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 
 from mmpy_bot.utils import allowed_users
-from mmpy_bot.bot import respond_to, listen_to
+from mmpy_bot.bot import respond_to
 
 import sys
 import os
@@ -11,7 +11,7 @@ from tests.behavior_tests import driver_settings
 
 
 @respond_to('^allowed_driver$')
-@allowed_users(driver_settings.BOT_NAME)
+@allowed_users(driver_settings.BOT_NAME, driver_settings.BOT_LOGIN)
 def driver_allowed_hello(message):
     message.reply('Driver allowed!')
 

@@ -2,7 +2,6 @@
 from mmpy_bot.bot import Bot, PluginsManager
 from mmpy_bot.mattermost import MattermostClient
 from mmpy_bot.dispatcher import MessageDispatcher
-from mmpy_bot import settings
 import bot_settings
 
 
