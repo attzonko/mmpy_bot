@@ -1,5 +1,4 @@
 import sys
-import logging
 
 # Handle backwards compatibility with 2.7
 try:
@@ -9,27 +8,24 @@ except ImportError:
 
 from mmpy_bot.bot import PluginsManager
 
-# logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
-logger = logging.getLogger(__name__)
 
-
-def test_load_single_plugin():
+def test__load_plugins():
     reload(sys)
-    PluginsManager()._load_plugins('tests.unit_tests.single_plugin')
+    PluginsManager._load_plugins('tests.unit_tests.single_plugin')
     if 'tests.unit_tests.single_plugin' not in sys.modules:
         raise AssertionError()
     if 'tests.unit_tests.single_plugin.mock_plugin' not in sys.modules:
         raise AssertionError()
 
 
-def test_load_init_plugins():
+def test_init_plugins_default_plugins():
     reload(sys)
     PluginsManager().init_plugins()
     if 'mmpy_bot.plugins' not in sys.modules:
         raise AssertionError()
 
 
-def test_load_local_plugins():
+def test_init_plugins_specified_plugins():
     reload(sys)
     PluginsManager(plugins=['tests.unit_tests.local_plugins']).init_plugins()
     if 'tests.unit_tests.local_plugins' not in sys.modules:
