@@ -1,12 +1,23 @@
-import logging
+import os
+import json
+import pytest
 from mmpy_bot.dispatcher import MessageDispatcher
 from mmpy_bot import settings
 
-# logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
-logger = logging.getLogger(__name__)
+
+@pytest.fixture(scope="function")
+def message():
+    with open(os.sep.join(
+        ['tests','unit_tests','test_data', 'message.json']), 'r') as f:
+        return json.load(f)
 
 
-def test_messagedispatcher__ignore_sender():
+def test_get_message(message):
+    if MessageDispatcher.get_message(message) != "hello":
+        raise AssertionError()
+
+
+def test__ignore_sender():
     dispatcher = MessageDispatcher(None, None)
     event = {'event': 'posted', 'data': {'sender_name': 'betty'}}
     event2 = {'event': 'posted', 'data': {'sender_name': 'Carter'}}

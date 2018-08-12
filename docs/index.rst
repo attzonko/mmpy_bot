@@ -18,6 +18,7 @@ Contents
   decorators
   demo_installation
   dev_install
+  testing
   contributing
   authors
 

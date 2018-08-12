@@ -1,6 +1,8 @@
 import os
 
 PLUGINS = [
+	'test_plugins',
+	'mmpy_bot.plugins',
 ]
 
 BOT_URL = os.environ.get("BOT_URL", 'http://SERVER_HOST_DN/api/v4')

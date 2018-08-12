@@ -11,3 +11,4 @@ build
 .coverage
 .vscode
 coverage.xml
+*_build*
