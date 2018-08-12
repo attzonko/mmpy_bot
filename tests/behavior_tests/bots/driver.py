@@ -10,7 +10,8 @@ from websocket._exceptions import WebSocketConnectionClosedException, WebSocketT
 from mmpy_bot.bot import Bot, PluginsManager
 from mmpy_bot.mattermost import MattermostClient
 from mmpy_bot.dispatcher import MessageDispatcher
-from tests.behavior_tests import driver_settings, bot_settings
+from tests.behavior_tests.bots import driver_settings, responder_settings as bot_settings
+
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)

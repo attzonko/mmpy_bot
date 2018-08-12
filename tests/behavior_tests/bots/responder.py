@@ -2,10 +2,10 @@
 from mmpy_bot.bot import Bot, PluginsManager
 from mmpy_bot.mattermost import MattermostClient
 from mmpy_bot.dispatcher import MessageDispatcher
-import bot_settings
+import responder_settings as bot_settings
 
 
-class LocalBot(Bot):
+class ResponderBot(Bot):
 
     def __init__(self):
         self._client = MattermostClient(
@@ -14,12 +14,13 @@ class LocalBot(Bot):
             bot_settings.SSL_VERIFY
         )
         self._plugins = PluginsManager()
+        self._plugins.plugins = bot_settings.PLUGINS
         self._plugins.init_plugins()
         self._dispatcher = MessageDispatcher(self._client, self._plugins)
 
 
 def main():
-    bot = LocalBot()
+    bot = ResponderBot()
     bot.run()
 
 
