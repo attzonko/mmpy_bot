@@ -256,7 +256,10 @@ class Message(object):
         self.send_webapi(self._gen_reply(text), *args, **kwargs)
 
     def send_webapi(self, text, attachments=None, channel_id=None, **kwargs):
-        url = self._get_webhook_url_by_id(self._get_first_webhook())
+        wh = settings.WEBHOOK_ID
+        if not wh:
+            wh = self._get_first_webhook()
+        url = self._get_webhook_url_by_id(wh)
         kwargs['username'] = kwargs.get(
             'username', self.get_username(self._client.user['id']))
         kwargs['icon_url'] = kwargs.get('icon_url', BOT_ICON)
