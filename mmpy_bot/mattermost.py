@@ -34,7 +34,7 @@ class MattermostAPI(object):
             {
                 'channel_id': channel_id,
                 'message': message,
-                'filenames': files or [],
+                'file_ids': files or [],
                 'root_id': pid,
             })
 
@@ -165,6 +165,18 @@ class MattermostAPI(object):
     def user(self, user_id):
         return self.get_user_info(user_id)
 
+    def upload_file(self, file, channel_id):
+        files = {
+            'files': file,
+            'channel_id': (None, channel_id)
+        }
+        return json.loads(requests.post(
+            self.url + '/files',
+            headers=self._get_headers(),
+            files=files,
+            verify=self.ssl_verify
+        ).text)
+
 
 class MattermostClient(object):
     def __init__(self, url, team, email, password, ssl_verify=True, token=None):
@@ -189,10 +201,10 @@ class MattermostClient(object):
         self.user = self.api.login(team, email, password)
         return self.user
 
-    def channel_msg(self, channel, message, pid=""):
+    def channel_msg(self, channel, message, files=None, pid=""):
         c_id = self.channels.get(channel, {}).get("id") or channel
         return self.api.create_post(self.user["id"],
-                                    c_id, "{}".format(message), pid=pid)
+                                    c_id, "{}".format(message), files, pid)
 
     def update_msg(self, message_id, channel, message, pid=""):
         c_id = self.channels.get(channel, {}).get("id") or channel

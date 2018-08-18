@@ -17,7 +17,7 @@ Settings
     PLUGINS_ONLY_DOC_STRING = False
 
     # Basic configuration
-    BOT_URL = 'http://mm.example.com/api/v3'
+    BOT_URL = 'http://mm.example.com/api/v4'
     BOT_LOGIN = 'bot@example.com'
     BOT_PASSWORD = None
     BOT_TEAM = 'devops'

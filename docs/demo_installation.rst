@@ -25,7 +25,7 @@ Install stable package from PyPi::
 Create settings file `mmpy_bot_settings.py` with the following lines::
 
     DEBUG = True
-    BOT_URL = 'http://mm.example.com:8065/api/v3'
+    BOT_URL = 'http://mm.example.com:8065/api/v4'
     BOT_LOGIN = '<BOT_EMAIL>'
     BOT_PASSWORD = '<BOT_PASSWORD>'
     BOT_TEAM = '<TEAM>'

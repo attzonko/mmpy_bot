@@ -8,7 +8,7 @@ Basic
 
 Register new user on Mattermost. Copy email/password/team and url into ``mmpy_bot_settings.py`` file::
 
-    BOT_URL = 'http://<mm.example.com>/api/v3'  # with 'http://' and with '/api/v3' path
+    BOT_URL = 'http://<mm.example.com>/api/v4'  # with 'http://' and with '/api/v4' path
     BOT_LOGIN = '<bot-email-address>'
     BOT_PASSWORD = '<bot-password>'
     BOT_TEAM = '<your-team>'

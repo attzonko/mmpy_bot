@@ -11,7 +11,7 @@ Allowed users::
 
 
     @respond_to('^is-allowed$')
-    @allowed_users('admin', 'root')
+    @allowed_users('admin', 'root', 'root@admin.com')
     def access_allowed(message):
         message.reply('Access is allowed')
 
@@ -36,8 +36,8 @@ Real case
 For example we have some users on our chat. We want allow some functionality
 to some users. We can create constants with allowed users on bot settings::
 
-    ADMIN_USERS = ['admin', 'root']
-    SUPPORT_USERS = ['mike', 'nick']
+    ADMIN_USERS = ['admin', 'root', 'root@admin.com']
+    SUPPORT_USERS = ['mike', 'nick', 'nick@nick-server.com']
 
 
 So now we can close access to some functions on plugins::

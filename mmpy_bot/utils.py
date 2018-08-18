@@ -48,7 +48,8 @@ def allowed_users(*allowed_users_list):
     def plugin(func):
         def wrapper(message, *args, **kw):
             user = message.get_username()
-            if user not in allowed_users_list:
+            user_email = message.get_user_mail()
+            if not {user, user_email} & set(allowed_users_list):
                 return message.reply("`Permission denied`")
             return func(message, *args, **kw)
 

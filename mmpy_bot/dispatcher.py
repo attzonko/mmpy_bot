@@ -197,7 +197,7 @@ class Message(object):
         return self.get_user_info('id', user_id)
 
     def get_channel_name(self, channel_id=None):
-        channel_id = channel_id or self._body['data']['post']['channel_id']
+        channel_id = channel_id or self.channel
         if channel_id in self.channels:
             channel_name = self.channels[channel_id]
         else:
@@ -223,6 +223,9 @@ class Message(object):
 
     def get_file_link(self, file_id):
         return self._client.api.get_file_link(file_id)
+
+    def upload_file(self, file):
+        return self._client.api.upload_file(file, self.channel)
 
     def _gen_at_message(self, text):
         return '@{}: {}'.format(self.get_username(), text)
@@ -263,22 +266,22 @@ class Message(object):
             attachments=attachments, ssl_verify=self._client.api.ssl_verify,
             **kwargs)
 
-    def reply(self, text):
-        self.send(self._gen_reply(text))
+    def reply(self, text, files=None):
+        self.send(self._gen_reply(text), files=files)
 
-    def send(self, text, channel_id=None):
+    def send(self, text, channel_id=None, files=None):
         return self._client.channel_msg(
-            channel_id or self._body['data']['post']['channel_id'], text)
+            channel_id or self.channel, text, files=files)
 
     def update(self, text, message_id, channel_id=None):
         return self._client.update_msg(
-            message_id, channel_id or self._body['data']['post']['channel_id'],
+            message_id, channel_id or self.channel,
             text
         )
 
     def react(self, emoji_name):
         self._client.channel_msg(
-            self._body['data']['post']['channel_id'], emoji_name,
+            self.channel, emoji_name,
             pid=self._body['data']['post']['id'])
 
     def comment(self, message):

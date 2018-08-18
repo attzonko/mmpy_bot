@@ -157,6 +157,27 @@ class Driver(object):
                         return True
             return False
 
+    def wait_for_bot_direct_file(self):
+        self._wait_for_bot_file(self.dm_chan, tosender=False)
+
+    def _wait_for_bot_file(self, channel, maxwait=10, tosender=True, thread=False):
+        for _ in range(maxwait):
+            time.sleep(1)
+            if self._has_got_file_rtm(channel, tosender, thread=thread):
+                return
+        raise AssertionError('expected to get files, but got nothing')
+
+    def _has_got_file_rtm(self, channel, tosender=True, thread=False):
+        with self._events_lock:
+            for event in self.events:
+                if 'event' not in event or (event['event'] == 'posted' and 'data' not in event):
+                    print('Unusual event received: ' + repr(event))
+                if event['event'] == 'posted':
+                    post_data = json.loads(event['data']['post'])
+                    if post_data.get('file_ids', []) is not []:
+                        return True
+            return False
+
     def _send_channel_message(self, chan, msg, **kwargs):
         msg = self._format_message(msg, **kwargs)
         self._send_message_to_bot(chan, msg)

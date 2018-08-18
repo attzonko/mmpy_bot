@@ -10,6 +10,7 @@ Development Lead
 Contributors
 ------------
 * Victor Hu <selain@nature.ee.ncku.edu.tw>
+* tgly307 <tgly307@163.com>
 
 Past Contributors
 ------------------
