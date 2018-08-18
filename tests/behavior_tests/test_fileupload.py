@@ -1,10 +1,10 @@
 import pytest
 from tests.behavior_tests.fixture import driver
 
-# [ToDo] Implement this test together with the file upload function
-@pytest.mark.skip(reason="no way of currently testing this")
+
 def test_bot_upload_file(driver):
-    pass
+    driver.send_direct_message('show_me_src', tobot=True)
+    driver.wait_for_bot_direct_file()
 
 
 # [ToDo] Needs to find a better way in validating file upload by URL

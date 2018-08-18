@@ -10,3 +10,7 @@ def test_allowed_users(driver):
         raise AssertionError('response "Hello not allowed!" was not expected.')
     except AssertionError:
         pass
+
+def test_allowed_users_by_email(driver):
+    driver.send_channel_message('allowed_driver_by_email', tobot=True)
+    driver.wait_for_bot_channel_message('Driver email allowed!', tosender=True)

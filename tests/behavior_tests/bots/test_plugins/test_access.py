@@ -20,3 +20,9 @@ def driver_allowed_hello(message):
 @allowed_users('somebody-not-driver')
 def driver_not_allowed_hello(message):
     message.reply('Driver not allowed!')
+
+
+@respond_to('^allowed_driver_by_email$')
+@allowed_users(driver_settings.BOT_LOGIN)
+def driver_allowed_hello_by_email(message):
+    message.reply('Driver email allowed!')
