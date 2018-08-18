@@ -34,7 +34,7 @@ class MattermostAPI(object):
             {
                 'channel_id': channel_id,
                 'message': message,
-                'filenames': files or [],
+                'file_ids': files or [],
                 'root_id': pid,
             })
 
