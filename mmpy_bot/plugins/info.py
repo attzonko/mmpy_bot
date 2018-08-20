@@ -6,7 +6,6 @@ from mmpy_bot.bot import respond_to, listen_to
 @respond_to('^\!info$')
 @listen_to('^\!info$')
 def info_request(message):
-    message.send('TEAM-ID: `%s`' % message.get_team_id())
     message.send('USERNAME: `%s`' % message.get_username())
     message.send('EMAIL: `%s`' % message.get_user_mail())
     message.send('USER-ID: `%s`' % message.get_user_id())
