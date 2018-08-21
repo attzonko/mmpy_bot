@@ -17,6 +17,7 @@ BOT_PASSWORD = None
 BOT_TOKEN = None
 BOT_TEAM = 'devops'
 SSL_VERIFY = True
+WS_ORIGIN = None
 
 IGNORE_NOTIFIES = ['@here', '@channel', '@all']
 IGNORE_USERS = []
