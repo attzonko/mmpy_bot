@@ -27,6 +27,15 @@ class MattermostAPI(object):
         channel = {'channel': self.get('/channels/{}'.format(channel_id))}
         return channel
 
+    def create_reaction(self, user_id, post_id, emoji_name):
+        return self.post(
+            '/reactions',
+            {
+                'user_id': user_id,
+                'post_id': post_id,
+                'emoji_name': emoji_name,
+            })
+
     def create_post(self, user_id, channel_id, message, files=None, pid=""):
         # create_at = int(time.time() * 1000)
         return self.post(
@@ -202,6 +211,10 @@ class MattermostClient(object):
         self.email = email
         self.user = self.api.login(team, email, password)
         return self.user
+
+    def react_msg(self, post_id, emoji_name):
+        return self.api.create_reaction(self.user["id"],
+                                        post_id, emoji_name)
 
     def channel_msg(self, channel, message, files=None, pid=""):
         c_id = self.channels.get(channel, {}).get("id") or channel
