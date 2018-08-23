@@ -213,7 +213,7 @@ class MattermostClient(object):
         return self.user
 
     def react_msg(self, post_id, emoji_name):
-        return self.api.create_reaction(self.user["id"], 
+        return self.api.create_reaction(self.user["id"],
                                         post_id, emoji_name)
 
     def channel_msg(self, channel, message, files=None, pid=""):
