@@ -280,9 +280,8 @@ class Message(object):
         )
 
     def react(self, emoji_name):
-        self._client.channel_msg(
-            self.channel, emoji_name,
-            pid=self._body['data']['post']['id'])
+        self._client.react_msg(
+            self._body['data']['post']['id'], emoji_name)
 
     def comment(self, message):
         self.react(message)
