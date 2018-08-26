@@ -126,3 +126,62 @@ File Support
         file_id = result['file_infos'][0]['id']
         # file_id need convert to array
         message.reply('hello', [file_id])
+
+
+Job Scheduling
+--------------
+
+mmpy_bot integrates `schedule 
+<https://github.com/dbader/schedule/>`_ to provide in-process job scheduling.
+
+With `schedule 
+<https://github.com/dbader/schedule/>`_, we can put periodic jobs into waiting queue like this:
+
+.. code-block:: python
+
+    import re
+    from datetime import datetime
+    from mmpy_bot.bot import respond_to
+    from mmpy_bot.scheduler import schedule
+
+
+    @respond_to('reply \"(.*)\" every (.*) seconds', re.IGNORECASE)
+    def reply_every_seconds(message, content, seconds):
+        schedule.every(int(seconds)).seconds.do(message.reply, content)
+
+
+    @respond_to('cancel jobs', re.IGNORECASE)
+    def cancel_jobs(message):
+        schedule.clear()
+        message.reply('all jobs canceled.')
+
+The `schedule 
+<https://github.com/dbader/schedule/>`_ itself provide human-readable APIs to schedule jobs. Check out `schedule.readthedocs.io <https://schedule.readthedocs.io/>`_ for more usage examples.
+
+`schedule 
+<https://github.com/dbader/schedule/>`_ is designed for periodic jobs.
+In order to support one-time-only jobs, mmpy_bot has a monkey-patching on integrated 
+`schedule 
+<https://github.com/dbader/schedule/>`_ package.
+
+We can schedule a one-time-only job by `schedule.once` method.
+You should notice that this method takes a datetime object, which is different from `schedule.every` methods.
+
+The following code example uses `schedule.once` to schedule a job.
+This job will be trigger at `t_time`.
+
+.. code-block:: python
+
+    import re
+    from datetime import datetime
+    from mmpy_bot.bot import respond_to
+    from mmpy_bot.scheduler import schedule
+
+
+    @respond_to('reply \"(.*)\" at (.*)', re.IGNORECASE)
+    def reply_specific_time(message, content, trigger_time):
+        t_time = datetime.strptime(trigger_time, '%b-%d-%Y_%H:%M:%S')
+        schedule.once(t_time).do(message.reply, content)
+
+All jobs added will be triggered periodically. 
+The trigger period (default 5 seconds) can be configured by `JOB_TRIGGER_PERIOD` in settings.py or local_settings.py.
