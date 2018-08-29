@@ -241,7 +241,27 @@ class MattermostClient(object):
             sslopt={
                 "cert_reqs": ssl.CERT_REQUIRED if self.api.ssl_verify
                 else ssl.CERT_NONE})
+    def handle_message_data(self, data, ignore_own_msg=False, filter_actions=None):
+        try:
+            post = json.loads(data)
+            event_action = post.get('event')
+            if event_action not in filter_actions:
+                continue
 
+            if event_action == 'posted':
+                if post.get('data', {}).get('post'):
+                    dp = json.loads(post['data']['post'])
+                    if ignore_own_msg is True and dp.get("user_id"):
+                        if self.user["id"] == dp["user_id"]:
+                            continue
+                yield post
+            elif event_action in ['added_to_team', 'leave_team',
+                                  'user_added', 'user_removed']:
+                self.api.load_initial_data()  # reload teams & channels
+        except ValueError:
+            pass
+        
+        
     def messages(self, ignore_own_msg=False, filter_actions=None):
         filter_actions = filter_actions or []
         if not self.connect_websocket():
@@ -254,24 +274,7 @@ class MattermostClient(object):
                     raise
                 continue
             if data:
-                try:
-                    post = json.loads(data)
-                    event_action = post.get('event')
-                    if event_action not in filter_actions:
-                        continue
-
-                    if event_action == 'posted':
-                        if post.get('data', {}).get('post'):
-                            dp = json.loads(post['data']['post'])
-                            if ignore_own_msg is True and dp.get("user_id"):
-                                if self.user["id"] == dp["user_id"]:
-                                    continue
-                        yield post
-                    elif event_action in ['added_to_team', 'leave_team',
-                                          'user_added', 'user_removed']:
-                        self.api.load_initial_data()  # reload teams & channels
-                except ValueError:
-                    pass
+                self.handle_message_data(data, ignore_own_msg, filter_actions)
 
     def ping(self):
         self.websocket.ping()
