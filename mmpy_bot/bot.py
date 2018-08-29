@@ -106,24 +106,19 @@ class Matcher(object):
     def __init__(self, regex):
         self.regex = regex
 
-
-def respond_to(regexp, flags=0):
+def get_wrapper(wrapper_type, regexp, flags=0):
     def wrapper(func):
         m = Matcher(re.compile(regexp, flags))
-        PluginsManager.commands['respond_to'][m] = func
+        PluginsManager.commands[wrapper_type][m] = func
         logger.info(
-            'registered respond_to plugin "%s" to "%s"', func.__name__, regexp)
+            'registered %s plugin "%s" to "%s"', wrapper_type, func.__name__, regexp)
         return func
 
     return wrapper
-
+  
+  
+def respond_to(regexp, flags=0):
+    return get_wrapper('respond_to', regexp, flags)
 
 def listen_to(regexp, flags=0):
-    def wrapper(func):
-        m = Matcher(re.compile(regexp, flags))
-        PluginsManager.commands['listen_to'][m] = func
-        logger.info(
-            'registered listen_to plugin "%s" to "%s"', func.__name__, regexp)
-        return func
-
-    return wrapper
+    return get_wrapper('listen_to', regexp, flags)
