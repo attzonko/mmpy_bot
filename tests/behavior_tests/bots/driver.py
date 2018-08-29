@@ -134,8 +134,8 @@ class Driver(object):
         else:
             raise AssertionError('expected to get message like "{}", but got nothing'.format(match))
 
-    def wait_for_bot_direct_message(self, match):
-        self._wait_for_bot_message(self.dm_chan, match, tosender=False)
+    def wait_for_bot_direct_message(self, match, maxwait=10):
+        self._wait_for_bot_message(self.dm_chan, match, maxwait=maxwait, tosender=False)
 
     def _wait_for_bot_message(self, channel, match, maxwait=10, tosender=True, thread=False):
         for _ in range(maxwait):
@@ -157,8 +157,8 @@ class Driver(object):
                         return True
             return False
 
-    def wait_for_bot_direct_file(self):
-        self._wait_for_bot_file(self.dm_chan, tosender=False)
+    def wait_for_bot_direct_file(self, maxwait=10):
+        self._wait_for_bot_file(self.dm_chan, tosender=False, maxwait=maxwait)
 
     def _wait_for_bot_file(self, channel, maxwait=10, tosender=True, thread=False):
         for _ in range(maxwait):

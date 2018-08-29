@@ -15,6 +15,7 @@ from six.moves import _thread
 from mmpy_bot import settings
 from mmpy_bot.dispatcher import MessageDispatcher
 from mmpy_bot.mattermost import MattermostClient
+from mmpy_bot.scheduler import schedule
 
 logger = logging.getLogger(__name__)
 
@@ -36,6 +37,7 @@ class Bot(object):
         self._plugins.init_plugins()
         self._dispatcher.start()
         _thread.start_new_thread(self._keep_active, tuple())
+        _thread.start_new_thread(self._run_jobs, tuple())
         self._dispatcher.loop()
 
     def _keep_active(self):
@@ -43,6 +45,12 @@ class Bot(object):
         while True:
             time.sleep(60)
             self._client.ping()
+
+    def _run_jobs(self):
+        logger.info('job running thread started')
+        while True:
+            time.sleep(settings.JOB_TRIGGER_PERIOD)
+            schedule.run_pending()
 
 
 class PluginsManager(object):
