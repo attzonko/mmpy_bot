@@ -2,6 +2,7 @@
 
 from mmpy_bot.bot import respond_to, listen_to
 
+
 @respond_to('^\!info$')
 @listen_to('^\!info$')
 def info_request(message):

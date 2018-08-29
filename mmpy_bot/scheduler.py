@@ -18,9 +18,9 @@ class OneTimeJob(schedule.Job):
         self.next_run = next_time
 
     def run(self):
-        try: # py3+
+        try:  # py3+
             ret = super().run()
-        except TypeError: # py2.7
+        except TypeError:  # py2.7
             ret = super(OneTimeJob, self).run()
         self.scheduler.cancel_job(self)
         return ret

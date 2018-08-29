@@ -122,7 +122,8 @@ class MattermostAPI(object):
             response = self._login(props)
             if response.status_code in [301, 302, 307]:
                 # reset self.url to the new URL
-                self.url = response.headers['Location'].replace('/users/login', '')
+                self.url = response.headers['Location'].replace(
+                        '/users/login', '')
                 # re-try login if redirected
                 response = self._login(props)
             if response.status_code == 200:
@@ -143,7 +144,8 @@ class MattermostAPI(object):
     def load_initial_data(self):
         self.teams = self.get('/users/me/teams')
         if len(self.teams) == 0:
-            raise AssertionError('User account of this bot does not join any team yet.')
+            raise AssertionError(
+                    'User account of this bot does not join any team yet.')
         self.default_team_id = self.teams[0]['id']
         self.teams_channels_ids = {}
         for team in self.teams:
