@@ -18,7 +18,7 @@ BOT_TOKEN = None
 BOT_TEAM = 'devops'
 SSL_VERIFY = True
 WS_ORIGIN = None
-WEBHOOK_ID = None
+WEBHOOK_ID = None  # if not specified mmpy_bot will attempt to create one
 
 IGNORE_NOTIFIES = ['@here', '@channel', '@all']
 IGNORE_USERS = []
