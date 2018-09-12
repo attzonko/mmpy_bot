@@ -42,7 +42,7 @@ pip install mmpy_bot
 
 First you need create the mattermost email/password for your bot.
 
-For use all API(V4.0.0), you need add bot user to system admin group to avoid 403 error. 
+For use all API(V4.0.0), you need add bot user to system admin group to avoid 403 error.
 
 ### Configuration
 
@@ -59,6 +59,7 @@ BOT_LOGIN = '<bot-email-address>'
 BOT_PASSWORD = '<bot-password>'
 BOT_TOKEN = None # or '<bot-personal-access-token>' if you have set bot personal access token.
 BOT_TEAM = '<your-team>'  # possible in lowercase
+WEBHOOK_ID = '<bot-webhook-id>' # otherwise the bot will attempt to create one
 ```
 
 Alternatively, you can use the environment variable `MATTERMOST_BOT_URL`,
