@@ -59,7 +59,7 @@ if settings_module is not None:
     try:
         execfile(filename)
     except NameError:
-        exec(open(filename).read())
+        exec(open(filename, encoding='utf-8').read())
 
 try:
     from mmpy_bot_settings import *
