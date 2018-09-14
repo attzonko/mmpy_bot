@@ -266,12 +266,12 @@ class Message(object):
             attachments=attachments, ssl_verify=self._client.api.ssl_verify,
             **kwargs)
 
-    def reply(self, text, files=None):
-        self.send(self._gen_reply(text), files=files)
+    def reply(self, text, files=None, props={}):
+        self.send(self._gen_reply(text), files=files, props=props)
 
-    def send(self, text, channel_id=None, files=None):
+    def send(self, text, channel_id=None, files=None, props={}):
         return self._client.channel_msg(
-            channel_id or self.channel, text, files=files)
+            channel_id or self.channel, text, files=files, props=props)
 
     def update(self, text, message_id, channel_id=None):
         return self._client.update_msg(
