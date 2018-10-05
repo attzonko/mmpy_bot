@@ -101,7 +101,7 @@ class MattermostAPI(object):
     def in_webhook(url, channel, text, username=None, as_user=None,
                    parse=None, link_names=None, attachments=None,
                    unfurl_links=None, unfurl_media=None, icon_url=None,
-                   icon_emoji=None, ssl_verify=True):
+                   icon_emoji=None, ssl_verify=True, **kwargs):
         return requests.post(
             url, data={
                 'payload': json.dumps({

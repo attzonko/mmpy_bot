@@ -238,15 +238,6 @@ class Message(object):
     def _get_sender_name(self):
         return self._body['data'].get('sender_name', '').strip()
 
-    def _get_first_webhook(self):
-        hooks = self._client.api.hooks_list()
-        if not hooks:
-            for channel in self._client.api.get_channels():
-                if channel.get('name') == 'town-square':
-                    return self._client.api.hooks_create(
-                        channel_id=channel.get('id')).get('id')
-        return hooks[0].get('id')
-
     @staticmethod
     def _get_webhook_url_by_id(hook_id):
         base = '/'.join(settings.BOT_URL.split('/')[:3])
@@ -256,10 +247,14 @@ class Message(object):
         self.send_webapi(self._gen_reply(text), *args, **kwargs)
 
     def send_webapi(self, text, attachments=None, channel_id=None, **kwargs):
-        wh = settings.WEBHOOK_ID
-        if not wh:
-            wh = self._get_first_webhook()
-        url = self._get_webhook_url_by_id(wh)
+        webhook_id = kwargs.get('webhook_id', settings.WEBHOOK_ID)
+        if not webhook_id:
+            logger.warning(
+                'send_webapi with webhook_id={}. message "{}" is not sent.'
+                .format(webhook_id, text)
+            )
+            return
+        url = self._get_webhook_url_by_id(webhook_id)
         kwargs['username'] = kwargs.get(
             'username', self.get_username(self._client.user['id']))
         kwargs['icon_url'] = kwargs.get('icon_url', BOT_ICON)
