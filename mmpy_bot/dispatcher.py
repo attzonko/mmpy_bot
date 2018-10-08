@@ -148,7 +148,7 @@ class MessageDispatcher(object):
         # create dictionary organizing commands by plugin
         modules = {}
         for p, v in iteritems(self._plugins.commands['respond_to']):
-            key = v.__module__.title().split('.')[1]
+            key = v.__module__.title()
             if key not in modules:
                 modules[key] = []
             modules[key].append((p.regex.pattern, v.__doc__))
