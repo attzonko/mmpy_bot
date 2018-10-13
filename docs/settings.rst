@@ -22,6 +22,19 @@ Settings
     BOT_PASSWORD = None
     BOT_TEAM = 'devops'
 
+    # default public channel name
+    BOT_CHANNEL = 'off-topic'
+
+    # a private channel in BOT_TEAM
+    BOT_PRIVATE_CHANNEL = 'test'
+
+    # login with SSL verification
+    SSL_VERIFY = True
+
+    # the dafult webhook_id of message to reply via webhook
+    # this is optional
+    #WEBHOOK_ID = 'p7tuwghy37r63jp4nf3tsopque'
+
     # Ignore broadcast message
     IGNORE_NOTIFIES = ['@channel', '@all']
     # Ignore message from specified senders (case-insensitive), ex: IGNORE_USERS = ['john', 'Mary']
