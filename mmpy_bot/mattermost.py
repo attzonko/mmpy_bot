@@ -278,7 +278,7 @@ class MattermostClient(object):
     def ping(self):
         try:
             self.websocket.ping()
-        except socket.error as sock_err:
+        except socket.error:
             logger.error('\n'.join([
                 'socket.error while pinging the mattermost server',
                 'possible causes: expired cookie or broken socket pipe'
