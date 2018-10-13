@@ -2,6 +2,7 @@ import json
 import logging
 import ssl
 import requests
+import socket
 import websocket
 import websocket._exceptions
 
@@ -275,4 +276,14 @@ class MattermostClient(object):
                     pass
 
     def ping(self):
-        self.websocket.ping()
+        try:
+            self.websocket.ping()
+        except socket.error as sock_err:
+            logger.error('\n'.join([
+                'socket.error while pinging the mattermost server',
+                'possible causes: expired cookie or broken socket pipe'
+            ]))
+            if not self.connect_websocket(): # try to re-connect
+                logger.info('reconnecting websocket ... failed')
+            else:
+                logger.info('reconnecting websocket ... succeeded')
