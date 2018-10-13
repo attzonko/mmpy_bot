@@ -20,6 +20,24 @@ Run the bot::
     $ MATTERMOST_BOT_SETTINGS_MODULE=mmpy_bot_settings matterbot
 
 
+Structuting Your Basic Bot with Plugins
+---------------------------------------
+
+If you simply want to add some plugins ( listen_to, respond_to handlers), 
+you can have bot code files orginized under ``/opt/your_bot/`` like this :
+
+::
+
+    ~/opt/your_bot/
+        my_plugins/
+            __init__.py
+            intro.py
+            <more py modules>
+        mmpy_bot_settings.py
+
+Where the ``intro.py`` is a handler module.
+
+
 Integration with Django
 -----------------------
 
