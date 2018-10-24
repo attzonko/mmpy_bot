@@ -23,12 +23,8 @@ pep8:
 .PHONY: release
 # target: release - Release app into PyPi
 release: clean
-	@python setup.py register sdist upload --sign
-	@python setup.py bdist_wheel upload --sign
-
-sdist: clean
-	@python setup.py sdist
-	@ls -l dist
+	@python setup.py sdist bdist_wheel
+	@twine upload dist/*
 
 .PHONY: run
 # target: run - Run bot
