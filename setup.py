@@ -6,6 +6,7 @@ install_requires = (
     'websocket-client>=0.22.0',
     'six>=1.10.0',
     'requests>=2.4.0',
+    'schedule>=0.5.0',
 )
 
 excludes = (
