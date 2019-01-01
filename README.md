@@ -132,7 +132,7 @@ from mmpy_bot.bot import respond_to
 def message_with_file(message):
     # upload_file() can upload only one file at a time
     # If you have several files to upload, you need call this function several times.
-    file = open('test.txt', 'w+')
+    file = open('test.txt')
     result = message.upload_file(file)
     file.close()
     if 'file_infos' not in result:
