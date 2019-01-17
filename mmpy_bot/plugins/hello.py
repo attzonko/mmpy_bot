@@ -52,4 +52,4 @@ def hello_comment(message):
 
 @listen_to('hello_react', re.IGNORECASE)
 def hello_react(message):
-    message.react(':+1:')
+    message.react('+1')
