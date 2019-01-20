@@ -266,7 +266,7 @@ class Message(object):
 
     def reply(self, text, files=None, props={}):
         self.send(self._gen_reply(text), files=files, props=props)
-    
+
     def reply_thread(self, text, files=None, props={}):
         self.send(self._gen_reply(text), files=files, props=props, pid=self._body['data']['post']['id'])
 
