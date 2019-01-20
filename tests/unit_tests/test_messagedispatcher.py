@@ -17,7 +17,7 @@ def test_get_message(message):
         raise AssertionError()
 
 
-def test__ignore_sender():
+def test_ignore_sender():
     dispatcher = MessageDispatcher(None, None)
     event = {'event': 'posted', 'data': {'sender_name': 'betty'}}
     event2 = {'event': 'posted', 'data': {'sender_name': 'Carter'}}

@@ -53,3 +53,7 @@ def test_bot_reply_to_private_channel_message(driver):
     driver.wait_for_bot_private_channel_message('hello sender!')
     driver.send_private_channel_message('hello', colon=False)
     driver.wait_for_bot_private_channel_message('hello sender!')
+
+def test_bot_reply_to_message_thread(driver):
+    driver.send_channel_message('hello_reply_threaded', tobot=False)
+    driver.wait_for_bot_channel_message('hello threaded!', thread=True)

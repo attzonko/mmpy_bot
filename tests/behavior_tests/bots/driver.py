@@ -126,14 +126,6 @@ class Driver(object):
         msg = self._format_message(msg, tobot=tobot, colon=colon)
         self._send_message_to_bot(self.dm_chan, msg)
 
-    def validate_bot_direct_message(self, match):
-        posts = self.bot._client.api.get('/channels/%s/posts' % self.dm_chan)
-        last_response = posts['posts'][posts['order'][0]]
-        if re.search(match, last_response['message']):
-            return
-        else:
-            raise AssertionError('expected to get message like "{}", but got nothing'.format(match))
-
     def wait_for_bot_direct_message(self, match, maxwait=10):
         self._wait_for_bot_message(self.dm_chan, match, maxwait=maxwait, tosender=False)
 
@@ -154,6 +146,9 @@ class Driver(object):
                 if event['event'] == 'posted':
                     post_data = json.loads(event['data']['post'])
                     if re.match(match, post_data['message'], re.DOTALL):
+                        if thread:
+                            if post_data['parent_id'] == "":
+                                return False
                         return True
             return False
 
@@ -185,16 +180,8 @@ class Driver(object):
     def send_channel_message(self, msg, **kwargs):
         self._send_channel_message(self.cm_chan, msg, **kwargs)
 
-    def validate_bot_channel_message(self, match):
-        posts = self.bot._client.api.get('/channels/%s/posts' % self.cm_chan)
-        last_response = posts['posts'][posts['order'][0]]
-        if re.search(match, last_response['message']):
-            return
-        else:
-            raise AssertionError('expected to get message like "{}", but got nothing'.format(match))
-
-    def wait_for_bot_channel_message(self, match, tosender=True):
-        self._wait_for_bot_message(self.cm_chan, match, tosender=tosender)
+    def wait_for_bot_channel_message(self, match, tosender=True, thread=False):
+        self._wait_for_bot_message(self.cm_chan, match, tosender=tosender, thread=thread)
 
     def send_private_channel_message(self, msg, **kwargs):
         self._send_channel_message(self.gm_chan, msg, **kwargs)
