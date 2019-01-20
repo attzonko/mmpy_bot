@@ -53,3 +53,7 @@ def hello_comment(message):
 @listen_to('hello_react', re.IGNORECASE)
 def hello_react(message):
     message.react('+1')
+
+@listen_to('hello_reply_threaded', re.IGNORECASE)
+def hello_reply_threaded(message):
+    message.reply_thread('hello threaded!')

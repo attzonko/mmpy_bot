@@ -266,10 +266,13 @@ class Message(object):
 
     def reply(self, text, files=None, props={}):
         self.send(self._gen_reply(text), files=files, props=props)
+    
+    def reply_thread(self, text, files=None, props={}):
+        self.send(self._gen_reply(text), files=files, props=props, pid=self._body['data']['post']['id'])
 
-    def send(self, text, channel_id=None, files=None, props={}):
+    def send(self, text, channel_id=None, files=None, props={}, pid=''):
         return self._client.channel_msg(
-            channel_id or self.channel, text, files=files, props=props)
+            channel_id or self.channel, text, files=files, pid=pid, props=props)
 
     def update(self, text, message_id, channel_id=None):
         return self._client.update_msg(
