@@ -59,3 +59,23 @@ def allowed_users(*allowed_users_list):
         return wrapper
 
     return plugin
+
+
+def allowed_channels(*allowed_channels_list):
+    def plugin(func):
+        @wraps(func)
+        def wrapper(message, *args, **kw):
+            # Check display_name first
+            channel = message.get_channel_display_name()
+            if channel in list(allowed_channels_list):
+                return func(message, *args, **kw)
+            # Check url channel name
+            channel = message.get_channel_name()
+            if channel in list(allowed_channels_list):
+                return func(message, *args, **kw)
+
+            return message.reply("`This plugin only allowed in these channels:{}`".format(list(allowed_channels_list)))
+
+        return wrapper
+
+    return plugin

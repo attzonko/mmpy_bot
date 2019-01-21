@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
 
 from mmpy_bot.utils import allowed_users
+from mmpy_bot.utils import allowed_channels
 from mmpy_bot.bot import respond_to
 
 import sys
@@ -26,3 +27,15 @@ def driver_not_allowed_hello(message):
 @allowed_users(driver_settings.BOT_LOGIN)
 def driver_allowed_hello_by_email(message):
     message.reply('Driver email allowed!')
+
+
+@respond_to('^allowed_channel$')
+@allowed_channels(driver_settings.BOT_PRIVATE_CHANNEL)
+def driver_allowed_chan(message):
+    message.reply('Driver in channel allowed!')
+
+
+@respond_to('^not_allowed_channel$')
+@allowed_channels(driver_settings.BOT_CHANNEL)
+def driver_not_allowed_chan(message):
+    message.reply('Driver in channel NOT allowed!')

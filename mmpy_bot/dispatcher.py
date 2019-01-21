@@ -205,6 +205,11 @@ class Message(object):
             channel_name = channel['channel']['name']
             self.channels[channel_id] = channel_name
         return channel_name
+ 
+    def get_channel_display_name(self, channel_id=None):
+        channel_id = channel_id or self.channel
+        channel = self._client.api.channel(channel_id)
+        return channel['channel']['display_name']
 
     def get_team_id(self):
         return self._body['data'].get('team_id', '').strip()
