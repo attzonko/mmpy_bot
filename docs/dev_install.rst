@@ -11,7 +11,7 @@ Installation for development
     $ pip install -r requirements.txt
     $ pip install -r docs/requirements.txt
     $ touch local_settings.py               # configure your local settings
-    $ matterbot                             # run bot
+    $ mmpy_bot                              # run bot
 
 
 .. code-block:: python
