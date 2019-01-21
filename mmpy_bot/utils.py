@@ -3,6 +3,7 @@
 import logging
 
 from six.moves import _thread, queue
+from functools import wraps
 
 logger = logging.getLogger(__name__)
 
@@ -34,6 +35,7 @@ class WorkerPool(object):
 
 def allow_only_direct_message():
     def plugin(func):
+        @wraps(func)
         def wrapper(message, *args, **kw):
             if not message.is_direct_message():
                 return message.reply("`Only direct messages is allowed`")
@@ -46,6 +48,7 @@ def allow_only_direct_message():
 
 def allowed_users(*allowed_users_list):
     def plugin(func):
+        @wraps(func)
         def wrapper(message, *args, **kw):
             user = message.get_username()
             user_email = message.get_user_mail()
