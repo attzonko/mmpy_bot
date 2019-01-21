@@ -37,7 +37,7 @@ class MattermostAPI(object):
                 'emoji_name': emoji_name,
             })
 
-    def create_post(self, user_id, channel_id, message, files=None, pid="", props={}):
+    def create_post(self, user_id, channel_id, message, files=None, pid="", props=None):
         # create_at = int(time.time() * 1000)
         return self.post(
             '/posts',
@@ -46,7 +46,7 @@ class MattermostAPI(object):
                 'message': message,
                 'file_ids': files or [],
                 'root_id': pid,
-                'props': props
+                'props': props or {}
             })
 
     @staticmethod
@@ -220,10 +220,10 @@ class MattermostClient(object):
         return self.api.create_reaction(self.user["id"],
                                         post_id, emoji_name)
 
-    def channel_msg(self, channel, message, files=None, pid="", props={}):
+    def channel_msg(self, channel, message, files=None, pid="", props=None):
         c_id = self.channels.get(channel, {}).get("id") or channel
         return self.api.create_post(self.user["id"], c_id, "{}".format(message),
-                                    files, pid, props=props)
+                                    files, pid, props=props or {})
 
     def update_msg(self, message_id, channel, message, pid=""):
         c_id = self.channels.get(channel, {}).get("id") or channel
