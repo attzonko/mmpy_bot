@@ -1,10 +1,11 @@
 import pytest
 from tests.behavior_tests.config import pytest_config
-from tests.behavior_tests.fixture import driver
+from tests.behavior_tests.fixture import driver  # noqa: F401
 
 
-@pytest.mark.skipif(pytest_config.DRIVER_ADMIN_PRIVILEGE is False,
-                    reason="Needs admin privilege to create webhook.")
+@pytest.mark.skipif(  # noqa: F811
+        pytest_config.DRIVER_ADMIN_PRIVILEGE is False,
+        reason="Needs admin privilege to create webhook.")
 def test_bot_create_get_list_post_webhook(driver):
     # test create webhook
     created = driver.create_webhook()

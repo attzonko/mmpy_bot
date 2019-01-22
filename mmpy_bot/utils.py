@@ -74,7 +74,9 @@ def allowed_channels(*allowed_channels_list):
             if channel in list(allowed_channels_list):
                 return func(message, *args, **kw)
 
-            return message.reply("`This plugin only allowed in these channels:{}`".format(list(allowed_channels_list)))
+            return message.reply(
+                "`This plugin only allowed in these channels:{}`"
+                .format(list(allowed_channels_list)))
 
         return wrapper
 

@@ -37,8 +37,8 @@ class MattermostAPI(object):
                 'emoji_name': emoji_name,
             })
 
-    def create_post(self, user_id, channel_id, message, files=None, pid="", props=None):
-        # create_at = int(time.time() * 1000)
+    def create_post(self, user_id, channel_id, message,
+                    files=None, pid="", props=None):
         return self.post(
             '/posts',
             {
@@ -222,8 +222,9 @@ class MattermostClient(object):
 
     def channel_msg(self, channel, message, files=None, pid="", props=None):
         c_id = self.channels.get(channel, {}).get("id") or channel
-        return self.api.create_post(self.user["id"], c_id, "{}".format(message),
-                                    files, pid, props=props or {})
+        return self.api.create_post(self.user["id"], c_id,
+                                    "{}".format(message), files, pid,
+                                    props=props or {})
 
     def update_msg(self, message_id, channel, message, pid=""):
         c_id = self.channels.get(channel, {}).get("id") or channel
@@ -283,7 +284,7 @@ class MattermostClient(object):
                 'socket.error while pinging the mattermost server',
                 'possible causes: expired cookie or broken socket pipe'
             ]))
-            if not self.connect_websocket(): # try to re-connect
+            if not self.connect_websocket():  # try to re-connect
                 logger.info('reconnecting websocket ... failed')
             else:
                 logger.info('reconnecting websocket ... succeeded')

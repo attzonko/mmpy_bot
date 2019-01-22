@@ -49,7 +49,8 @@ def test_get_plugins():
             matched_func_names.add(func.__name__)
     if 'hello_send' not in matched_func_names or \
        'hello_send_alternative' not in matched_func_names:
-        raise AssertionError('hello_send and hello_send_alternative should both be loaded')
+        raise AssertionError(
+            'hello_send and hello_send_alternative should both be loaded')
     # test: not has_matching_plugin (there is no handler for `hallo`)
     reload(sys)
     matched_func_names = set()

@@ -6,9 +6,9 @@ from mmpy_bot.bot import respond_to
 
 import sys
 import os
-sys.path.append(os.getcwd()) # enable importing driver_settings
+sys.path.append(os.getcwd())  # enable importing driver_settings
 
-from tests.behavior_tests.bots import driver_settings
+from tests.behavior_tests.bots import driver_settings   # noqa: E402
 
 
 @respond_to('^allowed_driver$')
