@@ -201,15 +201,18 @@ def stats(message, start_date=None, end_date=None):
     pass
 ```
 
-If you don't want to expose some bot commands to public, you can add `@allowed_users()` like so:
+If you don't want to expose some bot commands to public, you can add `@allowed_users()` or `@allowed_channels()` like so:
 
 ```python
 @respond_to('^admin$')
 @allow_only_direct_message() #only trigger by direct message, remove this line if you want call this in channel
-@allowed_users('Your username or email address here')
+@allowed_users('Your username or email address here','user@email.com') # List of usernames or e-mails allowed
+@allowed_channels('allowed_channel_1','allowed_channel_2')  # List of allowed channels
 def users_access(message):
     pass
 ```
+Keep in mind the order matters! `@respond_to()` and `@listen_to()`must come before the "allowed" decorators.
+
 
 And add the plugins module to `PLUGINS` list of mmpy_bot settings, e.g. mmpy_bot_settings.py:
 
