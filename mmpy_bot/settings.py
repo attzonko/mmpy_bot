@@ -63,9 +63,9 @@ if settings_module is not None:
         exec(open(filename, encoding='utf-8').read())
 
 try:
-    from mmpy_bot_settings import *
+    from mmpy_bot_settings import *  # noqa: F401, F403
 except ImportError:
     try:
-        from local_settings import *
+        from local_settings import *  # noqa: F401, F403
     except ImportError:
         pass

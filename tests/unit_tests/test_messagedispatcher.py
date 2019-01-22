@@ -8,7 +8,8 @@ from mmpy_bot import settings
 @pytest.fixture(scope="function")
 def message():
     with open(os.sep.join(
-        ['tests','unit_tests','test_data', 'message.json']), 'r') as f:
+              ['tests', 'unit_tests', 'test_data', 'message.json']),
+              'r') as f:
         return json.load(f)
 
 

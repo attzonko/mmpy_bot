@@ -7,7 +7,8 @@ from mmpy_bot.dispatcher import Message
 @pytest.fixture(scope="function")
 def message():
     with open(os.sep.join(
-        ['tests','unit_tests','test_data', 'message.json']), 'r') as f:
+              ['tests', 'unit_tests', 'test_data', 'message.json']),
+              'r') as f:
         return Message(client=None, body=json.load(f), pool=None)
 
 
@@ -38,7 +39,8 @@ def test_channel(message):
 
 def test_body(message):
     with open(os.sep.join(
-        ['tests','unit_tests','test_data', 'message.json']), 'r') as f:
-        body=json.load(f)
+              ['tests', 'unit_tests', 'test_data', 'message.json']),
+              'r') as f:
+        body = json.load(f)
         if message.body != body:
             raise AssertionError()

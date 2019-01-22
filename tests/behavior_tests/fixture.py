@@ -8,7 +8,7 @@ def _start_bot_process():
     """
     Function to run a bot for testing in a subprocess
     """
-    args = [sys.executable, 'tests/behavior_tests/bots/responder.py',]
+    args = [sys.executable, 'tests/behavior_tests/bots/responder.py', ]
     return subprocess.Popen(args)
 
 

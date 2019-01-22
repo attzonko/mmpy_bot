@@ -206,6 +206,11 @@ class Message(object):
             self.channels[channel_id] = channel_name
         return channel_name
 
+    def get_channel_display_name(self, channel_id=None):
+        channel_id = channel_id or self.channel
+        channel = self._client.api.channel(channel_id)
+        return channel['channel']['display_name']
+
     def get_team_id(self):
         return self._body['data'].get('team_id', '').strip()
 
@@ -268,11 +273,13 @@ class Message(object):
         self.send(self._gen_reply(text), files=files, props=props or {})
 
     def reply_thread(self, text, files=None, props=None):
-        self.send(self._gen_reply(text), files=files, props=props or {}, pid=self._body['data']['post']['id'])
+        self.send(self._gen_reply(text), files=files, props=props or {},
+                  pid=self._body['data']['post']['id'])
 
     def send(self, text, channel_id=None, files=None, props=None, pid=''):
         return self._client.channel_msg(
-            channel_id or self.channel, text, files=files, pid=pid, props=props or {})
+            channel_id or self.channel, text,
+            files=files, pid=pid, props=props or {})
 
     def update(self, text, message_id, channel_id=None):
         return self._client.update_msg(
