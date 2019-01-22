@@ -67,7 +67,7 @@ def allowed_channels(*allowed_channels_list):
         def wrapper(message, *args, **kw):
             # Check display_name first
             disp_name = message.get_channel_display_name()
-            url_name = message.get_channel_name() 
+            url_name = message.get_channel_name()
             if not {disp_name, url_name} & set(allowed_channels_list):
                 return message.reply(
                     "`This plugin only allowed in these channels:{}`"
