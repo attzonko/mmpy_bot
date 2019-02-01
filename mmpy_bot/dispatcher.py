@@ -276,6 +276,9 @@ class Message(object):
         self.send(self._gen_reply(text), files=files, props=props or {},
                   pid=self._body['data']['post']['id'])
 
+    def comment(self, message):
+        self.reply_thread(message)
+
     def send(self, text, channel_id=None, files=None, props=None, pid=''):
         return self._client.channel_msg(
             channel_id or self.channel, text,
@@ -290,9 +293,6 @@ class Message(object):
     def react(self, emoji_name):
         self._client.react_msg(
             self._body['data']['post']['id'], emoji_name)
-
-    def comment(self, message):
-        self.react(message)
 
     def docs_reply(self, docs_format='    • `{0}` {1}'):
         reply = [docs_format.format(v.__name__, v.__doc__ or "")
