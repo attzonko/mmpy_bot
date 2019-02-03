@@ -68,7 +68,8 @@ def allowed_channels(*allowed_channels_list):
             # Check display_name first
             disp_name = message.get_channel_display_name()
             url_name = message.get_channel_name()
-            if not {disp_name, url_name} & set(allowed_channels_list):
+            is_direct_message = message.is_direct_message()
+            if (not is_direct_message) and (not {disp_name, url_name} & set(allowed_channels_list)):
                 return message.reply(
                     "`This plugin only allowed in these channels:{}`"
                     .format(list(allowed_channels_list)))
