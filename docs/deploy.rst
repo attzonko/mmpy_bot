@@ -51,7 +51,7 @@ Configure supervisor::
 Add following config::
 
     [program:matterbot]
-    command=/home/matterbot/mm-env/bin/matterbot
+    command=/home/matterbot/mm-env/bin/mmpy_bot
     user=matterbot
     directory=/home/matterbot/mybot
     # should be a real settings file on MATTERMOST_BOT_SETTINGS_MODULE

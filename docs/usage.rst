@@ -17,7 +17,7 @@ Register new user on Mattermost. Copy email/password/team and url into ``mmpy_bo
 
 Run the bot::
 
-    $ MATTERMOST_BOT_SETTINGS_MODULE=mmpy_bot_settings matterbot
+    $ MATTERMOST_BOT_SETTINGS_MODULE=mmpy_bot_settings mmpy_bot
 
 
 Structuting Your Basic Bot with Plugins

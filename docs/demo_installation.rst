@@ -32,4 +32,4 @@ Create settings file `mmpy_bot_settings.py` with the following lines::
 
 Run your bot by following command::
 
-    MATTERMOST_BOT_SETTINGS_MODULE=mmpy_bot_settings matterbot
+    MATTERMOST_BOT_SETTINGS_MODULE=mmpy_bot_settings mmpy_bot
