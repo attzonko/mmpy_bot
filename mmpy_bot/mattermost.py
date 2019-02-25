@@ -39,7 +39,7 @@ class MattermostAPI(object):
 
     def delete_reaction(self, user_id, post_id, emoji_name):
         return self.delete(
-            '/{0}/posts/{1}/reactions/{2}'.format(
+            '/users/{0}/posts/{1}/reactions/{2}'.format(
                 user_id, post_id, emoji_name))
 
     def create_post(self, user_id, channel_id, message,
