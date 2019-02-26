@@ -167,11 +167,20 @@ class MattermostAPI(object):
             verify=self.ssl_verify
         ).text)
 
+    def put(self, request, data):
+        return json.loads(requests.put(
+            self.url + request,
+            headers=self._get_headers(),
+            data=json.dumps(data),
+            verify=self.ssl_verify
+        ).text)
+
     def update_post(self, message_id, user_id, channel_id,
                     message, files=None, pid=""):
-        return self.post(
+        return self.put(
             '/posts/%s' % message_id,
             {
+                'id': message_id,
                 'message': message,
             })
 
