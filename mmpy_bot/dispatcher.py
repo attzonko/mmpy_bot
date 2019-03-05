@@ -274,7 +274,8 @@ class Message(object):
 
     def reply_thread(self, text, files=None, props=None):
         self.send(self._gen_reply(text), files=files, props=props or {},
-                  pid=self._body['data']['post']['id'])
+                  pid=(self._body['data']['post']['root_id'] or
+                       self._body['data']['post']['id']))
 
     def comment(self, message):
         self.reply_thread(message)
