@@ -294,6 +294,10 @@ class Message(object):
         self._client.react_msg(
             self._body['data']['post']['id'], emoji_name)
 
+    def remove_reaction(self, emoji_name):
+        self._client.remove_reaction(
+            self._body['data']['post']['id'], emoji_name)
+
     def docs_reply(self, docs_format='    • `{0}` {1}'):
         reply = [docs_format.format(v.__name__, v.__doc__ or "")
                  for p, v in iteritems(self._plugins.commands['respond_to'])]

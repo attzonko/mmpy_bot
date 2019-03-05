@@ -37,6 +37,11 @@ class MattermostAPI(object):
                 'emoji_name': emoji_name,
             })
 
+    def delete_reaction(self, user_id, post_id, emoji_name):
+        return self.delete(
+            '/users/{0}/posts/{1}/reactions/{2}'.format(
+                user_id, post_id, emoji_name))
+
     def create_post(self, user_id, channel_id, message,
                     files=None, pid="", props=None):
         return self.post(
@@ -167,6 +172,13 @@ class MattermostAPI(object):
             verify=self.ssl_verify
         ).text)
 
+    def delete(self, request):
+        return json.loads(requests.delete(
+            self.url + request,
+            headers=self._get_headers(),
+            verify=self.ssl_verify
+        ).text)
+
     def put(self, request, data):
         return json.loads(requests.put(
             self.url + request,
@@ -227,6 +239,10 @@ class MattermostClient(object):
 
     def react_msg(self, post_id, emoji_name):
         return self.api.create_reaction(self.user["id"],
+                                        post_id, emoji_name)
+
+    def remove_reaction(self, post_id, emoji_name):
+        return self.api.delete_reaction(self.user["id"],
                                         post_id, emoji_name)
 
     def channel_msg(self, channel, message, files=None, pid="", props=None):
