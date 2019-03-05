@@ -1,7 +1,10 @@
 import os
 import json
 import pytest
-from unittest import mock
+try:
+    from unittest import mock
+except ImportError:
+    from mock import mock
 from mmpy_bot.dispatcher import Message
 
 
