@@ -190,9 +190,8 @@ class MattermostAPI(object):
     def update_post(self, message_id, user_id, channel_id,
                     message, files=None, pid=""):
         return self.put(
-            '/posts/%s' % message_id,
+            '/posts/%s/patch' % message_id,
             {
-                'id': message_id,
                 'message': message,
             })
 
