@@ -24,7 +24,7 @@ matrix:
 install:
   - pip install -r requirements.txt
   - pip install pytest-cov
-  if [[ $TRAVIS_PYTHON_VERSION == 2.7 ]]; then pip install mock; fi
+  - if [[ $TRAVIS_PYTHON_VERSION == 2.7 ]]; then pip install mock; fi
   - pip install .
 
 before_script:
