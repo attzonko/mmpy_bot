@@ -6,7 +6,7 @@ Usage
 Basic
 -----
 
-Register new user on Mattermost. Copy email/password/team and url into ``mmpy_bot_settings.py`` file::
+Register a new user on Mattermost. Copy the email/password/team and URL into your ``mmpy_bot_settings.py`` file::
 
     BOT_URL = 'http://<mm.example.com>/api/v4'  # with 'http://' and with '/api/v4' path
     BOT_LOGIN = '<bot-email-address>'
@@ -20,11 +20,11 @@ Run the bot::
     $ MATTERMOST_BOT_SETTINGS_MODULE=mmpy_bot_settings mmpy_bot
 
 
-Structuting Your Basic Bot with Plugins
+Structuring Your Basic Bot with Plugins
 ---------------------------------------
 
-If you simply want to add some plugins ( listen_to, respond_to handlers), 
-you can have bot code files orginized under ``/opt/your_bot/`` like this :
+If you simply want to add some plugins (``listen_to``, ``respond_to`` handlers), 
+you can organize the bot code files under ``~/opt/your_bot/`` like this:
 
 ::
 
@@ -35,13 +35,13 @@ you can have bot code files orginized under ``/opt/your_bot/`` like this :
             <more py modules>
         mmpy_bot_settings.py
 
-Where the ``intro.py`` is a handler module.
+where ``intro.py`` is the handler module.
 
 
 Integration with Django
 -----------------------
 
-Create bot_settings on your project and after you can create ``django`` command::
+Set ``bot_settings`` in your project, after which you can create a ``django`` command::
 
     import logging
     import sys
