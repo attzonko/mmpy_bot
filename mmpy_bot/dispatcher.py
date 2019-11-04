@@ -37,7 +37,7 @@ class MessageDispatcher(object):
 
     @staticmethod
     def get_sender(msg):
-        return msg.get('data', {}).get('sender_name', '').strip()
+        return msg.get('data', {}).get('sender_name', '').strip().strip('@')
 
     def ignore(self, _msg):
         return self._ignore_notifies(_msg) or self._ignore_sender(_msg)
