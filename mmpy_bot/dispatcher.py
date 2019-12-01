@@ -241,7 +241,7 @@ class Message(object):
         return text
 
     def _get_sender_name(self):
-        return self._body['data'].get('sender_name', '').strip()
+        return self._body['data'].get('sender_name', '').strip().strip('@')
 
     @staticmethod
     def _get_webhook_url_by_id(hook_id):
