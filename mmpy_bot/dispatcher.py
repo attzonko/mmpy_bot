@@ -270,15 +270,15 @@ class Message(object):
             **kwargs)
 
     def reply(self, text, files=None, props=None):
-        self.send(self._gen_reply(text), files=files, props=props or {})
+        return self.send(self._gen_reply(text), files=files, props=props or {})
 
     def reply_thread(self, text, files=None, props=None):
-        self.send(self._gen_reply(text), files=files, props=props or {},
-                  pid=(self._body['data']['post']['root_id'] or
-                       self._body['data']['post']['id']))
+        return self.send(self._gen_reply(text), files=files, props=props or {},
+                         pid=(self._body['data']['post']['root_id'] or
+                              self._body['data']['post']['id']))
 
     def comment(self, message):
-        self.reply_thread(message)
+        return self.reply_thread(message)
 
     def send(self, text, channel_id=None, files=None, props=None, pid=''):
         return self._client.channel_msg(
@@ -292,11 +292,11 @@ class Message(object):
         )
 
     def react(self, emoji_name):
-        self._client.react_msg(
+        return self._client.react_msg(
             self._body['data']['post']['id'], emoji_name)
 
     def remove_reaction(self, emoji_name):
-        self._client.remove_reaction(
+        return self._client.remove_reaction(
             self._body['data']['post']['id'], emoji_name)
 
     def docs_reply(self, docs_format='    • `{0}` {1}'):
