@@ -4,7 +4,9 @@ Built-in decorators
 ===================
 
 
-Allowed users::
+Allowed users:
+
+.. code-block:: python
 
     from mmpy_bot.utils import allowed_users
     from mmpy_bot.bot import respond_to
@@ -17,7 +19,9 @@ Allowed users::
 
 
 
-Direct messages::
+Direct messages:
+
+.. code-block:: python
 
     from mmpy_bot.utils import allow_only_direct_message
     from mmpy_bot.bot import respond_to
@@ -30,7 +34,9 @@ Direct messages::
 
 
 
-Actions just after plugin initilization ::
+Actions just after plugin initilization:
+
+.. code-block:: python
 
     from mmpy_bot.bot import at_start
 
@@ -45,13 +51,17 @@ Real case
 ---------
 
 For example we have some users on our chat. We want allow some functionality
-to some users. We can create constants with allowed users on bot settings::
+to some users. We can create constants with allowed users on bot settings:
+
+.. code-block:: python
 
     ADMIN_USERS = ['admin', 'root', 'root@admin.com']
     SUPPORT_USERS = ['mike', 'nick', 'nick@nick-server.com']
 
 
-So now we can close access to some functions on plugins::
+So now we can close access to some functions on plugins:
+
+.. code-block:: python
 
     from mmpy_bot.utils import allow_only_direct_message
     from mmpy_bot.utils import allowed_users
