@@ -30,6 +30,17 @@ Direct messages::
 
 
 
+Actions just after plugin initilization ::
+
+    from mmpy_bot.bot import at_start
+
+
+    @at_start
+    def hello(client):
+        client.connect_websocket()
+        client.ping()
+
+
 Real case
 ---------
 
@@ -61,3 +72,10 @@ So now we can close access to some functions on plugins::
     def sms_to(message, name):
         # some code
         message.reply('Sms was sent to %s' % name)
+
+
+    @at_start
+    def hello(client):
+        team = client.api.get_team_by_name("TESTTEAM")
+        channel = client.api.get_channel_by_name("bot_test", team["id"])
+        client.channel_msg(channel["id"], "Hello, feels good to be alive!!")
