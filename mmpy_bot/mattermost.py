@@ -81,7 +81,7 @@ class MattermostAPI(object):
         return self.get('/files/{}/link'.format(file_id))
 
     def get_team_by_name(self, team_name):
-            return self.get('/teams/name/{}'.format(team_name))
+        return self.get('/teams/name/{}'.format(team_name))
 
     def get_team_id(self, channel_id):
         for team_id, channels in self.teams_channels_ids.items():
@@ -125,21 +125,21 @@ class MattermostAPI(object):
             }, verify=ssl_verify)
 
     def login(self, team, account, password):
-            props = {'login_id': account, 'password': password}
+        props = {'login_id': account, 'password': password}
+        response = self._login(props)
+        if response.status_code in [301, 302, 307]:
+            # reset self.url to the new URL
+            self.url = response.headers['Location'].replace(
+                    '/users/login', '')
+            # re-try login if redirected
             response = self._login(props)
-            if response.status_code in [301, 302, 307]:
-                # reset self.url to the new URL
-                self.url = response.headers['Location'].replace(
-                        '/users/login', '')
-                # re-try login if redirected
-                response = self._login(props)
-            if response.status_code == 200:
-                self.token = response.headers["Token"]
-                self.load_initial_data()
-                user = json.loads(response.text)
-                return user
-            else:
-                response.raise_for_status()
+        if response.status_code == 200:
+            self.token = response.headers["Token"]
+            self.load_initial_data()
+            user = json.loads(response.text)
+            return user
+        else:
+            response.raise_for_status()
 
     def _login(self, props):
         return requests.post(
