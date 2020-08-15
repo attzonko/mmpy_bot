@@ -11,6 +11,7 @@ To write a new plugin, simply create a function decorated by ``mmpy_bot.bot.resp
 
 - A function decorated with ``respond_to`` is called when a message matching the pattern is sent to the bot (direct message or @botname in a channel/group chat)
 - A function decorated with ``listen_to`` is called when a message matching the pattern is sent on a channel/group chat (not directly sent to the bot)
+- A function decorated with ``at_start`` is called as soon as the plugin is initialized (when the bot starts)
 
 .. code-block:: python
 
@@ -38,6 +39,13 @@ To write a new plugin, simply create a function decorated by ``mmpy_bot.bot.resp
         # Message is sent on the channel
         # message.send('I can help everybody!')
 
+    @at_start
+    def hello(client):
+        # Note that contrary to respond_to and listen_to @at_start
+        # receives a client object and not a message object
+        team = client.api.get_team_by_name("TESTTEAM")
+        channel = client.api.get_channel_by_name("bot_test", team["id"])
+        client.channel_msg(channel["id"], "Hello, feels good to be alive!!")
 
 To extract params from the message, you can use regular expression:
 

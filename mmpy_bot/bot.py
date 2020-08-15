@@ -35,6 +35,7 @@ class Bot(object):
 
     def run(self):
         self._plugins.init_plugins()
+        self._plugins.trigger_at_start(self._client)
         self._dispatcher.start()
         _thread.start_new_thread(self._keep_active, tuple())
         _thread.start_new_thread(self._run_jobs, tuple())
@@ -58,6 +59,7 @@ class PluginsManager(object):
         'respond_to': {},
         'listen_to': {}
     }
+    _at_start = []
 
     def __init__(self, plugins=None):
         self.plugins = plugins or []
@@ -107,6 +109,13 @@ class PluginsManager(object):
         if not has_matching_plugin:
             yield None, None
 
+    def trigger_at_start(self, client):
+        for func in self._at_start:
+            try:
+                func(client)
+            except Exception as err:
+                logger.exception(err)
+
 
 class Matcher(object):
     """This allows us to map the same regex to multiple handlers."""
@@ -132,3 +141,14 @@ def respond_to(regexp, flags=0):
 
 def listen_to(regexp, flags=0):
     return get_wrapper('listen_to', regexp, flags)
+
+
+def at_start():
+    def wrapper(func):
+        PluginsManager._at_start.append(func)
+        logger.info(
+            'registered %s plugin "%s"',
+            "at_start", func.__name__)
+        return func
+
+    return wrapper

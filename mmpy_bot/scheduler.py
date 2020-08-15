@@ -34,8 +34,8 @@ def _default_scheduler__once(self, trigger_time):
 
 def _once(trigger_time=datetime.now()):
     if not isinstance(trigger_time, datetime):
-            raise AssertionError(
-                "The trigger_time parameter should be a datetime object.")
+        raise AssertionError(
+            "The trigger_time parameter should be a datetime object.")
     return default_scheduler.once(
             self=default_scheduler,
             trigger_time=trigger_time)
