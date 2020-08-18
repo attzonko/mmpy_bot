@@ -1,8 +1,11 @@
 dist: trusty
-sudo: false
+sudo: required
 env:
   global:
     - CC_TEST_REPORTER_ID=b0fed3b6b9b09683bf744113f1effa146b532c2fc05f21d0b3f29787807bca01
+
+services:
+  - docker
 
 branches:
   only:
@@ -31,6 +34,7 @@ before_script:
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
   - chmod +x ./cc-test-reporter
   - ./cc-test-reporter before-build
+  - docker run --name mattermost-preview -d --publish 8065:8065 --add-host dockerhost:127.0.0.1 mattermost/mattermost-preview
 
 script: pytest --cov=mmpy_bot tests/ --cov-report xml
 
