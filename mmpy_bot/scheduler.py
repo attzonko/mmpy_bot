@@ -32,7 +32,9 @@ def _default_scheduler__once(self, trigger_time):
     return job
 
 
-def _once(trigger_time=datetime.now()):
+def _once(trigger_time=None):
+    if trigger_time is None:
+        trigger_time = datetime.now()
     if not isinstance(trigger_time, datetime):
         raise AssertionError(
             "The trigger_time parameter should be a datetime object.")
