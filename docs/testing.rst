@@ -140,3 +140,22 @@ Using "--cov-report" parameter to write report into "cov_html" folder by html fo
 .. code-block:: bash
 
 	py.test --cov-report html:logs\cov_html --cov=mmpy_bot tests\
+
+Running tests in docker:
+------------------------
+
+If you have docker installed you can spawn a temporary mattermost instance and
+run all the tests by running the following:
+
+.. code-block:: bash
+
+    $ ./tests/run-tests-in-docker.sh
+
+This has predefined environment variables which you can customise.
+Variables in addition to the ones above are:
+
+:code:`DOCKER_CONTAINER_NAME` which specifies the name of the conatiner that runs mattermost
+
+:code:`DOCKER_NETWORK` the docker network to run in, this is created automatically if it doesn't exist
+
+:code:`PYTHON_VERSION` the python version to use
