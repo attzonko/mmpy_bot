@@ -7,6 +7,18 @@ module = "mmpy_bot"
 author = "Alex Tzonkov"
 author-email = "alex.tzonkov@gmail.com"
 home-page = "https://pypi.org/project/mmpy-bot/"
-classifiers = ["License :: OSI Approved :: MIT License"]
 description-file = "README.md"
+classifiers = [
+'License :: OSI Approved :: MIT License',
+'Development Status :: 5 - Production/Stable',
+'Intended Audience :: Developers',
+'Operating System :: OS Independent',
+'Programming Language :: Python',
+'Programming Language :: Python :: 3.6',
+'Programming Language :: Python :: 3.7',
+'Programming Language :: Python :: 3.8',
+'Programming Language :: Python :: 3.9',
+'Topic :: Internet :: WWW/HTTP',
+'Topic :: Software Development :: Libraries :: Python Modules',
+]
 
