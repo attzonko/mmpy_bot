@@ -6,7 +6,7 @@ build-backend = "flit_core.buildapi"
 module = "mmpy_bot"
 author = "Alex Tzonkov"
 author-email = "alex.tzonkov@gmail.com"
-home-page = "https://pypi.org/project/mmpy-bot/"
+home-page = "https://github.com/attzonko/mmpy_bot"
 description-file = "README.md"
 classifiers = [
 'License :: OSI Approved :: MIT License',
