@@ -28,8 +28,6 @@ def test_bot_reply_to_channel_message(driver):  # noqa: F811
     driver.wait_for_bot_channel_message('hello sender!')
     driver.send_channel_message('hello', colon=False)
     driver.wait_for_bot_channel_message('hello sender!')
-    driver.send_channel_message('hello', space=False)
-    driver.wait_for_bot_channel_message('hello sender!')
     driver.send_channel_message('hello', colon=False, space=False)
     driver.wait_for_bot_channel_message('hello channel!', tosender=False)
 

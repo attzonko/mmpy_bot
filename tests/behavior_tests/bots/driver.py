@@ -81,8 +81,11 @@ class Driver(object):
             json_data = self._websocket_safe_read()
             if json_data != '':
                 with self._events_lock:
-                    self.events.extend(
-                        [json.loads(d) for d in json_data.split('\n')])
+                    for d in json_data.split('\n'):
+                        try:
+                            self.events.extend([json.loads(d)])
+                        except:
+                            pass
             time.sleep(1)
 
     def _retrieve_bot_user_ids(self):

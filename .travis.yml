@@ -1,36 +1,43 @@
-dist: trusty
 sudo: false
 env:
   global:
     - CC_TEST_REPORTER_ID=b0fed3b6b9b09683bf744113f1effa146b532c2fc05f21d0b3f29787807bca01
+    - BOT_URL='http://localhost:8065/api/v4'
+    - DRIVERBOT_LOGIN='driverbot@test.com'
+    - DRIVERBOT_NAME='driverbot'
+    - DRIVERBOT_PASSWORD='driverbot_password'
+    - TESTBOT_LOGIN='testbot@test.com'
+    - TESTBOT_NAME='testbot'
+    - TESTBOT_PASSWORD='testbot_password'
+    - BOT_TEAM='test-team'
+    - DOCKER_CONTAINER_NAME=mattermost
+    - DOCKER_NETWORK=default
+    - BOT_CHANNEL=public
+    - BOT_PRIVATE_CHANNEL=private
 
 branches:
   only:
     - master
 
+services:
+  - docker
+
 language: python
 
 matrix:
   include:
-  - python: "2.7"
-    env: BOT_CHANNEL=PUB_2_7 BOT_PRIVATE_CHANNEL=PRIV_2_7
-  - python: "3.4"
-    env: BOT_CHANNEL=PUB_3_4 BOT_PRIVATE_CHANNEL=PRIV_3_4
-  - python: "3.5"
-    env: BOT_CHANNEL=PUB_3_5 BOT_PRIVATE_CHANNEL=PRIV_3_5
   - python: "3.6"
-    env: BOT_CHANNEL=PUB_3_6 BOT_PRIVATE_CHANNEL=PRIV_3_6
+  - python: "3.7"
+  - python: "3.8"
+  - python: "3.9"
     
 install:
   - pip install -r requirements.txt
   - pip install pytest-cov
-  - if [[ $TRAVIS_PYTHON_VERSION == 2.7 ]]; then pip install mock; fi
   - pip install .
 
 before_script:
-  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-  - chmod +x ./cc-test-reporter
-  - ./cc-test-reporter before-build
+  - tests/setup.sh
 
 script: pytest --cov=mmpy_bot tests/ --cov-report xml
 
