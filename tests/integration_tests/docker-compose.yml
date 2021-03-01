@@ -1,0 +1,10 @@
+version: "3.7"
+
+services:
+  app:
+    container_name: "mattermost-bot-test"
+    build: .
+    command: ./mm/docker-entry.sh
+    network_mode: host
+    extra_hosts:
+      - "dockerhost:127.0.0.1"

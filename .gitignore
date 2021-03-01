@@ -12,3 +12,6 @@ build
 .vscode
 coverage.xml
 *_build*
+**/*.log
+**/*.lock
+test.py

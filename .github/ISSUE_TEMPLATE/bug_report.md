@@ -15,7 +15,7 @@ A clear and concise description of what you expected to happen.
 
 **Operating Environment (please complete the following information):**
  - OS: [e.g. Windows 10, Linux, MacOS]
- - Python Version: [e.g. 2.7, 3.4, 3.6]
+ - Python Version: [e.g. 3.4, 3.8]
  - Mattermost Version: [e.g. 5.1.0]
  - mmpy_bot Version: [e.g. 1.2.1]
  

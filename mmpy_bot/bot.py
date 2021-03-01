@@ -1,154 +1,95 @@
-# -*- coding: utf-8 -*-
-
-from __future__ import absolute_import
-
-import imp
-import importlib
+import asyncio
 import logging
-import os
-import re
-import time
-from glob import glob
+import sys
+from typing import Sequence
 
-from six.moves import _thread
-
-from mmpy_bot import settings
-from mmpy_bot.dispatcher import MessageDispatcher
-from mmpy_bot.mattermost import MattermostClient
-from mmpy_bot.scheduler import schedule
-
-logger = logging.getLogger(__name__)
+from mmpy_bot.driver import Driver
+from mmpy_bot.event_handler import EventHandler
+from mmpy_bot.plugins import ExamplePlugin, Plugin, WebHookExample
+from mmpy_bot.settings import Settings
+from mmpy_bot.webhook_server import WebHookServer
 
 
-class Bot(object):
-    def __init__(self):
-        if settings.MATTERMOST_API_VERSION < 4:
-            raise ValueError('mmpy-bot only supports API Version 4+')
-        self._client = MattermostClient(
-            settings.BOT_URL, settings.BOT_TEAM,
-            settings.BOT_LOGIN, settings.BOT_PASSWORD,
-            settings.SSL_VERIFY, settings.BOT_TOKEN,
-            settings.WS_ORIGIN)
-        logger.info('connected to mattermost')
-        self._plugins = PluginsManager()
-        self._dispatcher = MessageDispatcher(self._client, self._plugins)
+class Bot:
+    """Base chatbot class.
+
+    Can be either subclassed for custom functionality, or used as-is with custom plugins
+    and settings. To start the bot, simply call bot.run().
+    """
+
+    def __init__(
+        self, settings=Settings(), plugins=[ExamplePlugin(), WebHookExample()]
+    ):
+        logging.basicConfig(
+            **{
+                "format": "[%(asctime)s] %(message)s",
+                "datefmt": "%m/%d/%Y %H:%M:%S",
+                "level": logging.DEBUG if settings.DEBUG else logging.INFO,
+                "stream": sys.stdout,
+            }
+        )
+        self.settings = settings
+        self.driver = Driver(
+            {
+                "url": settings.MATTERMOST_URL,
+                "port": settings.MATTERMOST_PORT,
+                "token": settings.BOT_TOKEN,
+                "scheme": settings.SCHEME,
+                "verify": settings.SSL_VERIFY,
+            }
+        )
+        self.driver.login()
+        self.plugins = self._initialize_plugins(plugins)
+        self.event_handler = EventHandler(
+            self.driver, settings=self.settings, plugins=self.plugins
+        )
+        self.webhook_server = None
+
+        if self.settings.WEBHOOK_HOST_ENABLED:
+            self._initialize_webhook_server()
+
+    def _initialize_plugins(self, plugins: Sequence[Plugin]):
+        for plugin in plugins:
+            plugin.initialize(self.driver, self.settings)
+        return plugins
+
+    def _initialize_webhook_server(self):
+        self.webhook_server = WebHookServer(
+            url=self.settings.WEBHOOK_HOST_URL, port=self.settings.WEBHOOK_HOST_PORT
+        )
+        self.driver.register_webhook_server(self.webhook_server)
+        # Schedule the queue loop to the current event loop so that it starts together
+        # with self.init_websocket.
+        asyncio.get_event_loop().create_task(
+            self.event_handler._check_queue_loop(self.webhook_server.event_queue)
+        )
 
     def run(self):
-        self._plugins.init_plugins()
-        self._plugins.trigger_at_start(self._client)
-        self._dispatcher.start()
-        _thread.start_new_thread(self._keep_active, tuple())
-        _thread.start_new_thread(self._run_jobs, tuple())
-        self._dispatcher.loop()
-
-    def _keep_active(self):
-        logger.info('keep active thread started')
-        while True:
-            time.sleep(60)
-            self._client.ping()
-
-    def _run_jobs(self):
-        logger.info('job running thread started')
-        while True:
-            time.sleep(settings.JOB_TRIGGER_PERIOD)
-            schedule.run_pending()
-
-
-class PluginsManager(object):
-    commands = {
-        'respond_to': {},
-        'listen_to': {}
-    }
-    _at_start = []
-
-    def __init__(self, plugins=None):
-        self.plugins = plugins or []
-
-    def init_plugins(self):
-        if self.plugins == []:
-            if hasattr(settings, 'PLUGINS'):
-                self.plugins = settings.PLUGINS
-            if self.plugins == []:
-                self.plugins.append('mmpy_bot.plugins')
-
-        for plugin in self.plugins:
-            self._load_plugins(plugin)
-
-    @staticmethod
-    def _load_plugins(plugin):
-        logger.info('loading plugin "%s"', plugin)
-        path_name = None
-        # try to load root package as module first
-        PluginsManager._load_module(plugin)
-        # load modules in this plugin package
-        for mod in plugin.split('.'):
-            if path_name is not None:
-                path_name = [path_name]
-            _, path_name, _ = imp.find_module(mod, path_name)
-        for py_file in glob('{}/[!_]*.py'.format(path_name)):
-            module = '.'.join((plugin, os.path.split(py_file)[-1][:-3]))
-            PluginsManager._load_module(module)
-
-    @staticmethod
-    def _load_module(module):
+        logging.info(f"Starting bot {self.__class__.__name__}.")
         try:
-            _module = importlib.import_module(module)
-            if hasattr(_module, 'on_init'):
-                _module.on_init()
-        except Exception as err:
-            logger.exception(err)
+            self.driver.threadpool.start()
+            # Start a thread to run potential scheduled jobs
+            self.driver.threadpool.start_scheduler_thread(
+                self.settings.SCHEDULER_PERIOD
+            )
+            # Start the webhook server on a separate thread if necessary
+            if self.settings.WEBHOOK_HOST_ENABLED:
+                self.driver.threadpool.start_webhook_server_thread(self.webhook_server)
 
-    def get_plugins(self, category, text):
-        has_matching_plugin = False
-        for matcher in self.commands[category]:
-            m = matcher.regex.search(text)
-            if m:
-                has_matching_plugin = True
-                yield self.commands[category][matcher], m.groups()
+            for plugin in self.plugins:
+                plugin.on_start()
 
-        if not has_matching_plugin:
-            yield None, None
+            # Start listening for events
+            self.event_handler.start()
 
-    def trigger_at_start(self, client):
-        for func in self._at_start:
-            try:
-                func(client)
-            except Exception as err:
-                logger.exception(err)
+        except KeyboardInterrupt as e:
+            self.stop()
+            raise e
 
-
-class Matcher(object):
-    """This allows us to map the same regex to multiple handlers."""
-    def __init__(self, regex):
-        self.regex = regex
-
-
-def get_wrapper(wrapper_type, regexp, flags=0):
-    def wrapper(func):
-        m = Matcher(re.compile(regexp, flags))
-        PluginsManager.commands[wrapper_type][m] = func
-        logger.info(
-            'registered %s plugin "%s" to "%s"',
-            wrapper_type, func.__name__, regexp)
-        return func
-
-    return wrapper
-
-
-def respond_to(regexp, flags=0):
-    return get_wrapper('respond_to', regexp, flags)
-
-
-def listen_to(regexp, flags=0):
-    return get_wrapper('listen_to', regexp, flags)
-
-
-def at_start():
-    def wrapper(func):
-        PluginsManager._at_start.append(func)
-        logger.info(
-            'registered %s plugin "%s"',
-            "at_start", func.__name__)
-        return func
-
-    return wrapper
+    def stop(self):
+        logging.info("Stopping bot.")
+        # Shutdown the running plugins
+        for plugin in self.plugins:
+            plugin.on_stop()
+        # Stop the threadpool
+        self.driver.threadpool.stop()
