@@ -23,6 +23,7 @@ setup(
     platforms=['Any'],
     packages=find_packages(exclude=excludes),
     install_requires=install_requires,
+    extras_require={"dev": requires("dev-requirements.txt")},
     entry_points={
         'console_scripts': [
             'mmpy_bot = mmpy_bot.cli:main',
