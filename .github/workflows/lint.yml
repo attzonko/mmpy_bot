@@ -1,0 +1,47 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Linting
+
+# Controls when the action will run. 
+on:
+  # Triggers the workflow on push or pull request events but only for the master branch
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Cancel Outdated Runs
+        uses: styfle/cancel-workflow-action@0.8.0
+        with:
+          access_token: ${{ github.token }}
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - uses: actions/cache@v2.1.4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip3-${{ hashFiles('*requirements.txt') }}
+      - run: pip install wheel
+      - name: Install dependencies
+        run: pip install -e .[dev]
+      - name: Run Flake8
+        run: flake8
+      - name: Black code style
+        run: black . --check --target-version py38 --exclude '\.mypy_cache/|\.venv/|env/|(.*/)*snapshots/|.pytype/'
+      - name: Docstring formatting
+        run: docformatter -c -r . --wrap-summaries 88 --wrap-descriptions 88
+      - name: Check import order with isort
+        run: isort . --check --diff
+      - name: PyType type-check
+        run: pytype -j auto .
