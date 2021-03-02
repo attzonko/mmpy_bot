@@ -12,6 +12,10 @@ excludes = (
     "*local_settings*",
 )
 
+
+def requires(filename: str):
+        return open(filename).read().splitlines()
+
 setup(
     name="mmpy_bot",
     version=__version__,
@@ -27,6 +31,11 @@ setup(
     packages=find_packages(exclude=excludes),
     install_requires=requires("requirements.txt"),
     extras_require={"dev": requires("dev-requirements.txt")},
+    entry_points={
+        'console_scripts': [
+            'mmpy_bot = mmpy_bot.cli:main',
+        ],
+    },
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "License :: OSI Approved :: MIT License",
