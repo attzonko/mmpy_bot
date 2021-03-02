@@ -9,6 +9,10 @@ excludes = (
     '*local_settings*',
 )
 
+
+def requires(filename: str):
+        return open(filename).read().splitlines()
+
 setup(
     name="mmpy_bot",
     version=get_version(),
