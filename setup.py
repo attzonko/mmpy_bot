@@ -7,7 +7,8 @@ excludes = (
 
 
 def requires(filename: str):
-        return open(filename).read().splitlines()
+    return open(filename).read().splitlines()
+
 
 setup(
     name="mmpy_bot",
