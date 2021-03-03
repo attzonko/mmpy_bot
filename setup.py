@@ -26,8 +26,8 @@ setup(
     install_requires=requires("requirements.txt"),
     extras_require={"dev": requires("dev-requirements.txt")},
     entry_points={
-        'console_scripts': [
-            'mmpy_bot = mmpy_bot.cli:main',
+        "console_scripts": [
+            "mmpy_bot = mmpy_bot.cli:main",
         ],
     },
     classifiers=[
