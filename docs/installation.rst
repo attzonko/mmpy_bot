@@ -15,5 +15,5 @@ Recommended way to install is via pip::
 Check `mmpy_bot` version::
 
     import mmpy_bot
-    print(mmpy_bot.get_version())
+    print(mmpy_bot.__version__)
 

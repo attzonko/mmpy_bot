@@ -17,4 +17,4 @@ Installation for development
 .. code-block:: python
 
     >>> import mmpy_bot
-    >>> print(mmpy_bot.get_version())
+    >>> print(mmpy_bot.__version__)

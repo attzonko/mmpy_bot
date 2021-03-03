@@ -2,7 +2,7 @@
 
 import os
 
-from mmpy_bot import get_version
+from mmpy_bot import __version__
 
 os.environ["DJANGO_SETTINGS_MODULE"] = "settings"
 
@@ -12,8 +12,8 @@ source_suffix = ".rst"
 master_doc = "index"
 project = "mmpy_bot"
 copyright = "2016, "
-version = get_version()
-release = get_version()
+version = __version__
+release = __version__ 
 exclude_patterns = []
 pygments_style = "sphinx"
 html_theme = "default"
