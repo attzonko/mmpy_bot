@@ -1,12 +1,5 @@
 from setuptools import find_packages, setup
 
-from mmpy_bot import __version__
-
-
-def requires(filename: str):
-    return open(filename).read().splitlines()
-
-
 excludes = (
     "*test*",
     "*local_settings*",
@@ -18,7 +11,7 @@ def requires(filename: str):
 
 setup(
     name="mmpy_bot",
-    version=__version__,
+    version="2.0.0.dev1",
     author="Alex Tzonkov",
     author_email="alex.tzonkov@gmail.com",
     license="MIT",
