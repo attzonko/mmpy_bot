@@ -7,12 +7,7 @@ import pytest
 
 from mmpy_bot import ExamplePlugin, Settings, listen_to
 from mmpy_bot.driver import Driver
-from mmpy_bot.function import (
-    Function,
-    MessageFunction,
-    WebHookFunction,
-    listen_webhook,
-)
+from mmpy_bot.function import Function, MessageFunction, WebHookFunction, listen_webhook
 from mmpy_bot.webhook_server import NoResponse
 from mmpy_bot.wrappers import WebHookEvent
 
