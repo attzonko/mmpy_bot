@@ -9,17 +9,27 @@
 Documentation available at [Read the Docs](http://mmpy_bot.readthedocs.org/).
 
 
-## What is This
+## Description
 
-A python based chat bot for [Mattermost](http://www.mattermost.org).
+A Python based chat bot for [Mattermost](http://www.mattermost.org). The code for
+this bot was heavily re-factored in v2.0.0 and will only work with Python 3.8 or higher.
+For Python 2 support, please use v1.3.9 or lower.
 
 ## Features
 
-* Based on Mattermost [WebSocket API(V4.0.0)](https://api.mattermost.com)
-* Simple plugins mechanism
-* Messages can be handled concurrently
-* Automatically reconnect to Mattermost when connection is lost
-* Python3 Support
+- [x] Based on Mattermost [WebSocket API(V4.0.0)](https://api.mattermost.com)
+- [x] Simple plugins mechanism
+- [x] Concurrent message handling
+- [x] Attachment support
+- [x] Auto-reconnect to Mattermost after connection loss
+- [x] Python 2 compatible (<=v1.3.9 only)
+
+##### Additional features in v2.0.0:
+- [x] Multi-threading and asyncio execution
+- [x] Integrated webhook server
+- [x] Support for click functions
+- [x] Job scheduling
+- [x] Compatible with Python 3.8+ only
 
 
 ## Compatibility
@@ -32,56 +42,52 @@ A python based chat bot for [Mattermost](http://www.mattermost.org).
 
 ## Installation
 
+##### v2.0.0 refactor
 ```
 pip install mmpy_bot
 ```
 
-## Usage
+##### v1.3.9 legacy
+```
+pip install mmpy_bot==1.3.9
+```
+
+## Usage (v2.0.0)
 
 ### Registration
 
-First you need create the mattermost email/password for your bot.
+First you need to create a bot account on your Mattermost server.
+Note: **Enable Bot Account Creation** must be enabled under System Console
+1. Login to your Mattermost server as a user with Administrative privileges.
+1. Navigate to Integrations -> Bot Accounts -> Add Bot Account
+1. Fill in the configuration options and upon creation take note of the **Access Token**
 
 For use all API(V4.0.0), you need add bot user to system admin group to avoid 403 error.
 
 ### Configuration
+Edit settings.py and configure as needed.
 
-Then you need to configure the `BOT_URL`, `BOT_LOGIN`, `BOT_PASSWORD`, `BOT_TEAM` in a python module
-`mmpy_bot_settings.py`, which must be located in a python import path.
-
-
-mmpy_bot_settings.py:
+**settings.py:**
 
 ```python
-SSL_VERIFY = True  # Whether to perform SSL cert verification
-BOT_URL = 'http://<mm.example.com>/api/v4'  # with 'http://' and with '/api/v4' path. without trailing slash.
-BOT_LOGIN = '<bot-email-address>'
-BOT_PASSWORD = '<bot-password>'
-BOT_TOKEN = None # or '<bot-personal-access-token>' if you have set bot personal access token.
-BOT_TEAM = '<your-team>'  # possible in lowercase
-WEBHOOK_ID = '<bot-webhook-id>' # otherwise the bot will attempt to create one
-```
-
-Alternatively, you can use the environment variable `MATTERMOST_BOT_URL`,
-`MATTERMOST_BOT_LOGIN`, `MATTERMOST_BOT_PASSWORD`, `MATTERMOST_BOT_TEAM`,
-`MATTERMOST_BOT_SSL_VERIFY`, `MATTERMOST_BOT_TOKEN`
-
-or `MATTERMOST_BOT_SETTINGS_MODULE` environment variable, which provide settings module
-
-```bash
-MATTERMOST_BOT_SETTINGS_MODULE=settings.bot_conf mmpy_bot
+MATTERMOST_URL: str = "https://chat.com"
+MATTERMOST_PORT: int = 443
+BOT_TOKEN: str = "token"
+BOT_TEAM: str = "team_name"
+SSL_VERIFY: bool = True
+WEBHOOK_HOST_ENABLED: bool = False
+WEBHOOK_HOST_URL: str = "http://127.0.0.1"
+WEBHOOK_HOST_PORT: int = 8579
+DEBUG: bool = False
+IGNORE_USERS: Sequence[str] = field(default_factory=list)
+# How often to check whether any scheduled jobs need to be run, default every second
+SCHEDULER_PERIOD: float = 1.0
 ```
 
 
 ### Run the bot
 
-Use the built-in cli script and point to your custom settings file.
-
-```bash
-MATTERMOST_BOT_SETTINGS_MODULE=mmpy_bot_settings mmpy_bot
-```
-
-or you can create your own startup file. For example `run.py`:
+Create your own startup file. For example `run.py`:
 
 ```python
 from mmpy_bot.bot import Bot
@@ -91,9 +97,9 @@ if __name__ == "__main__":
     Bot().run()
 ```
 
-Now you can talk to your bot in your mattermost client!
+Now you can talk to your bot in your Mattermost client!
 
-
+##### TODO: Update below instructions
 
 ## Attachment Support
 
