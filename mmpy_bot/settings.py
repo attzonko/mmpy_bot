@@ -15,7 +15,7 @@ class Settings:
     BOT_TOKEN: str = "token"
     BOT_TEAM: str = "team_name"
     SSL_VERIFY: bool = True
-    WEBHOOK_HOST_ENABLED: bool = True
+    WEBHOOK_HOST_ENABLED: bool = False
     WEBHOOK_HOST_URL: str = "http://127.0.0.1"
     WEBHOOK_HOST_PORT: int = 8579
     DEBUG: bool = False

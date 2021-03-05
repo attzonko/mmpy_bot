@@ -54,6 +54,9 @@ def driver():
             BOT_TOKEN="7arqwr6kzibc58zomct9ndfk1e",
             MATTERMOST_PORT=8065,
             SSL_VERIFY=False,
+            WEBHOOK_HOST_ENABLED=True,
+            WEBHOOK_HOST_URL="http://127.0.0.1",
+            WEBHOOK_HOST_PORT=8579
         ),
         plugins=[],  # We only use this to send messages, not to reply to anything.
     ).driver
@@ -74,6 +77,9 @@ def start_bot(request):
                 BOT_TOKEN="e691u15hajdebcnqpfdceqihcc",
                 MATTERMOST_PORT=8065,
                 SSL_VERIFY=False,
+                WEBHOOK_HOST_ENABLED=True,
+                WEBHOOK_HOST_URL="http://127.0.0.1",
+                WEBHOOK_HOST_PORT=8579
             ),
             plugins=[TestPlugin(), ExamplePlugin(), WebHookExample()],
         )
