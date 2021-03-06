@@ -9,6 +9,9 @@ on:
 jobs:
   unit_test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.7, 3.8, 3.9]
 
     steps:
       - name: Cancel Outdated Runs
@@ -16,10 +19,10 @@ jobs:
         with:
           access_token: ${{ github.token }}
       - uses: actions/checkout@v2
-      - name: Set up Python 3.8
-        uses: actions/setup-python@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2.2.1
         with:
-          python-version: 3.8
+          python-version: ${{ matrix.python-version }}
       - uses: actions/cache@v2.1.4
         with:
           path: ~/.cache/pip
@@ -35,10 +38,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Set up Python 3.8
-        uses: actions/setup-python@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2.2.1
         with:
-          python-version: 3.8
+          python-version: ${{ matrix.python-version }}
       - uses: actions/cache@v2.1.4
         with:
           path: ~/.cache/pip
