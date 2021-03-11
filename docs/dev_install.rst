@@ -25,7 +25,7 @@ Installation for development
         MATTERMOST_PORT: int = 8065
         BOT_TOKEN: str = "e691u15hajdebcnqpfdceqihcc"
         BOT_TEAM: str = "test"
-        SSL_VERIFY: bool = True
+        SSL_VERIFY: bool = False
         WEBHOOK_HOST_ENABLED: bool = False
         WEBHOOK_HOST_URL: str = "http://127.0.0.1"
         WEBHOOK_HOST_PORT: int = 8579
