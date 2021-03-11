@@ -1,20 +1,38 @@
 Installation for development
 ============================
 
-.. code-block:: bash
+#. Clone repo and install requirements:
 
-    $ sudo apt-get install virtualenvwrapper
-    $ mkvirtualenv mmpy_bot
-    $ git clone https://github.com/attzonko/mmpy_bot.git
-    $ cd mmpy_bot
-    $ python setup.py develop
-    $ pip install -r requirements.txt
-    $ pip install -r docs/requirements.txt
-    $ touch local_settings.py               # configure your local settings
-    $ mmpy_bot                              # run bot
+    .. code-block:: bash
 
+        $ git clone https://github.com/attzonko/mmpy_bot.git
+        $ cd mmpy_bot
+        $ pip install -r requirements.txt
+        $ pip install -r dev-requirements.txt
+
+#. Spin up the Mattermost container (Podman or Docker required):
+
+    .. code-block:: bash
+
+        $ podman-compose -f tests/integration_tests/docker-compose.yml up -d
+
+#. Edit mmpy_bot/settings.py and configure as below. If testing webhook
+   server functionality, ensure **WEBHOOK_HOST_ENABLED** is to `True`.
+
+    .. code-block:: python
+
+        MATTERMOST_URL: str = "http://127.0.0.1"
+        MATTERMOST_PORT: int = 8065
+        BOT_TOKEN: str = "e691u15hajdebcnqpfdceqihcc"
+        BOT_TEAM: str = "test"
+        SSL_VERIFY: bool = True
+        WEBHOOK_HOST_ENABLED: bool = False
+        WEBHOOK_HOST_URL: str = "http://127.0.0.1"
+        WEBHOOK_HOST_PORT: int = 8579
+
+#. Run the bot:
 
 .. code-block:: python
 
-    >>> import mmpy_bot
-    >>> print(mmpy_bot.__version__)
+    >>> from mmpy_bot.bot import Bot
+    >>> Bot().run()
