@@ -1,7 +1,7 @@
 Plugins
 =======
 
-A chat bot is meaningless unless you can extend/customize it to fit your own use cases, which can be achieved through custom plugins. This page provides some details on how to get started.
+A chat bot is meaningless unless you can extend/customize it to fit your own use cases, which can be achieved through custom plugins.
 
 Writing your first plugin
 -------------------------
@@ -30,7 +30,6 @@ Writing your first plugin
 #. Now open up ./plugins/__init__.py and add your plugin module as follows:
 
     .. code-block:: python
-      :emphasize-lines: 4,6
 
         from mmpy_bot.plugins.base import Plugin
         from mmpy_bot.plugins.example import ExamplePlugin
