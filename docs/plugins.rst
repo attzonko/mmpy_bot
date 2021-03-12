@@ -69,8 +69,8 @@ Implementing regular expression
         message.reply('I can understand hi or HI!')
 
     @listen_to('Give me (.*)')
-    def give_me(message, something):
-        message.reply('Here is %s' % something)
+    async def give_me(self, message, something):
+        self.driver.reply_to(message, 'Here is %s' % something)
 
 Restrict messages to specific users
 ----------------------------------
