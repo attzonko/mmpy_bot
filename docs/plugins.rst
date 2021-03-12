@@ -6,7 +6,7 @@ A chat bot is meaningless unless you can extend/customize it to fit your own use
 Writing your first plugin
 -------------------------
 
-#. First you need to create a Python file in the ./plugins directory. For this example we will create the file ./plugins/my_plugin.py and
+#. First you need to create a Python file in the `./plugins` directory. For this example we will create the file ./plugins/my_plugin.py and
    import the required modules:
 
     .. code-block:: python
@@ -27,7 +27,7 @@ Writing your first plugin
 
     In the above code block, the `@listen_to` decorator tells the bot to listen on any channel for the string "wake up", and respond with "I'm awake!".
 
-#. Now open up ./plugins/__init__.py and add your plugin module as follows:
+#. Now open up `./plugins/__init__.py` and add your plugin module as follows:
 
     .. code-block:: python
 
@@ -55,7 +55,7 @@ Further configuration
 ---------------------
 
 The below code snippets provide an insight into the functionality that can be added to the bot. For more in-depth examples,
-please refer to ./plugins/example.py and ./plugins/webhook_example.py.
+please refer to `./plugins/example.py` and `./plugins/webhook_example.py`.
 
 Implementing regular expression
 -------------------------------
