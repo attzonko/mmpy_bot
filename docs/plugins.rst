@@ -6,50 +6,59 @@ A chat bot is meaningless unless you can extend/customize it to fit your own use
 Writing your first plugin
 -------------------------
 
-#. First you need to create a Python file in the `./plugins` directory. For this example we will create the file ./plugins/my_plugin.py and
-   import the required modules:
+#. To demonstrate how easy it is to create a plugin for `mmpy_bot`, let's write a basic plugin and run it. Start with an empty Python file and import these three `mmpy_bot` modules:
 
     .. code-block:: python
 
-        from mmpy_bot.plugins.base import Plugin, listen_to
-        from mmpy_bot.wrappers import Message
+        from mmpy_bot import Plugin, listen_to
+        from mmpy_bot import Message
 
-
-#. Next create a class with the name of your plugin and create an `asyncio` method with the `@listen_to` decorator:
+#. Now create a Class with the name of your plugin, subclassing `Plugin`:
 
     .. code-block:: python
 
         class MyPlugin(Plugin):
 
-            @listen_to("wake up")
-            async def wake_up(self, message: Message):
-                self.driver.reply_to(message, "I'm awake!")
+#. Now we can write the methods that control how the bot will respond to certain messages. Let's start with a basic one that will simply trigger a response from the bot:
+
+    .. code-block:: python
+
+        @listen_to("wake up")
+        async def wake_up(self, message: Message):
+            self.driver.reply_to(message, "I'm awake!")
 
     In the above code block, the `@listen_to` decorator tells the bot to listen on any channel for the string "wake up", and respond with "I'm awake!".
 
-#. Now open up `./plugins/__init__.py` and add your plugin module as follows:
+#. Save your plugin file and open a fresh Python file which will be the entrypoint to start the bot and include your plugin:
 
     .. code-block:: python
 
-        from mmpy_bot.plugins.base import Plugin
-        from mmpy_bot.plugins.example import ExamplePlugin
-        from mmpy_bot.plugins.webhook_example import WebHookExample
-        from mmpy_bot.plugins.my_plugin import MyPlugin
+        #!/usr/bin/env python
 
-        __all__ = ["Plugin", "ExamplePlugin", "WebHookExample", "MyPlugin"]
+        from mmpy_bot import Bot, Settings
+        from my_plugin import MyPlugin
 
-#. Last but not least, you will need to ensure your plugin is started by the bot. In this example we will update the default `bot.py` file
-   to import `MyPlugin`:
+        bot = Bot(
+            settings=Settings(
+                MATTERMOST_URL = "http://127.0.0.1",
+                MATTERMOST_PORT = 8065,
+                BOT_TOKEN = "<your_bot_token>",
+                BOT_TEAM = "<team_name>",
+                SSL_VERIFY = False,
+            ),  # Either specify your settings here or as environment variables.
+            plugins=[MyPlugin()],  # Add your own plugins here.
+        )
+        bot.run()
 
-    .. code-block:: python
+    The above code assumes your plugin is in the same directory as the entrypoint file. Also be sure to set the correct settings for your Mattermost server and bot account.
 
-        from mmpy_bot.plugins import ExamplePlugin, Plugin, WebHookExample, MyPlugin
+#. Save your entrypoint file and run it from the command prompt:
 
-        def __init__(self, settings=Settings(), plugins=[ExamplePlugin(), WebHookExample(),
-                     MyPlugin()]
-        ):
+    .. code-block:: bash
 
-   If everything went as planned you can now start your bot, send the message "wake up" and expect to appropriate reply.
+        $ ./my_bot.py
+
+If everything went as planned you can now start your bot, send the message "wake up" and expect the appropriate reply.
 
 Further configuration
 ---------------------
@@ -118,6 +127,12 @@ File upload
 Job scheduling
 --------------
 
+mmpy_bot integrates `schedule
+<https://github.com/dbader/schedule/>`_ to provide in-process job scheduling.
+
+With `schedule
+<https://github.com/dbader/schedule/>`_, we can put periodic jobs into waiting queue like this:
+
 .. code-block:: python
 
     @listen_to("^schedule every ([0-9]+)$", re.IGNORECASE, needs_mention=True)
@@ -131,3 +146,22 @@ Job scheduling
             self.driver.reply_to, message, f"Scheduled message every {seconds} seconds!"
         )
 
+    @listen_to('cancel jobs', re.IGNORECASE)
+    def cancel_jobs(message):
+        schedule.clear()
+        self.driver.reply_to('All jobs cancelled.')
+
+The `schedule
+<https://github.com/dbader/schedule/>`_ package provides human-readable APIs to schedule jobs. Check out `schedule.readthedocs.io <https://schedule.readthedocs.io/>`_ for more usage examples.
+
+`schedule
+<https://github.com/dbader/schedule/>`_ is designed for periodic jobs.
+In order to support one-time-only jobs, mmpy_bot has a monkey-patching on integrated
+`schedule
+<https://github.com/dbader/schedule/>`_ package.
+
+We can schedule a one-time-only job by `schedule.once` method.
+You should notice that this method takes a datetime object, which is different from `schedule.every` methods.
+
+The following code example uses `schedule.once` to schedule a job.
+This job will be trigger at `t_time`.
