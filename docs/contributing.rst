@@ -39,7 +39,7 @@ We recommend using `Virtualenv <https://virtualenv.pypa.io/en/latest/>`_ to keep
 Testing
 =======
 
-mmpy_bot develops all tests based on pytest. If you need to add your own tests and run tests, please ensure the dev requirements are installed as per the above steps
+mmpy_bot develops all tests based on pytest. If you need to add your own tests and run tests, please ensure the dev requirements are installed as per the above steps.
 
 All the tests are put in `mmpy_bot\tests`.
 There are two test packages: :code:`unit_tests` and :code:`integration_tests`.
