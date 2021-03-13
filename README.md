@@ -91,6 +91,6 @@ bot = Bot(
 bot.run()
 ```
 
-Set the executable bit on the entrypoint file (i.e. chmod +x my_bot.py) and start your bot from the command prompt. Now you can talk to your bot in your Mattermost client!
+Set the executable bit on the entrypoint file (i.e. `chmod +x my_bot.py`) and start your bot from the command prompt. Now you can talk to your bot in your Mattermost client!
 
 In order to get the most out of your bot, you will need to write your own plugins. Refer to the [Plugins Documentation](https://mmpy-bot.readthedocs.io/en/latest/plugins.html) to get started.
