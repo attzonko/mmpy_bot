@@ -8,12 +8,12 @@ Setup your environment
 ----------------------
 
 We recommend using `Virtualenv <https://virtualenv.pypa.io/en/latest/>`_ to keep your development environment isolated from your base Python environment.
-Virtualenv can be installed via pip:
+
+#. Virtualenv can be installed via pip:
 
     .. code-block:: bash
 
         $ pip install virtualenv
-
 
 #. Clone the mmpy_bot repository, setup your virtualenv and install the requirements:
 
@@ -24,7 +24,6 @@ Virtualenv can be installed via pip:
         $ python3 -m virtualenv venv
         $ source venv/bin/activate
         $ pip install -e ".[dev]"
-
 
 #. Spin up the Mattermost container (Podman or Docker required):
 
@@ -40,11 +39,7 @@ Virtualenv can be installed via pip:
 Testing
 =======
 
-mmpy_bot develops all tests based on pytest. If you need to add your own tests and run tests, please install the dev requirements.
-
-.. code-block:: bash
-
-	$ pip install -r dev-requirements.txt
+mmpy_bot develops all tests based on pytest. If you need to add your own tests and run tests, please ensure the dev requirements are installed as per the above steps
 
 All the tests are put in `mmpy_bot\tests`.
 There are two test packages: :code:`unit_tests` and :code:`integration_tests`.
