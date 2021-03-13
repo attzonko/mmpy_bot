@@ -1,7 +1,7 @@
 import asyncio
 import logging
 import sys
-from typing import Sequence
+from typing import Optional, Sequence
 
 from mmpy_bot.driver import Driver
 from mmpy_bot.event_handler import EventHandler
@@ -18,7 +18,9 @@ class Bot:
     """
 
     def __init__(
-        self, settings=Settings(), plugins=[ExamplePlugin(), WebHookExample()]
+        self,
+        settings: Optional[Settings] = None,
+        plugins: Sequence[Plugin] = [ExamplePlugin(), WebHookExample()],
     ):
         logging.basicConfig(
             **{
@@ -28,7 +30,8 @@ class Bot:
                 "stream": sys.stdout,
             }
         )
-        self.settings = settings
+        # Use default settings if none were specified.
+        self.settings = settings or Settings()
         self.driver = Driver(
             {
                 "url": settings.MATTERMOST_URL,
