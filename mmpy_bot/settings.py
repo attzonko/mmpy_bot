@@ -8,7 +8,6 @@ def _get_comma_separated_list(string: str, type=str):
     values = string.split(",")
     # Convert to the specified type if necessary.
     if type is not str:
-        print(type, dir(type))
         values = list([type(value) for value in values])
     return values
 
