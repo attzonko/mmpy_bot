@@ -64,175 +64,33 @@ Note: **Enable Bot Account Creation** must be enabled under System Console
 
 For use all API(V4.0.0), you need add bot user to system admin group to avoid 403 error.
 
-### Configuration
-Edit settings.py and configure as needed.
 
-**settings.py:**
+### Configure and run the bot
 
-```python
-MATTERMOST_URL: str = "https://chat.com"
-MATTERMOST_PORT: int = 443
-BOT_TOKEN: str = "token"
-BOT_TEAM: str = "team_name"
-SSL_VERIFY: bool = True
-WEBHOOK_HOST_ENABLED: bool = False
-WEBHOOK_HOST_URL: str = "http://127.0.0.1"
-WEBHOOK_HOST_PORT: int = 8579
-DEBUG: bool = False
-IGNORE_USERS: Sequence[str] = field(default_factory=list)
-# How often to check whether any scheduled jobs need to be run, default every second
-SCHEDULER_PERIOD: float = 1.0
-```
+Create an entrypoint file (or copy the one provided), that defines your Mattermost server and bot account settings and imports
+the desired modules.
 
-
-### Run the bot
-
-Create your own startup file. For example `run.py`:
+Example `my_bot.py`:
 
 ```python
-from mmpy_bot.bot import Bot
+#!/usr/bin/env python
 
+from mmpy_bot import Bot, Settings
+from my_plugin import MyPlugin
 
-if __name__ == "__main__":
-    Bot().run()
+bot = Bot(
+    settings=Settings(
+        MATTERMOST_URL = "http://chat.example.com",
+        MATTERMOST_PORT = 443,
+        BOT_TOKEN = "a69155mvlsobcnqpfdceqihaa",
+        BOT_TEAM = "test",
+        SSL_VERIFY = 443,
+    ),  # Either specify your settings here or as environment variables.
+    plugins=[MyPlugin()],  # Add your own plugins here.
+)
+bot.run()
 ```
 
-Now you can talk to your bot in your Mattermost client!
+Set the executable bit on the entrypoint file (i.e. chmod +x my_bot.py) and start your bot from the command prompt. Now you can talk to your bot in your Mattermost client!
 
-##### TODO: Update below instructions
-
-## Attachment Support
-
-```python
-from mmpy_bot.bot import respond_to
-
-
-@respond_to('webapi')
-def webapi_reply(message):
-    attachments = [{
-        'fallback': 'Fallback text',
-        'author_name': 'Author',
-        'author_link': 'http://www.github.com',
-        'text': 'Some text here ...',
-        'color': '#59afe1'
-    }]
-    message.reply_webapi(
-        'Attachments example', attachments,
-        username='Mattermost-Bot',
-        icon_url='https://goo.gl/OF4DBq',
-    )
-    # Optional: Send message to specified channel
-    # message.send_webapi('', attachments, channel_id=message.channel)
-```
-
-*Integrations must be allowed for non admins users.*
-
-
-## File Support
-
-```python
-from mmpy_bot.bot import respond_to
-
-
-@respond_to('files')
-def message_with_file(message):
-    # upload_file() can upload only one file at a time
-    # If you have several files to upload, you need call this function several times.
-    file = open('test.txt')
-    result = message.upload_file(file)
-    file.close()
-    if 'file_infos' not in result:
-        message.reply('upload file error')
-    file_id = result['file_infos'][0]['id']
-    # file_id need convert to array
-    message.reply('hello', [file_id])
-```
-
-
-## Plugins
-
-A chat bot is meaningless unless you can extend/customize it to fit your own use cases.
-
-To write a new plugin, simply create a function decorated by `mmpy_bot.bot.respond_to` or `mmpy_bot.bot.listen_to`:
-
-- A function decorated with `respond_to` is called when a message matching the pattern is sent to the bot (direct message or @botname in a channel/group chat)
-- A function decorated with `listen_to` is called when a message matching the pattern is sent on a channel/group chat (not directly sent to the bot)
-
-```python
-import re
-
-from mmpy_bot.bot import listen_to
-from mmpy_bot.bot import respond_to
-
-
-@respond_to('hi', re.IGNORECASE)
-def hi(message):
-    message.reply('I can understand hi or HI!')
-
-
-@respond_to('I love you')
-def love(message):
-    message.reply('I love you too!')
-
-
-@listen_to('Can someone help me?')
-def help_me(message):
-    # Message is replied to the sender (prefixed with @user)
-    message.reply('Yes, I can!')
-
-    # Message is sent on the channel
-    # message.send('I can help everybody!')
-```
-
-To extract params from the message, you can use regular expression:
-```python
-from mmpy_bot.bot import respond_to
-
-
-@respond_to('Give me (.*)')
-def give_me(message, something):
-    message.reply('Here is %s' % something)
-```
-
-If you would like to have a command like 'stats' and 'stats start_date end_date', you can create reg ex like so:
-
-```python
-from mmpy_bot.bot import respond_to
-import re
-
-
-@respond_to('stat$', re.IGNORECASE)
-@respond_to('stat (.*) (.*)', re.IGNORECASE)
-def stats(message, start_date=None, end_date=None):
-    pass
-```
-
-If you don't want to expose some bot commands to public, you can add `@allowed_users()` or `@allowed_channels()` like so:
-
-```python
-@respond_to('^admin$')
-@allow_only_direct_message() #only trigger by direct message, remove this line if you want call this in channel
-@allowed_users('Your username or email address here','user@email.com') # List of usernames or e-mails allowed
-@allowed_channels('allowed_channel_1','allowed_channel_2')  # List of allowed channels
-def users_access(message):
-    pass
-```
-Keep in mind the order matters! `@respond_to()` and `@listen_to()`must come before the "allowed" decorators.
-
-
-And add the plugins module to `PLUGINS` list of mmpy_bot settings, e.g. mmpy_bot_settings.py:
-
-```python
-PLUGINS = [
-    'mmpy_bot.plugins',
-    'devops.plugins',          # e.g. git submodule:  domain:devops-plugins.git
-    'programmers.plugins',     # e.g. python package: package_name.plugins
-    'frontend.plugins',        # e.g. project tree:   apps.bot.plugins
-]
-```
-*For example you can separate git repositories with plugins on your team.*
-
-
-If you are migrating from `Slack` to the `Mattermost`, and previously you are used `SlackBot`,
-you can use this battery without any problem. On most cases your plugins will be working properly
-if you are used standard API or with minimal modifications.
+In order to get the most out of your bot, you will need to write your own plugins. Refer to the [Plugins Documentation](https://mmpy-bot.readthedocs.io/en/latest/plugins.html) to get started.
