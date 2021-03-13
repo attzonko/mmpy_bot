@@ -4,118 +4,76 @@
 Testing
 =======
 
-mmpy_bot develops all tests based on pytest. If you need to add your own tests and run tests, please install pytest first.
+mmpy_bot develops all tests based on pytest. If you need to add your own tests and run tests, please install the dev requirements.
 
 .. code-block:: bash
 
-	$ pip install -U pytest
+	$ pip install -r dev-requirements.txt
 
 All the tests are put in `mmpy_bot\tests`.
-There are two test packages: :code:`unit_tests` and :code:`behavior_tests`.
+There are two test packages: :code:`unit_tests` and :code:`integration_tests`.
 
-Tests which can be performed by a single bot without mattermost server or other bots should be kept in :code:`unit_tests` package.
-Other tests requiring interactions between bots on mattermost server belong to :code:`behavior_tests` package.
+Tests which can be performed by a single bot without requiring a server or interaction with other bots should be kept in the :code:`unit_tests` package.
+Tests that require interactions between bots on a mattermost server belong to the :code:`integration_tests` package.
 
 
-Add unit tests
+Adding unit tests
 --------------
 
-There are multiple test modules inside unit_tests package.
-Each module collects tests of specific mmpy_bot class or module.
-The naming convention of these modules is *test_classname* or *test_modulename*.
-Inside each module, there will be several test functions with naming convention *test_functionname* or *test_methodname*.
-Each test function performs unit test against a specific class or module.
+There are multiple test modules inside unit_tests package, one for each module in the code.
+The naming convention of these modules is *modulename_test*.
+Inside each module, there will be several test functions with naming convention *test_methodname*, grouped into classes for each corresponding class in the code.
 If you need to add more unit tests, please consider following these conventions.
 
 
-Run unit tests
+Running the unit tests
 --------------
 
-To run unit tests, simply:
+To run the unit tests (in parallel), simply execute:
 
 .. code-block:: bash
 
-	$ pytest tests\unit_tests
+	$ pytest -n auto tests\unit_tests
 
 
-Add behavior tests
+Addding integration tests
 ------------------
 
-The behavior tests are done by interactions between a DriverBot (driver) and a TestBot (responder).
-You can find these two bots in package :code:`tests.behavior_tests.bots` .
-These two bots will be instantiated as pytext fixture in :code:`tests.behavior_tests.fixture`, and be used in various behavior tests.
+The integration tests are run on the `jneeven:mattermost-bot-test` docker image, for which dockerfiles are provided in the `tests/intergration_tests` folder.
+The tests are defined as interactions between a bot (the responder) and a driver (the one sending test messages), which live inside the docker image.
+Their respective tokens are available in `tests/integration_tests/utils.py`, and the two bots are available as pytest fixtures so they can be easily re-used.
+Note that while the bot is also a fixture, it should not be used in any functions.
+It will simply be started whenever the integration tests are executed.
 
-Relevant behavior tests should be collected inside the same module, following the naming convention *test_behaviorset*. For example, we have :code:`tests.behavior_tests.test_conversation` to test general bot conversation.
-The conversation was made by default :code:`mmpy_bot.plugins` .
-
-Each behavior test might look like this:
+An integration test might look like this (also have a look at the actual code in `tests/integration_tests/test_example_plugin.py`):
 
 .. code-block:: python
 
-	from tests.behavior_tests.fixture import driver
+	from tests.integration_tests.utils import start_bot  # noqa, only imported so that the bot is started
+	from tests.integration_tests.utils import MAIN_BOT_ID, OFF_TOPIC_ID, RESPONSE_TIMEOUT, TEAM_ID
+	from tests.integration_tests.utils import driver as driver_fixture
+	from tests.integration_tests.utils import expect_reply
 
-	def test_bot_respond_to_simple_message(driver):
-	    driver.send_direct_message('hello')
-	    driver.wait_for_bot_direct_message('hello sender!')
+	# Hacky workaround to import the fixture without linting errors
+	driver = driver_fixture
 
-This is a simple hello test. 
-The driver is imported from fixture, and send into test function.
-In the test, firstly the driver sends a direct message 'hello', and waits for response 'hello sender!'.
-If the response does not show up in 10 seconds (default), an *AssertionError* will be raised.
+	# Verifies that the bot is running and listening to this non-targeted message
+	def test_start(driver):
+		post = driver.create_post(OFF_TOPIC_ID, "starting integration tests!")
+		# Checks whether the bot has sent us the expected reply
+		assert expect_reply(driver, post)["message"] == "Bring it on!"
 
-For more message sending methods and options, please checkout :code:`tests.behavior_tests.bots.driver.py`. 
+In this test, the driver sends a message in the "off-topic" channel, and waits for the bot to reply 'Bring it on!'.
+If no reply occurs within a default response timeout (15 seconds by default, but this can be passed as an argument to `expect_reply`), an exception will be raised.
+The driver fixture is imported from the utils and can be re-used in every test function simply by adding it as a function argument.
 
 
-Run behavior tests
+
+Running the integration_tests
 ------------------
 
-To perform behavior tests, some settings are necessary for bots to login to mattermost server for test.
-
-1. Set up a mattermost server for test
-2. Create two user accounts for bots, e.g. 'driverbot' and 'testbot'
-3. Create a team, e.g. 'test-team', and add 'driverbot' and 'testbot' into the team
-4. Make sure the default public channel 'off-topic' exists
-5. Create a private channel, e.g. 'test', in team 'test-team', and add 'driverbot' and 'testbot' into the private channel
-
-Optionally, if you like to test webhooks and other behaviors which requires admin privilege, please also assign 'drivebot' ADMIN privilege on your testing server, and set 
-
-.. code-block:: python
-
-	config.pytest_config.DRIVER_ADMIN_PRIVILEGE = True
-
-If :code:`DRIVER_ADMIN_PRIVILEGE` is not set True, relevant tests will be skipped.
-
-Set these environment variables (replace set command depending on your OS):
-
-.. code-block:: bash
-
-	$ set BOT_URL = 'http://SERVER_HOST_DN/api/v4'
-	$ set DRIVERBOT_LOGIN = 'driverbot@mail'
-	$ set DRIVERBOT_NAME = 'driverbot'
-	$ set DRIVERBOT_PASSWORD = 'driverbot_password'
-	$ set TESTBOT_LOGIN = 'testbot@mail'
-	$ set TESTBOT_NAME = 'testbot_name'
-	$ set TESTBOT_PASSWORD = 'testbot_password'
-	$ set BOT_TEAM = 'test-team'
-	$ set BOT_CHANNEL = 'off-topic'
-	$ set BOT_PRIVATE_CHANNEL = 'test'
-
-Then you should be ready to run behavior tests:
-
-.. code-block:: bash
-
-	$ pytest tests\behavior_tests
-
-
-Run all the tests:
-------------------
-
-Set environment variables needed for behavior tests as mentioned above.
-
-.. code-block:: bash
-
-	$ pytest
-
+Running the integration_tests is easy: simply `cd` into `tests/integration_tests`, and run `docker-compose up -d` to start a local mattermost server.
+Then run `pytest -n auto .` to start the tests! For more info about the integration tests an the docker server, have a look at `tests/integration_tests/README.md`.
 
 Test coverage:
 --------------
@@ -140,22 +98,3 @@ Using "--cov-report" parameter to write report into "cov_html" folder by html fo
 .. code-block:: bash
 
 	py.test --cov-report html:logs\cov_html --cov=mmpy_bot tests\
-
-Running tests in docker:
-------------------------
-
-If you have docker installed you can spawn a temporary mattermost instance and
-run all the tests by running the following:
-
-.. code-block:: bash
-
-    $ ./tests/run-tests-in-docker.sh
-
-This has predefined environment variables which you can customise.
-Variables in addition to the ones above are:
-
-:code:`DOCKER_CONTAINER_NAME` which specifies the name of the conatiner that runs mattermost
-
-:code:`DOCKER_NETWORK` the docker network to run in, this is created automatically if it doesn't exist
-
-:code:`PYTHON_VERSION` the python version to use
