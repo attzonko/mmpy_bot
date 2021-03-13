@@ -1,7 +1,7 @@
 import collections
 import os
 from dataclasses import dataclass, field, fields
-from typing import Sequence, get_args, get_origin
+from typing import Sequence, get_args, get_origin  # type: ignore
 
 
 def _get_comma_separated_list(string: str, type=str):
@@ -60,7 +60,7 @@ class Settings:
                         )
                     # Use get_args to find out what kind of sequence it is.
                     value = _get_comma_separated_list(value, type=get_args(f.type)[0])
-                elif f.type in [int, float, str]:
+                elif f.type in [int, float, str]:  # type: ignore
                     value = f.type(value)
                 else:
                     raise TypeError(

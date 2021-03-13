@@ -22,23 +22,23 @@ class Bot:
         settings: Optional[Settings] = None,
         plugins: Sequence[Plugin] = [ExamplePlugin(), WebHookExample()],
     ):
+        # Use default settings if none were specified.
+        self.settings = settings or Settings()
         logging.basicConfig(
             **{
                 "format": "[%(asctime)s] %(message)s",
                 "datefmt": "%m/%d/%Y %H:%M:%S",
-                "level": logging.DEBUG if settings.DEBUG else logging.INFO,
+                "level": logging.DEBUG if self.settings.DEBUG else logging.INFO,
                 "stream": sys.stdout,
             }
         )
-        # Use default settings if none were specified.
-        self.settings = settings or Settings()
         self.driver = Driver(
             {
-                "url": settings.MATTERMOST_URL,
-                "port": settings.MATTERMOST_PORT,
-                "token": settings.BOT_TOKEN,
-                "scheme": settings.SCHEME,
-                "verify": settings.SSL_VERIFY,
+                "url": self.settings.MATTERMOST_URL,
+                "port": self.settings.MATTERMOST_PORT,
+                "token": self.settings.BOT_TOKEN,
+                "scheme": self.settings.SCHEME,
+                "verify": self.settings.SSL_VERIFY,
             }
         )
         self.driver.login()
