@@ -14,6 +14,7 @@ Virtualenv can be installed via pip:
 
         $ pip install virtualenv
 
+
 #. Clone the mmpy_bot repository, setup your virtualenv and install the requirements:
 
     .. code-block:: bash
@@ -24,11 +25,13 @@ Virtualenv can be installed via pip:
         $ source venv/bin/activate
         $ pip install -e ".[dev]"
 
+
 #. Spin up the Mattermost container (Podman or Docker required):
 
     .. code-block:: bash
 
         $ podman-compose -f tests/integration_tests/docker-compose.yml up -d
+
 
 #. In order to run the bot, it is advised to use an entrypoint Python file which defines your Mattermost server and bot account settings,
    as well as importing any custom plugins you may create. See the provided `entrypoint.py` as a reference.
@@ -51,7 +54,7 @@ Tests that require interactions between bots on a mattermost server belong to th
 
 
 Adding unit tests
---------------
+-----------------
 
 There are multiple test modules inside unit_tests package, one for each module in the code.
 The naming convention of these modules is *modulename_test*.
@@ -60,7 +63,7 @@ If you need to add more unit tests, please consider following these conventions.
 
 
 Running the unit tests
---------------
+----------------------
 
 To run the unit tests (in parallel), simply execute:
 
@@ -69,8 +72,8 @@ To run the unit tests (in parallel), simply execute:
 	$ pytest -n auto tests\unit_tests
 
 
-Addding integration tests
-------------------
+Adding integration tests
+-------------------------
 
 The integration tests are run on the `jneeven:mattermost-bot-test` docker image, for which dockerfiles are provided in the `tests/intergration_tests` folder.
 The tests are defined as interactions between a bot (the responder) and a driver (the one sending test messages), which live inside the docker image.
@@ -103,7 +106,7 @@ The driver fixture is imported from the utils and can be re-used in every test f
 
 
 Running the integration_tests
-------------------
+-----------------------------
 
 Running the integration_tests is easy: simply `cd` into `tests/integration_tests`, and run `docker-compose up -d` to start a local mattermost server.
 Then run `pytest -n auto .` to start the tests! For more info about the integration tests an the docker server, have a look at `tests/integration_tests/README.md`.
