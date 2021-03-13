@@ -17,7 +17,7 @@ Installation for development
         $ podman-compose -f tests/integration_tests/docker-compose.yml up -d
 
 #. Edit mmpy_bot/settings.py and configure as below. If testing webhook
-   server functionality, ensure **WEBHOOK_HOST_ENABLED** is to `True`.
+   server functionality, ensure **WEBHOOK_HOST_ENABLED** is set to `True`.
 
     .. code-block:: python
 
