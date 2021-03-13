@@ -1,0 +1,17 @@
+version: "3.7"
+
+services:
+  app:
+    container_name: "mmpy_bot"
+    build: .
+    network_mode: host
+    extra_hosts:
+      - "dockerhost:127.0.0.1"
+    environment:
+      - MATTERMOST_URL="http://127.0.0.1"
+      - BOT_TOKEN="e691u15hajdebcnqpfdceqihcc"
+      - MATTERMOST_PORT=8065
+      - SSL_VERIFY=False
+      - WEBHOOK_HOST_ENABLED=True
+      - WEBHOOK_HOST_URL="http://127.0.0.1"
+      - WEBHOOK_HOST_PORT=8579
