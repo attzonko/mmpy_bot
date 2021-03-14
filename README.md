@@ -62,7 +62,9 @@ Note: **Enable Bot Account Creation** must be enabled under System Console
 1. Navigate to Integrations -> Bot Accounts -> Add Bot Account
 1. Fill in the configuration options and upon creation take note of the **Access Token**
 
-For use all API(V4.0.0), you need add bot user to system admin group to avoid 403 error.
+Note that some API functions, such as ephemeral message replies, will require the bot to be part of the **System Admin** group,
+however most API functions will work with a regular **Member** account role. Just be aware that if some API functions are not working, it
+may be due to a lack of appropriate permissions.
 
 
 ### Configure and run the bot
