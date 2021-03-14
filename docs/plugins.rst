@@ -64,7 +64,7 @@ Further configuration
 ---------------------
 
 The below code snippets provide an insight into the functionality that can be added to the bot. For more in-depth examples,
-please refer to `./plugins/example.py` and `./plugins/webhook_example.py`.
+please refer to [`./plugins/example.py`](https://github.com/attzonko/mmpy_bot/blob/master/mmpy_bot/plugins/example.py) and [`./plugins/webhook_example.py`](https://github.com/attzonko/mmpy_bot/blob/master/mmpy_bot/plugins/webhook_example.py).
 
 Implementing regular expression
 -------------------------------
@@ -93,6 +93,11 @@ Restrict messages to specific users
 
 Click support
 -------------
+    `mmpy_bot` now supports [click](https://click.palletsprojects.com/en/7.x/) commands, so you can build a robust CLI-like experience if you need it.
+    The example below registers a `hello_click` command that takes a positional argument, a keyword argument and a toggleable flag, which are automatically converted to the correct type.
+    For example, it can be called with `hello_click my_argument --keyword-arg=3 -f` and will parse the arguments accordingly.
+    A nice benefit of `click` commands is that they also automatically generate nicely formatted help strings.
+    Try sending "help" to the `ExamplePlugin` to see what it looks like!
 
     .. code-block:: python
 
