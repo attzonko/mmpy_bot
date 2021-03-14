@@ -58,7 +58,7 @@ class MessageFunction(Function):
         *args,
         direct_only: bool = False,
         needs_mention: bool = False,
-        allowed_users: Sequence[str] = [],
+        allowed_users: Optional[Sequence[str]] = None,
         **kwargs,
     ):
         super().__init__(*args, **kwargs)
@@ -66,7 +66,11 @@ class MessageFunction(Function):
         self.is_click_function = isinstance(self.function, click.Command)
         self.direct_only = direct_only
         self.needs_mention = needs_mention
-        self.allowed_users = [user.lower() for user in allowed_users]
+
+        if allowed_users is None:
+            self.allowed_users = []
+        else:
+            self.allowed_users = [user.lower() for user in allowed_users]
 
         if self.is_click_function:
             _function = self.function.callback
@@ -166,10 +170,13 @@ def listen_to(
     *,
     direct_only=False,
     needs_mention=False,
-    allowed_users=[],
+    allowed_users=None,
 ):
     """Wrap the given function in a MessageFunction class so we can register some
     properties."""
+
+    if allowed_users is None:
+        allowed_users = []
 
     def wrapped_func(func):
         reg = regexp
