@@ -40,7 +40,7 @@ class Driver(mattermostdriver.Driver):
         self,
         channel_id: str,
         message: str,
-        file_paths: Sequence[str] = [],
+        file_paths: Optional[Sequence[str]] = None,
         root_id: str = "",
         props: Dict = {},
         ephemeral_user_id: Optional[str] = None,
@@ -51,6 +51,9 @@ class Driver(mattermostdriver.Driver):
         paths are specified, those files will be uploaded to mattermost first and then
         attached.
         """
+        if file_paths is None:
+            file_paths = []
+
         file_ids = (
             self.upload_files(file_paths, channel_id) if len(file_paths) > 0 else []
         )
@@ -110,7 +113,7 @@ class Driver(mattermostdriver.Driver):
         self,
         message: Message,
         response: str,
-        file_paths: Sequence[str] = [],
+        file_paths: Optional[Sequence[str]] = None,
         props: Dict = {},
         ephemeral: bool = False,
     ):
@@ -119,6 +122,9 @@ class Driver(mattermostdriver.Driver):
         Supports sending ephemeral messages if the bot permissions allow it. If the
         message is part of a thread, the reply will be added to that thread.
         """
+        if file_paths is None:
+            file_paths = []
+
         if ephemeral:
             return self.create_post(
                 channel_id=message.channel_id,
