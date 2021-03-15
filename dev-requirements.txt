@@ -5,5 +5,5 @@ flake8==3.8.4
 isort==5.7.0
 pytest==6.2.2
 pytest-xdist==2.2.1
-pytype==2021.3.3
+pytype==2021.3.10
 snapshottest==0.6.0
