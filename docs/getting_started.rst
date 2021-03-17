@@ -36,7 +36,7 @@ Git Repo
 
 Running the bot
 ---------------
-We recommend creating an entrypoint file for executing the bot, which will look something like this:
+We recommend creating an `entrypoint` file for executing the bot, which will look something like this:
 
     .. code-block:: python
 
@@ -58,7 +58,7 @@ We recommend creating an entrypoint file for executing the bot, which will look 
         bot.run()
 
 You can then set the executable bit on this file and run the bot straight from the command line.
-For more information on configuring bot settings and plugins, please see the respective :doc:`settings` :doc:`plugins` pages.
+For more information on configuring bot settings and plugins, please see the respective :ref:`settings <settings>` and :ref:`plugins <plugins>` pages.
 
 Container
 #########
