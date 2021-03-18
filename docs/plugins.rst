@@ -113,7 +113,7 @@ Restrict messages to specific users
 
         @listen_to("^admin$", direct_only=True, allowed_users=["admin", "root"])
         async def users_access(self, message: Message):
-            """Showcases a function with restricted access."""
+            """Will only trigger if the username of the sender is 'admin' or 'root'."""
             self.driver.reply_to(message, "Access allowed!")
 
 Click support
@@ -169,6 +169,41 @@ They can be used as follows:
     def on_stop(self):
         """Notifies some channel that the bot is shutting down."""
         self.driver.create_post(channel_id="some_channel_id", message="I'll be right back!")
+
+
+Webhook listener
+---------------------
+If you want to interact with your bot not only through chat messages but also through web requests (for example to implement an `interactive dialog <https://docs.mattermost.com/developer/interactive-dialogs.html>`_), you can use enable the built-in `WebHookServer`.
+In your `Settings`, make sure to set `WEBHOOK_HOST_ENABLED=True` and provide a value for `WEBHOOK_HOST_URL` and `WEBHOOK_HOST_PORT` (see `settings.py <https://github.com/attzonko/mmpy_bot/blob/master/mmpy_bot/settings.py>`_ for more info).
+Then, on your custom `Plugin` you can create a function like this:
+
+.. code-block:: python
+    from mmpy_bot import listen_webhook
+
+    @listen_webhook("ping")
+    async def ping_listener(self, event: WebHookEvent):
+        """Listens to post requests to '<server_url>/hooks/ping' and posts a message in
+        the channel specified in the request body."""
+
+        self.driver.create_post(
+            event.body["channel_id"], f"Webhook {event.webhook_id} triggered!"
+        )
+
+And if you want to send a web response back to the incoming HTTP POST request, you can use `Driver.respond_to_web`:
+
+.. code-block:: python
+    @listen_webhook("ping")
+    async def ping_listener(self, event: WebHookEvent):
+        # Respond to the web request rather than posting a message.
+        self.driver.respond_to_web(
+            event,
+            {
+                # You can add any kind of JSON-serializable data here
+                "message": "hello!",
+            },
+        )
+
+For more information about the `WebHookServer` and its possibilities, take a look at the `WebHookExample  plugin <https://github.com/attzonko/mmpy_bot/blob/master/mmpy_bot/plugins/webhook_example.py>`_.
 
 
 Job scheduling
