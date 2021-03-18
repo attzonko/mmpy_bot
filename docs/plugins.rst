@@ -129,6 +129,23 @@ File upload
         file.write_text("Hello from this file!")
         self.driver.reply_to(message, "Here you go", file_paths=[file])
 
+
+Plugin startup and shutdown
+---------------------------
+The `Plugin` class comes with an `on_start` and `on_stop` function, which will be called when the bot starts up or shuts down.
+They can be used as follows:
+
+.. code-block:: python
+
+    def on_start(self):
+        """Notifies some channel that the bot is now running."""
+        self.driver.create_post(channel_id="some_channel_id", message="The bot just started running!")
+
+    def on_stop(self):
+        """Notifies some channel that the bot is shutting down."""
+        self.driver.create_post(channel_id="some_channel_id", message="I'll be right back!")
+
+
 Job scheduling
 --------------
 

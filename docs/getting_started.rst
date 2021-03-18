@@ -42,7 +42,7 @@ We recommend creating an `entrypoint` file for executing the bot, which will loo
 
         #!/usr/bin/env python
 
-        from mmpy_bot import Bot, Settings
+        from mmpy_bot import Bot, Settings, ExamplePlugin, WebhookExample
         from my_plugin import MyPlugin
 
         bot = Bot(
@@ -57,8 +57,8 @@ We recommend creating an `entrypoint` file for executing the bot, which will loo
         )
         bot.run()
 
-You can then set the executable bit on this file and run the bot straight from the command line.
-For more information on configuring bot settings and plugins, please see the respective :ref:`settings <settings>` and :ref:`plugins <plugins>` pages.
+You can then simply launch the bot with `python entrypoint.py`.
+For more information on configuring bot settings and plugins, please see `settings.py <https://github.com/attzonko/mmpy_bot/blob/master/mmpy_bot/settings.py>`_ and the :ref:`plugins <plugins>` page.
 
 Container
 #########
