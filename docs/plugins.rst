@@ -81,6 +81,31 @@ Implementing regular expression
     async def give_me(self, message, something):
         self.driver.reply_to(message, 'Here is %s' % something)
 
+
+Only accept messages that mention the bot
+----------------------------------
+
+If you want the bot to only respond to messages containing a mention (e.g. "hey @bot_name !"), you can use the `needs_mention` flag.
+Note that this will also trigger if you send the bot a direct message without mentioning its name!
+    .. code-block:: python
+
+        @listen_to("hey", needs_mention=True)
+        async def hey(self, message: Message):
+            self.driver.reply_to(message, "Hi! You mentioned me?")
+
+
+Only accept direct messages
+----------------------------------
+
+Using `direct_only=True`, the bot will only respond if you send it a direct message.
+
+    .. code-block:: python
+
+        @listen_to("hey", direct_only=True)
+        async def hey(self, message: Message):
+            self.driver.reply_to(message, "Hi! This is a private conversation.")
+
+
 Restrict messages to specific users
 ----------------------------------
 
