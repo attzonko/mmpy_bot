@@ -7,21 +7,16 @@ Contributing
 Setup your environment
 ----------------------
 
-We recommend using `Virtualenv <https://virtualenv.pypa.io/en/latest/>`_ to keep your development environment isolated from your base Python environment.
+We recommend using `venv <https://docs.python.org/3.8/library/venv.html>`_ to keep your development environment isolated from your base Python environment. It is part of Python by default.
 
-#. Virtualenv can be installed via pip:
 
-    .. code-block:: bash
-
-        $ pip install virtualenv
-
-#. Clone the mmpy_bot repository, setup your virtualenv and install the requirements:
+#. Clone the mmpy_bot repository, setup your virtual environment and install the requirements:
 
     .. code-block:: bash
 
         $ git clone https://github.com/attzonko/mmpy_bot.git
         $ cd mmpy_bot
-        $ python3 -m virtualenv venv
+        $ python3 -m venv venv
         $ source venv/bin/activate
         $ pip install -e ".[dev]"
 
@@ -33,7 +28,8 @@ We recommend using `Virtualenv <https://virtualenv.pypa.io/en/latest/>`_ to keep
 
 
 #. In order to run the bot, it is advised to use an entrypoint Python file which defines your Mattermost server and bot account settings,
-   as well as importing any custom plugins you may create. See the provided `entrypoint.py` as a reference.
+   as well as importing any custom plugins you may create. See the provided `entrypoint.py <https://github.com/attzonko/mmpy_bot/blob/master/entrypoint.py>`_  as a reference.
+   To run your bot inside a docker container (not necessary, you can also just run `python entrypoint.py`) you can use the provided `docker-compose file <https://github.com/attzonko/mmpy_bot/blob/master/docker-compose.yml>`_.
 
 
 Testing
