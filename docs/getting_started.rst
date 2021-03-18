@@ -81,7 +81,7 @@ You can also find an example `docker-compose.yml` file `here <https://github.com
 
 Customizing your bot
 ####################
-Getting your bot running is only the beginning. The real fun begins with writing plugins to get it functioning exactly how you want it! Head on over to the :doc:`plugins` page to get started.
+Getting your bot running is only the beginning. The real fun begins with writing plugins to get it functioning exactly how you want it! Head on over to the :ref:`plugins <plugins>` page to get started.
 
 Fetch mmpy_bot version
 ####################
