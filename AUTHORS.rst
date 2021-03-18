@@ -2,20 +2,21 @@
 Credits
 =======
 
-Development Lead
-----------------
-
+Development Leads
+-----------------
 * Alex Tzonkov <alex.tzonkov@gmail.com>
+* Jelmer Neeven
 
 Contributors
 ------------
-* Victor Hu <selain@nature.ee.ncku.edu.tw>
-* tgly307 <tgly307@163.com>
+* Renato Alves
+* Thomas Tuffin <ttuffin@redhat.com>
 
 Past Contributors
 ------------------
+* Victor Hu <selain@nature.ee.ncku.edu.tw>
+* tgly307 <tgly307@163.com>
 * GoTLiuM InSPiRiT <gotlium@gmail.com>
-
 * Grokzen <grokzen@gmail.com>
 * Philipp Schmitt <philipp@schmitt.co>
 * Tom Horlock <thomashorlock1993@gmail.com>

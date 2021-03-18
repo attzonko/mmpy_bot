@@ -9,16 +9,9 @@ Contents
 .. toctree::
   :maxdepth: 1
 
-  installation
-  usage
-  settings
+  getting_started
   plugins
-  deploy
-  use_cases
-  decorators
-  demo_installation
-  dev_install
-  testing
+  migration
   contributing
   authors
 
