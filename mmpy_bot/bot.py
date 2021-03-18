@@ -20,8 +20,10 @@ class Bot:
     def __init__(
         self,
         settings: Optional[Settings] = None,
-        plugins: Sequence[Plugin] = [ExamplePlugin(), WebHookExample()],
+        plugins: Optional[Sequence[Plugin]] = None,
     ):
+        if plugins is None:
+            plugins = [ExamplePlugin(), WebHookExample()]
         # Use default settings if none were specified.
         self.settings = settings or Settings()
         logging.basicConfig(
