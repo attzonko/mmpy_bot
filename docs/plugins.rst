@@ -1,240 +1,245 @@
 Plugins
 =======
 
+A chat bot is meaningless unless you can extend/customize it to fit your own use cases, which can be achieved through custom plugins.
 
-Plugins
--------
+Writing your first plugin
+-------------------------
 
-A chat bot is meaningless unless you can extend/customize it to fit your own use cases.
+#. To demonstrate how easy it is to create a plugin for `mmpy_bot`, let's write a basic plugin and run it. Start with an empty Python file and import these three `mmpy_bot` modules:
 
-To write a new plugin, simply create a function decorated by ``mmpy_bot.bot.respond_to`` or ``mmpy_bot.bot.listen_to``:
+    .. code-block:: python
 
-- A function decorated with ``respond_to`` is called when a message matching the pattern is sent to the bot (direct message or @botname in a channel/group chat)
-- A function decorated with ``listen_to`` is called when a message matching the pattern is sent on a channel/group chat (not directly sent to the bot)
-- A function decorated with ``at_start`` is called as soon as the plugin is initialized (when the bot starts)
+        from mmpy_bot import Plugin, listen_to
+        from mmpy_bot import Message
+
+#. Now create a Class with the name of your plugin, subclassing `Plugin`:
+
+    .. code-block:: python
+
+        class MyPlugin(Plugin):
+
+#. Now we can write the methods that control how the bot will respond to certain messages. Let's start with a basic one that will simply trigger a response from the bot:
+
+    .. code-block:: python
+
+        @listen_to("wake up")
+        async def wake_up(self, message: Message):
+            self.driver.reply_to(message, "I'm awake!")
+
+    In the above code block, the `@listen_to` decorator tells the bot to listen on any channel for the string "wake up", and respond with "I'm awake!".
+
+#. Save your plugin file and open a fresh Python file which will be the entrypoint to start the bot and include your plugin:
+
+    .. code-block:: python
+
+        #!/usr/bin/env python
+
+        from mmpy_bot import Bot, Settings
+        from my_plugin import MyPlugin
+
+        bot = Bot(
+            settings=Settings(
+                MATTERMOST_URL = "http://127.0.0.1",
+                MATTERMOST_PORT = 8065,
+                BOT_TOKEN = "<your_bot_token>",
+                BOT_TEAM = "<team_name>",
+                SSL_VERIFY = False,
+            ),  # Either specify your settings here or as environment variables.
+            plugins=[MyPlugin()],  # Add your own plugins here.
+        )
+        bot.run()
+
+    The above code assumes your plugin is in the same directory as the entrypoint file. Also be sure to set the correct settings for your Mattermost server and bot account.
+
+#. Save your entrypoint file and run it from the command prompt:
+
+    .. code-block:: bash
+
+        $ ./my_bot.py
+
+If everything went as planned you can now start your bot, send the message "wake up" and expect the appropriate reply.
+
+Further configuration
+---------------------
+
+The below code snippets provide an insight into the functionality that can be added to the bot. For more in-depth examples,
+please refer to [`./plugins/example.py`](https://github.com/attzonko/mmpy_bot/blob/master/mmpy_bot/plugins/example.py) and [`./plugins/webhook_example.py`](https://github.com/attzonko/mmpy_bot/blob/master/mmpy_bot/plugins/webhook_example.py).
+
+Implementing regular expression
+-------------------------------
 
 .. code-block:: python
 
     import re
 
-    from mmpy_bot.bot import listen_to
-    from mmpy_bot.bot import respond_to
-
-
-    @respond_to('hi', re.IGNORECASE)
+    @listen_to('hi', re.IGNORECASE)
     def hi(message):
         message.reply('I can understand hi or HI!')
 
-
-    @respond_to('I love you')
-    def love(message):
-        message.reply('I love you too!')
-
-
-    @listen_to('Can someone help me?')
-    def help_me(message):
-        # Message is replied to the sender (prefixed with @user)
-        message.reply('Yes, I can!')
-
-        # Message is sent on the channel
-        # message.send('I can help everybody!')
-
-    @at_start
-    def hello(client):
-        # Note that contrary to respond_to and listen_to @at_start
-        # receives a client object and not a message object
-        team = client.api.get_team_by_name("TESTTEAM")
-        channel = client.api.get_channel_by_name("bot_test", team["id"])
-        client.channel_msg(channel["id"], "Hello, feels good to be alive!!")
-
-To extract params from the message, you can use regular expression:
-
-.. code-block:: python
-
-    from mmpy_bot.bot import respond_to
+    @listen_to('Give me (.*)')
+    async def give_me(self, message, something):
+        self.driver.reply_to(message, 'Here is %s' % something)
 
 
-    @respond_to('Give me (.*)')
-    def give_me(message, something):
-        message.reply('Here is %s' % something)
+Only accept messages that mention the bot
+----------------------------------
+
+If you want the bot to only respond to messages containing a mention (e.g. "hey @bot_name !"), you can use the `needs_mention` flag.
+Note that this will also trigger if you send the bot a direct message without mentioning its name!
+    .. code-block:: python
+
+        @listen_to("hey", needs_mention=True)
+        async def hey(self, message: Message):
+            self.driver.reply_to(message, "Hi! You mentioned me?")
 
 
-If you would like to have a command like 'stats' and 'stats start_date end_date', you can create reg ex like so:
+Only accept direct messages
+----------------------------------
 
-.. code-block:: python
+Using `direct_only=True`, the bot will only respond if you send it a direct message.
 
-    from mmpy_bot.bot import respond_to
-    import re
+    .. code-block:: python
 
-
-    @respond_to('stat$', re.IGNORECASE)
-    @respond_to('stat (.*) (.*)', re.IGNORECASE)
-    def stats(message, start_date=None, end_date=None):
-        pass
+        @listen_to("hey", direct_only=True)
+        async def hey(self, message: Message):
+            self.driver.reply_to(message, "Hi! This is a private conversation.")
 
 
+Restrict messages to specific users
+----------------------------------
 
-And add the plugins module to ``PLUGINS`` list of mmpy_bot settings, e.g. ``mmpy_bot_settings.py``:
+    .. code-block:: python
 
-.. code-block:: python
+        @listen_to("^admin$", direct_only=True, allowed_users=["admin", "root"])
+        async def users_access(self, message: Message):
+            """Will only trigger if the username of the sender is 'admin' or 'root'."""
+            self.driver.reply_to(message, "Access allowed!")
 
-    PLUGINS = [
-        'mmpy_bot.plugins',
-        'devops.plugins',          # e.g. git submodule: domain:devops-plugins.git
-        'programmers.plugins',     # e.g. python package: package_name.plugins
-        'frontend.plugins',        # e.g. project tree: apps.bot.plugins
-    ]
+Click support
+-------------
+    `mmpy_bot` now supports [click](https://click.palletsprojects.com/en/7.x/) commands, so you can build a robust CLI-like experience if you need it.
+    The example below registers a `hello_click` command that takes a positional argument, a keyword argument and a toggleable flag, which are automatically converted to the correct type.
+    For example, it can be called with `hello_click my_argument --keyword-arg=3 -f` and will parse the arguments accordingly.
+    A nice benefit of `click` commands is that they also automatically generate nicely formatted help strings.
+    Try sending "help" to the `ExamplePlugin` to see what it looks like!
 
-*For example you can separate git repositories with plugins on your team.*
+    .. code-block:: python
 
+        @listen_to("hello_click", needs_mention=True)
+        @click.command(help="An example click command with various arguments.")
+        @click.argument("POSITIONAL_ARG", type=str)
+        @click.option("--keyword-arg", type=float, default=5.0, help="A keyword arg.")
+        @click.option("-f", "--flag", is_flag=True, help="Can be toggled.")
+        def hello_click(
+            self, message: Message, positional_arg: str, keyword_arg: float, flag: bool
+        ):
+            response = (
+                "Received the following arguments:\n"
+                f"- positional_arg: {positional_arg}\n"
+                f"- keyword_arg: {keyword_arg}\n"
+                f"- flag: {flag}\n"
+            )
+            self.driver.reply_to(message, response)
 
-Attachment Support
+File upload
 ------------------
 
 .. code-block:: python
 
-    from mmpy_bot.bot import respond_to
+    @listen_to("^hello_file$", re.IGNORECASE, needs_mention=True)
+    async def hello_file(self, message: Message):
+        """Responds by uploading a text file."""
+        file = Path("/tmp/hello.txt")
+        file.write_text("Hello from this file!")
+        self.driver.reply_to(message, "Here you go", file_paths=[file])
 
 
-    @respond_to('webapi')
-    def webapi_reply(message):
-        attachments = [{
-            'fallback': 'Fallback text',
-            'author_name': 'Author',
-            'author_link': 'http://www.github.com',
-            'text': 'Some text here ...',
-            'color': '#59afe1'
-        }]
-        message.reply_webapi(
-            'Attachments example', attachments,
-            username='Mattermost-Bot',
-            icon_url='https://goo.gl/OF4DBq',
-        )
-        # Optional: Send message to specified channel
-        # message.send_webapi('', attachments, channel_id=message.channel)
-
-
-File Support
-------------------
+Plugin startup and shutdown
+---------------------------
+The `Plugin` class comes with an `on_start` and `on_stop` function, which will be called when the bot starts up or shuts down.
+They can be used as follows:
 
 .. code-block:: python
 
-    from mmpy_bot.bot import respond_to
+    def on_start(self):
+        """Notifies some channel that the bot is now running."""
+        self.driver.create_post(channel_id="some_channel_id", message="The bot just started running!")
+
+    def on_stop(self):
+        """Notifies some channel that the bot is shutting down."""
+        self.driver.create_post(channel_id="some_channel_id", message="I'll be right back!")
 
 
-    @respond_to('files')
-    def message_with_file(message):
-        # upload_file() can upload only one file at a time
-        # If you have several files to upload, you need call this function several times.
-        file = open('test.txt', 'w+')
-        result = message.upload_file(file)
-        file.close()
-        if 'file_infos' not in result:
-            message.reply('upload file error')
-        file_id = result['file_infos'][0]['id']
-        # file_id need convert to array
-        message.reply('hello', [file_id])
-
-
-Webhook Support
-------------------
-
-You can specify ``webhook_id`` at ``reply_webapi`` and ``send_webapi`` method call.
-The ``webhook_id`` can be generated and acquired from Mattermost Contol Panel.
-It is also possible to send messages to different teams/channels in the same message handler, as long as you got needed webhook_ids.
+Webhook listener
+---------------------
+If you want to interact with your bot not only through chat messages but also through web requests (for example to implement an `interactive dialog <https://docs.mattermost.com/developer/interactive-dialogs.html>`_), you can use enable the built-in `WebHookServer`.
+In your `Settings`, make sure to set `WEBHOOK_HOST_ENABLED=True` and provide a value for `WEBHOOK_HOST_URL` and `WEBHOOK_HOST_PORT` (see `settings.py <https://github.com/attzonko/mmpy_bot/blob/master/mmpy_bot/settings.py>`_ for more info).
+Then, on your custom `Plugin` you can create a function like this:
 
 .. code-block:: python
+    from mmpy_bot import listen_webhook
 
-    from mmpy_bot.bot import respond_to
+    @listen_webhook("ping")
+    async def ping_listener(self, event: WebHookEvent):
+        """Listens to post requests to '<server_url>/hooks/ping' and posts a message in
+        the channel specified in the request body."""
 
-    @respond_to('reply')
-    def reply(message):
-        attachments = [{
-            'fallback': 'Fallback text',
-            'author_name': 'Author',
-            'author_link': 'http://www.github.com',
-            'text': 'Some text here ...',
-            'color': '#59afe1'
-        }]
-        message.reply_webapi(
-            'Response to team I got message from.',
-            attachments,
-            webhook_id='p7tuwghy37r63jp4nf3tsopque',
-        )
-        # Optional: Send message to specified channel
-        message.send_webapi(
-            'Response to another team.',
-            attachments,
-            webhook_id='aib7mnahsfy5zrt6tf3ycbghic',
+        self.driver.create_post(
+            event.body["channel_id"], f"Webhook {event.webhook_id} triggered!"
         )
 
-You can also set ``WEBHOOK_ID`` in settings.py or local_settings.py.
-The ``WEBHOOK_ID`` will serve as default webhook id to send message via webhook API if ``webhook_id`` is not given at ``reply_webapi`` or ``send_webapi`` method call.
+And if you want to send a web response back to the incoming HTTP POST request, you can use `Driver.respond_to_web`:
 
 .. code-block:: python
+    @listen_webhook("ping")
+    async def ping_listener(self, event: WebHookEvent):
+        # Respond to the web request rather than posting a message.
+        self.driver.respond_to_web(
+            event,
+            {
+                # You can add any kind of JSON-serializable data here
+                "message": "hello!",
+            },
+        )
 
-    import os
-
-    PLUGINS = [
-        'my_plugins',
-    ]
-
-    BOT_URL = os.environ.get("BOT_URL", 'http://your_server_dn/api/v4')
-    BOT_LOGIN = os.environ.get("DRIVERBOT_LOGIN", 'bot@nature.ee.ncku.edu.tw')
-    BOT_NAME = os.environ.get("DRIVERBOT_NAME", 'bot')
-    BOT_PASSWORD = os.environ.get("DRIVERBOT_PASSWORD", 'passwd')
-
-    # this team name should be the same as in driver_settings
-    BOT_TEAM = os.environ.get("BOT_TEAM", 'test_team')
-
-    # default public channel name
-    BOT_CHANNEL = os.environ.get("BOT_CHANNEL", 'off-topic')
-
-    # a private channel in BOT_TEAM
-    BOT_PRIVATE_CHANNEL = os.environ.get("BOT_PRIVATE_CHANNEL", 'test')
-
-    SSL_VERIFY = True
-
-    # example webhook_id of test_team/off-topic
-    WEBHOOK_ID = 'p7tuwghy37r63jp4nf3tsopque'
-
-If neither ``webhook_id`` (as parameter) nor ``WEBHOOK_ID`` (in settings.py) is given, the message will not be send, and a warning will be added to logging.
+For more information about the `WebHookServer` and its possibilities, take a look at the `WebHookExample  plugin <https://github.com/attzonko/mmpy_bot/blob/master/mmpy_bot/plugins/webhook_example.py>`_.
 
 
-Job Scheduling
+Job scheduling
 --------------
 
-mmpy_bot integrates `schedule 
+mmpy_bot integrates `schedule
 <https://github.com/dbader/schedule/>`_ to provide in-process job scheduling.
 
-With `schedule 
+With `schedule
 <https://github.com/dbader/schedule/>`_, we can put periodic jobs into waiting queue like this:
 
 .. code-block:: python
 
-    import re
-    from datetime import datetime
-    from mmpy_bot.bot import respond_to
-    from mmpy_bot.scheduler import schedule
+    @listen_to("^schedule every ([0-9]+)$", re.IGNORECASE, needs_mention=True)
+    def schedule_every(self, message: Message, seconds: int):
+        """Schedules a reply every x seconds. Use the `cancel jobs` command to stop.
 
+        Arguments:
+        - seconds (int): number of seconds between each reply.
+        """
+        schedule.every(int(seconds)).seconds.do(
+            self.driver.reply_to, message, f"Scheduled message every {seconds} seconds!"
+        )
 
-    @respond_to('reply \"(.*)\" every (.*) seconds', re.IGNORECASE)
-    def reply_every_seconds(message, content, seconds):
-        schedule.every(int(seconds)).seconds.do(message.reply, content)
-
-
-    @respond_to('cancel jobs', re.IGNORECASE)
+    @listen_to('cancel jobs', re.IGNORECASE)
     def cancel_jobs(message):
         schedule.clear()
-        message.reply('all jobs canceled.')
+        self.driver.reply_to('All jobs cancelled.')
 
-The `schedule 
-<https://github.com/dbader/schedule/>`_ itself provide human-readable APIs to schedule jobs. Check out `schedule.readthedocs.io <https://schedule.readthedocs.io/>`_ for more usage examples.
+The `schedule
+<https://github.com/dbader/schedule/>`_ package provides human-readable APIs to schedule jobs. Check out `schedule.readthedocs.io <https://schedule.readthedocs.io/>`_ for more usage examples.
 
-`schedule 
+`schedule
 <https://github.com/dbader/schedule/>`_ is designed for periodic jobs.
-In order to support one-time-only jobs, mmpy_bot has a monkey-patching on integrated 
-`schedule 
+In order to support one-time-only jobs, mmpy_bot has a monkey-patching on integrated
+`schedule
 <https://github.com/dbader/schedule/>`_ package.
 
 We can schedule a one-time-only job by `schedule.once` method.
@@ -242,19 +247,3 @@ You should notice that this method takes a datetime object, which is different f
 
 The following code example uses `schedule.once` to schedule a job.
 This job will be trigger at `t_time`.
-
-.. code-block:: python
-
-    import re
-    from datetime import datetime
-    from mmpy_bot.bot import respond_to
-    from mmpy_bot.scheduler import schedule
-
-
-    @respond_to('reply \"(.*)\" at (.*)', re.IGNORECASE)
-    def reply_specific_time(message, content, trigger_time):
-        t_time = datetime.strptime(trigger_time, '%b-%d-%Y_%H:%M:%S')
-        schedule.once(t_time).do(message.reply, content)
-
-All jobs added will be triggered periodically. 
-The trigger period (default 5 seconds) can be configured by `JOB_TRIGGER_PERIOD` in settings.py or local_settings.py.
