@@ -42,8 +42,8 @@ We recommend creating an `entrypoint` file for executing the bot, which will loo
 
         #!/usr/bin/env python
 
-        from mmpy_bot import Bot, Settings, ExamplePlugin, WebhookExample
-        from my_plugin import MyPlugin
+        from mmpy_bot import Bot, Settings, ExamplePlugin, WebHookExample
+        # from my_plugin import MyPlugin  <== Example of importing your own plugin, don't forget to add it to the plugins list.
 
         bot = Bot(
             settings=Settings(
@@ -53,7 +53,7 @@ We recommend creating an `entrypoint` file for executing the bot, which will loo
                 BOT_TEAM = "<team_name>",
                 SSL_VERIFY = True,
             ),
-            plugins=[ExamplePlugin(), WebhookExample()],
+            plugins=[ExamplePlugin(), WebHookExample()],
         )
         bot.run()
 
