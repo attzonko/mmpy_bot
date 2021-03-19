@@ -10,7 +10,7 @@ from mmpy_bot.scheduler import schedule
 from mmpy_bot.settings import Settings
 from mmpy_bot.wrappers import ActionEvent, Message, WebHookEvent
 
-__version__ = "2.0.0.dev1"
+__version__ = "2.0.0"
 
 __all__ = [
     "__version__",
