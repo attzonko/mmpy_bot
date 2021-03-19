@@ -2,13 +2,10 @@
 Credits
 =======
 
-Development Leads
------------------
+Active Contributors
+------------
 * Alex Tzonkov <alex.tzonkov@gmail.com>
 * Jelmer Neeven
-
-Contributors
-------------
 * Renato Alves
 * Thomas Tuffin <ttuffin@redhat.com>
 
