@@ -91,35 +91,3 @@ To check your installed version of `mmpy_bot`, simply open a Python interpreter 
 
         import mmpy_bot
         print(mmpy_bot.__version__)
-
-
-Integration with Django
------------------------
-
-You can create a ``django`` command as follows:
-
-    from django.core.management.base import BaseCommand
-
-    from mmpy_bot import Bot, Settings
-
-
-    class Command(BaseCommand):
-
-        def handle(self, **options):
-            b = Bot(settings=Settings())
-            b.run()
-
-
-Modify ``manage.py``::
-
-    #!/usr/bin/env python
-
-    import os
-    import sys
-
-
-    if __name__ == "__main__":
-        os.environ.setdefault("DJANGO_SETTINGS_MODULE", "project.settings")
-        from django.core.management import execute_from_command_line
-
-        execute_from_command_line(sys.argv)
