@@ -86,7 +86,7 @@ bot = Bot(
         MATTERMOST_PORT = 443,
         BOT_TOKEN = "a69155mvlsobcnqpfdceqihaa",
         BOT_TEAM = "test",
-        SSL_VERIFY = 443,
+        SSL_VERIFY = True,
     ),  # Either specify your settings here or as environment variables.
     plugins=[MyPlugin()],  # Add your own plugins here.
 )
