@@ -49,7 +49,7 @@ Tests that require interactions between bots on a mattermost server belong to th
 
 
 Adding unit tests
---------------
+-----------------
 
 There are multiple test modules inside unit_tests package, one for each module in the code.
 The naming convention of these modules is *modulename_test*.
