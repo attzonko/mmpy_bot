@@ -35,7 +35,11 @@ We recommend using `venv <https://docs.python.org/3.8/library/venv.html>`_ to ke
 Testing
 =======
 
-mmpy_bot develops all tests based on pytest. If you need to add your own tests and run tests, please ensure the dev requirements are installed as per the above steps.
+mmpy_bot develops all tests based on pytest. If you need to add your own tests and run tests, please install the dev requirements.
+
+    .. code-block:: bash
+
+        $ pip install -r dev-requirements.txt
 
 All the tests are put in `mmpy_bot\tests`.
 There are two test packages: :code:`unit_tests` and :code:`integration_tests`.
@@ -45,7 +49,7 @@ Tests that require interactions between bots on a mattermost server belong to th
 
 
 Adding unit tests
------------------
+--------------
 
 There are multiple test modules inside unit_tests package, one for each module in the code.
 The naming convention of these modules is *modulename_test*.
@@ -58,13 +62,13 @@ Running the unit tests
 
 To run the unit tests (in parallel), simply execute:
 
-.. code-block:: bash
+    .. code-block:: bash
 
-	$ pytest -n auto tests\unit_tests
+        $ pytest -n auto tests\unit_tests
 
 
 Adding integration tests
--------------------------
+------------------------
 
 The integration tests are run on the `jneeven:mattermost-bot-test` docker image, for which dockerfiles are provided in the `tests/intergration_tests` folder.
 The tests are defined as interactions between a bot (the responder) and a driver (the one sending test messages), which live inside the docker image.
@@ -74,21 +78,21 @@ It will simply be started whenever the integration tests are executed.
 
 An integration test might look like this (also have a look at the actual code in `tests/integration_tests/test_example_plugin.py`):
 
-.. code-block:: python
+    .. code-block:: python
 
-	from tests.integration_tests.utils import start_bot  # noqa, only imported so that the bot is started
-	from tests.integration_tests.utils import MAIN_BOT_ID, OFF_TOPIC_ID, RESPONSE_TIMEOUT, TEAM_ID
-	from tests.integration_tests.utils import driver as driver_fixture
-	from tests.integration_tests.utils import expect_reply
+        from tests.integration_tests.utils import start_bot  # noqa, only imported so that the bot is started
+        from tests.integration_tests.utils import MAIN_BOT_ID, OFF_TOPIC_ID, RESPONSE_TIMEOUT, TEAM_ID
+        from tests.integration_tests.utils import driver as driver_fixture
+        from tests.integration_tests.utils import expect_reply
 
-	# Hacky workaround to import the fixture without linting errors
-	driver = driver_fixture
+        # Hacky workaround to import the fixture without linting errors
+        driver = driver_fixture
 
-	# Verifies that the bot is running and listening to this non-targeted message
-	def test_start(driver):
-		post = driver.create_post(OFF_TOPIC_ID, "starting integration tests!")
-		# Checks whether the bot has sent us the expected reply
-		assert expect_reply(driver, post)["message"] == "Bring it on!"
+        # Verifies that the bot is running and listening to this non-targeted message
+        def test_start(driver):
+            post = driver.create_post(OFF_TOPIC_ID, "starting integration tests!")
+            # Checks whether the bot has sent us the expected reply
+            assert expect_reply(driver, post)["message"] == "Bring it on!"
 
 In this test, the driver sends a message in the "off-topic" channel, and waits for the bot to reply 'Bring it on!'.
 If no reply occurs within a default response timeout (15 seconds by default, but this can be passed as an argument to `expect_reply`), an exception will be raised.
@@ -109,20 +113,19 @@ Install pytest-cov_:
 
 .. _pytest-cov: https://pypi.org/project/pytest-cov/
 
-.. code-block:: bash
+    .. code-block:: bash
 
-	$ pip install pytest-cov
+        $ pip install pytest-cov
 
 Set necessary configuration as described above, and run:
 
-.. code-block:: bash
+    .. code-block:: bash
 
-	$ py.test --cov=mmpy_bot tests\
+        $ py.test --cov=mmpy_bot tests\
 
 It automatically runs tests and measures code coverage of modules under mmpy_bot root dir.
 Using "--cov-report" parameter to write report into "cov_html" folder by html format.
 
-.. code-block:: bash
+    .. code-block:: bash
 
-	py.test --cov-report html:logs\cov_html --cov=mmpy_bot tests\
-
+        py.test --cov-report html:logs\cov_html --cov=mmpy_bot tests\
