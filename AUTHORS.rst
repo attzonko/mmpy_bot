@@ -6,7 +6,7 @@ Active Contributors
 ------------
 * Alex Tzonkov <alex.tzonkov@gmail.com>
 * Jelmer Neeven <https://github.com/jneeven>
-* Renato Alves <https://github.com/unode>
+* Renato Alves <alves.rjc@gmail.com>
 * Thomas Tuffin <ttuffin@redhat.com>
 
 Past Contributors
