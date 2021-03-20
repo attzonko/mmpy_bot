@@ -27,8 +27,8 @@ def test_once():
             time.sleep(0.05)
 
         file.seek(0)
-        # Verify that the written time was within 0.1 seconds of the expected time
-        assert float(file.readline()) - 2 == pytest.approx(start, abs=0.1)
+        # Verify that the written time was within 0.3 seconds of the expected time
+        assert float(file.readline()) - 2 == pytest.approx(start, abs=0.3)
 
 
 def test_recurring_thread():
