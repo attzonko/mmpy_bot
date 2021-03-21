@@ -88,8 +88,12 @@ class Bot:
             self.event_handler.start()
 
         except KeyboardInterrupt as e:
-            self.stop()
             raise e
+
+        finally:
+            # When either the event handler finishes (if we asked it to stop) or we
+            # receive a KeyboardInterrupt, shut down the bot.
+            self.stop()
 
     def stop(self):
         logging.info("Stopping bot.")

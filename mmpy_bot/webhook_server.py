@@ -63,7 +63,7 @@ class WebHookServer:
         asyncio.get_event_loop().create_task(self._obtain_responses_loop())
 
     async def stop(self):
-        self.app_runner.cleanup()
+        await self.app_runner.cleanup()
         self.running = False
 
     async def _obtain_responses_loop(self):
