@@ -1,7 +1,7 @@
 black==20.8b1
 docformatter==1.4
 filelock==3.0.12
-flake8==3.8.4
+flake8==3.9.0
 isort==5.7.0
 pytest==6.2.2
 pytest-xdist==2.2.1
