@@ -64,7 +64,7 @@ Further configuration
 ---------------------
 
 The below code snippets provide an insight into the functionality that can be added to the bot. For more in-depth examples,
-please refer to [`./plugins/example.py`](https://github.com/attzonko/mmpy_bot/blob/master/mmpy_bot/plugins/example.py) and [`./plugins/webhook_example.py`](https://github.com/attzonko/mmpy_bot/blob/master/mmpy_bot/plugins/webhook_example.py).
+please refer to `./plugins/example.py <https://github.com/attzonko/mmpy_bot/blob/master/mmpy_bot/plugins/example.py>`_ and `./plugins/webhook_example.py <https://github.com/attzonko/mmpy_bot/blob/master/mmpy_bot/plugins/webhook_example.py>`_.
 
 Implementing regular expression
 -------------------------------
@@ -118,7 +118,7 @@ Restrict messages to specific users
 
 Click support
 -------------
-    `mmpy_bot` now supports [click](https://click.palletsprojects.com/en/7.x/) commands, so you can build a robust CLI-like experience if you need it.
+    `mmpy_bot` now supports `click <https://click.palletsprojects.com/en/7.x/>`_ commands, so you can build a robust CLI-like experience if you need it.
     The example below registers a `hello_click` command that takes a positional argument, a keyword argument and a toggleable flag, which are automatically converted to the correct type.
     For example, it can be called with `hello_click my_argument --keyword-arg=3 -f` and will parse the arguments accordingly.
     A nice benefit of `click` commands is that they also automatically generate nicely formatted help strings.
@@ -178,6 +178,7 @@ In your `Settings`, make sure to set `WEBHOOK_HOST_ENABLED=True` and provide a v
 Then, on your custom `Plugin` you can create a function like this:
 
 .. code-block:: python
+
     from mmpy_bot import listen_webhook
 
     @listen_webhook("ping")
@@ -192,6 +193,7 @@ Then, on your custom `Plugin` you can create a function like this:
 And if you want to send a web response back to the incoming HTTP POST request, you can use `Driver.respond_to_web`:
 
 .. code-block:: python
+
     @listen_webhook("ping")
     async def ping_listener(self, event: WebHookEvent):
         # Respond to the web request rather than posting a message.
