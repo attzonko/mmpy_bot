@@ -41,6 +41,8 @@ class Bot:
                 "token": self.settings.BOT_TOKEN,
                 "scheme": self.settings.SCHEME,
                 "verify": self.settings.SSL_VERIFY,
+                "keepalive": True,
+                "connect_kw_args": {'ping_interval': None}               
             }
         )
         self.driver.login()
