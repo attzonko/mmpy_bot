@@ -42,7 +42,7 @@ class Bot:
                 "scheme": self.settings.SCHEME,
                 "verify": self.settings.SSL_VERIFY,
                 "keepalive": True,
-                "connect_kw_args": {'ping_interval': None},
+                "connect_kw_args": {"ping_interval": None},
             }
         )
         self.driver.login()
