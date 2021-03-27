@@ -53,6 +53,8 @@ class Bot:
         if self.settings.WEBHOOK_HOST_ENABLED:
             self._initialize_webhook_server()
 
+        self.running = False
+
     def _initialize_plugins(self, plugins: Sequence[Plugin]):
         for plugin in plugins:
             plugin.initialize(self.driver, self.settings)
@@ -72,6 +74,8 @@ class Bot:
     def run(self):
         logging.info(f"Starting bot {self.__class__.__name__}.")
         try:
+            self.running = True
+
             self.driver.threadpool.start()
             # Start a thread to run potential scheduled jobs
             self.driver.threadpool.start_scheduler_thread(
@@ -96,9 +100,13 @@ class Bot:
             self.stop()
 
     def stop(self):
+        if not self.running:
+            return
+
         logging.info("Stopping bot.")
         # Shutdown the running plugins
         for plugin in self.plugins:
             plugin.on_stop()
         # Stop the threadpool
         self.driver.threadpool.stop()
+        self.running = False
