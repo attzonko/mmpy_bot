@@ -5,7 +5,7 @@ Credits
 Active Contributors
 ------------
 * Alex Tzonkov <alex.tzonkov@gmail.com>
-* Jelmer Neeven <https://github.com/jneeven>
+* Jelmer Neeven <jelmer@neeven.tech>
 * Renato Alves <alves.rjc@gmail.com>
 * Thomas Tuffin <ttuffin@redhat.com>
 
