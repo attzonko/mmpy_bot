@@ -2,15 +2,24 @@ version: "3.7"
 
 services:
   app:
+    # This docker-compose file specifies a mmpy_bot
+    # running locally for development/test purposes
     container_name: "mmpy_bot"
     build: .
+    # network_mode and extra_hosts should only be necessary
+    # if mattermost is running on the host machine
     network_mode: host
     extra_hosts:
       - "dockerhost:127.0.0.1"
     environment:
       - MATTERMOST_URL=http://127.0.0.1
+      # You will need to update BOT_TOKEN to match the
+      # token generated in your Mattermost server
       - BOT_TOKEN=e691u15hajdebcnqpfdceqihcc
       - MATTERMOST_PORT=8065
+      # WARNING: Use SSL_VERIFY=False only if your Mattermost server
+      # is using self-signed SSL certificates or HTTP (without SSL).
+      # SSL_VERIFY should be set to True otherwise.
       - SSL_VERIFY=False
       - WEBHOOK_HOST_ENABLED=True
       - WEBHOOK_HOST_URL=http://127.0.0.1
