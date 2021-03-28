@@ -22,7 +22,7 @@ class Plugin(ABC):
     """
 
     def __init__(self):
-        self.driver = None
+        self.driver: Optional[Driver] = None
         self.message_listeners: Dict[
             re.Pattern, Sequence[MessageFunction]
         ] = defaultdict(list)
