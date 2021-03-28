@@ -92,7 +92,7 @@ class Driver(mattermostdriver.Driver):
         # Sort the posts by their timestamps
         sorted_stamps = sorted(id_stamps, key=lambda x: x[-1])
         # Overwrite the order with the sorted list
-        thread_info["order"] = list([id for id, stamp in sorted_stamps])
+        thread_info["order"] = [id for id, stamp in sorted_stamps]
         return thread_info
 
     def get_user_info(self, user_id: str):
