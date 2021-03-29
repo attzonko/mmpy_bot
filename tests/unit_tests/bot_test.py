@@ -36,16 +36,16 @@ class TestBot:
         for plugin in plugins:
             assert plugin.initialize.called_once_with(bot.driver)
 
-    @mock.patch("mmpy_bot.driver.Driver.init_websocket")
     @mock.patch.multiple("mmpy_bot.Plugin", on_start=mock.DEFAULT, on_stop=mock.DEFAULT)
-    def test_run(self, init_websocket, bot, **mocks):
-        bot.run()
-        init_websocket.assert_called_once()
+    def test_run(self, bot, **mocks):
+        with mock.patch.object(bot.driver, "init_websocket") as init_websocket:
+            bot.run()
+            init_websocket.assert_called_once()
 
-        for plugin in bot.plugins:
-            plugin.on_start.assert_called_once()
+            for plugin in bot.plugins:
+                plugin.on_start.assert_called_once()
 
-        bot.stop()
+            bot.stop()
 
-        for plugin in bot.plugins:
-            plugin.on_stop.assert_called_once()
+            for plugin in bot.plugins:
+                plugin.on_stop.assert_called_once()
