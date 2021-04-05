@@ -9,6 +9,8 @@
 Documentation available at [Read the Docs](http://mmpy_bot.readthedocs.org/).
 
 
+TEST
+
 ## Description
 
 A Python based chat bot for [Mattermost](http://www.mattermost.org). The code for
