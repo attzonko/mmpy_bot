@@ -69,8 +69,10 @@ class Settings:
                 )
             # Use get_args to find out what kind of sequence it is.
             value = _get_comma_separated_list(value, type=get_args(f.type)[0])
-        elif f.type in [int, float, str, bool]:  # type: ignore
+        elif f.type in [int, float, str]:  # type: ignore
             value = f.type(value)
+        elif f.type is bool:
+            value = f.type(value.lower() in ("yes", "y", "true", "1"))
         else:
             raise TypeError(
                 f"Attribute {f.name} has type {f.type}, which is not supported."
