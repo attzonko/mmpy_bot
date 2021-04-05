@@ -7,6 +7,8 @@ from queue import Queue
 from mmpy_bot.scheduler import default_scheduler
 from mmpy_bot.webhook_server import WebHookServer
 
+log = logging.getLogger("mmpy.threadpool")
+
 
 class ThreadPool(object):
     def __init__(self, num_workers: int):
@@ -43,10 +45,10 @@ class ThreadPool(object):
         for _ in range(self.num_workers):
             self._queue.put((self._stop_thread, tuple()))
         # Wait for each of them to finish
-        logging.info("Stopping threadpool, waiting for threads...")
+        log.info("Stopping threadpool, waiting for threads...")
         for thread in self._threads:
             thread.join()
-        logging.info("Threadpool stopped.")
+        log.info("Threadpool stopped.")
 
     def _stop_thread(self):
         """Used to stop individual threads."""
@@ -65,22 +67,22 @@ class ThreadPool(object):
 
     def start_scheduler_thread(self, trigger_period: float):
         def run_pending():
-            logging.info("Scheduler thread started.")
+            log.info("Scheduler thread started.")
             while self.alive:
                 time.sleep(trigger_period)
                 default_scheduler.run_pending()
-            logging.info("Scheduler thread stopped.")
+            log.info("Scheduler thread stopped.")
 
         self.add_task(run_pending)
 
     def start_webhook_server_thread(self, webhook_server: WebHookServer):
         async def start_server():
-            logging.info("Webhook server thread started.")
+            log.info("Webhook server thread started.")
             await webhook_server.start()
             while self.alive:
                 # We just use this to keep the loop running in a non-blocking way
                 await asyncio.sleep(0.001)
             await webhook_server.stop()
-            logging.info("Webhook server thread stopped.")
+            log.info("Webhook server thread stopped.")
 
         self.add_task(asyncio.run, start_server())
