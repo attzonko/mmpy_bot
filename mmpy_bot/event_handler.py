@@ -12,6 +12,8 @@ from mmpy_bot.settings import Settings
 from mmpy_bot.webhook_server import NoResponse
 from mmpy_bot.wrappers import Message, WebHookEvent
 
+log = logging.getLogger("mmpy.event_handler")
+
 
 class EventHandler(object):
     def __init__(
@@ -53,7 +55,7 @@ class EventHandler(object):
         ) or (self.ignore_own_messages and message.sender_name == self.driver.username)
 
     async def _check_queue_loop(self, webhook_queue: queue.Queue):
-        logging.info("EventHandlerWebHook queue listener started.")
+        log.info("EventHandlerWebHook queue listener started.")
         while True:
             try:
                 event = webhook_queue.get_nowait()

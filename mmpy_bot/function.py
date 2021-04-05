@@ -13,6 +13,8 @@ from mmpy_bot.utils import completed_future, spaces
 from mmpy_bot.webhook_server import NoResponse
 from mmpy_bot.wrappers import Message, WebHookEvent
 
+log = logging.getLogger("mmpy.function")
+
 
 class Function(ABC):
     def __init__(
@@ -245,7 +247,7 @@ class WebHookFunction(Function):
         try:
             self.function(self.plugin, event)
         except Exception:
-            logging.exception("Exception occurred: ")
+            log.exception("Exception occurred: ")
         finally:
             return ensure_response()
 
