@@ -9,6 +9,8 @@ from mmpy_bot.plugins import ExamplePlugin, Plugin, WebHookExample
 from mmpy_bot.settings import Settings
 from mmpy_bot.webhook_server import WebHookServer
 
+log = logging.getLogger("mmpy.bot")
+
 
 class Bot:
     """Base chatbot class.
@@ -28,12 +30,18 @@ class Bot:
         self.settings = settings or Settings()
         logging.basicConfig(
             **{
-                "format": "[%(asctime)s] %(message)s",
+                "format": self.settings.LOG_FORMAT,
                 "datefmt": "%m/%d/%Y %H:%M:%S",
                 "level": logging.DEBUG if self.settings.DEBUG else logging.INFO,
-                "stream": sys.stdout,
+                "filename": self.settings.LOG_FILE,
+                "filemode": "w",
             }
         )
+        # define and add a Handler which writes log messages to the sys.stdout
+        self.console = logging.StreamHandler(stream=sys.stdout)
+        self.console.setFormatter(logging.Formatter(self.settings.LOG_FORMAT))
+        logging.getLogger("").addHandler(self.console)
+
         self.driver = Driver(
             {
                 "url": self.settings.MATTERMOST_URL,
@@ -72,7 +80,7 @@ class Bot:
         )
 
     def run(self):
-        logging.info(f"Starting bot {self.__class__.__name__}.")
+        log.info(f"Starting bot {self.__class__.__name__}.")
         try:
             self.running = True
 
@@ -103,7 +111,7 @@ class Bot:
         if not self.running:
             return
 
-        logging.info("Stopping bot.")
+        log.info("Stopping bot.")
         # Shutdown the running plugins
         for plugin in self.plugins:
             plugin.on_stop()

@@ -1,7 +1,7 @@
 import collections
 import os
 from dataclasses import dataclass, field, fields
-from typing import Sequence, get_args, get_origin  # type: ignore
+from typing import Optional, Sequence, get_args, get_origin  # type: ignore
 
 
 def _get_comma_separated_list(string: str, type=str):
@@ -33,6 +33,9 @@ class Settings:
     WEBHOOK_HOST_URL: str = "http://127.0.0.1"
     WEBHOOK_HOST_PORT: int = 8579
     DEBUG: bool = False
+    LOG_FILE: Optional[str] = None
+    LOG_FORMAT: str = "[%(asctime)s][%(name)s][%(levelname)s] %(message)s"
+
     IGNORE_USERS: Sequence[str] = field(default_factory=list)
     # How often to check whether any scheduled jobs need to be run, default every second
     SCHEDULER_PERIOD: float = 1.0
