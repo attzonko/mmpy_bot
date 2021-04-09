@@ -9,6 +9,8 @@ from mmpy_bot.plugins import ExamplePlugin, Plugin, WebHookExample
 from mmpy_bot.settings import Settings
 from mmpy_bot.webhook_server import WebHookServer
 
+log = logging.getLogger("mmpy.bot")
+
 
 class Bot:
     """Base chatbot class.
@@ -28,12 +30,18 @@ class Bot:
         self.settings = settings or Settings()
         logging.basicConfig(
             **{
-                "format": "[%(asctime)s] %(message)s",
+                "format": self.settings.LOG_FORMAT,
                 "datefmt": "%m/%d/%Y %H:%M:%S",
                 "level": logging.DEBUG if self.settings.DEBUG else logging.INFO,
-                "stream": sys.stdout,
+                "filename": self.settings.LOG_FILE,
+                "filemode": "w",
             }
         )
+        # define and add a Handler which writes log messages to the sys.stdout
+        self.console = logging.StreamHandler(stream=sys.stdout)
+        self.console.setFormatter(logging.Formatter(self.settings.LOG_FORMAT))
+        logging.getLogger("").addHandler(self.console)
+
         self.driver = Driver(
             {
                 "url": self.settings.MATTERMOST_URL,
@@ -55,6 +63,8 @@ class Bot:
         if self.settings.WEBHOOK_HOST_ENABLED:
             self._initialize_webhook_server()
 
+        self.running = False
+
     def _initialize_plugins(self, plugins: Sequence[Plugin]):
         for plugin in plugins:
             plugin.initialize(self.driver, self.settings)
@@ -72,8 +82,10 @@ class Bot:
         )
 
     def run(self):
-        logging.info(f"Starting bot {self.__class__.__name__}.")
+        log.info(f"Starting bot {self.__class__.__name__}.")
         try:
+            self.running = True
+
             self.driver.threadpool.start()
             # Start a thread to run potential scheduled jobs
             self.driver.threadpool.start_scheduler_thread(
@@ -90,13 +102,21 @@ class Bot:
             self.event_handler.start()
 
         except KeyboardInterrupt as e:
-            self.stop()
             raise e
 
+        finally:
+            # When either the event handler finishes (if we asked it to stop) or we
+            # receive a KeyboardInterrupt, shut down the bot.
+            self.stop()
+
     def stop(self):
-        logging.info("Stopping bot.")
+        if not self.running:
+            return
+
+        log.info("Stopping bot.")
         # Shutdown the running plugins
         for plugin in self.plugins:
             plugin.on_stop()
         # Stop the threadpool
         self.driver.threadpool.stop()
+        self.running = False

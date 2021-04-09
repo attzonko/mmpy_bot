@@ -11,6 +11,8 @@ from mmpy_bot.function import Function, MessageFunction, WebHookFunction, listen
 from mmpy_bot.settings import Settings
 from mmpy_bot.wrappers import EventWrapper, Message
 
+log = logging.getLogger("mmpy.plugin_base")
+
 
 class Plugin(ABC):
     """A Plugin is a self-contained class that defines what functions should be executed
@@ -22,7 +24,7 @@ class Plugin(ABC):
     """
 
     def __init__(self):
-        self.driver = None
+        self.driver: Optional[Driver] = None
         self.message_listeners: Dict[
             re.Pattern, Sequence[MessageFunction]
         ] = defaultdict(list)
@@ -62,7 +64,7 @@ class Plugin(ABC):
 
         Can be overridden on the subclass if desired.
         """
-        logging.debug(f"Plugin {self.__class__.__name__} started!")
+        log.debug(f"Plugin {self.__class__.__name__} started!")
         return self
 
     def on_stop(self):
@@ -70,7 +72,7 @@ class Plugin(ABC):
 
         Can be overridden on the subclass if desired.
         """
-        logging.debug(f"Plugin {self.__class__.__name__} stopped!")
+        log.debug(f"Plugin {self.__class__.__name__} stopped!")
         return self
 
     async def call_function(
