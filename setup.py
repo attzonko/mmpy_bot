@@ -12,7 +12,7 @@ def requires(filename: str):
 
 setup(
     name="mmpy_bot",
-    version="2.0.0",
+    version="2.0.1",
     author="Alex Tzonkov",
     author_email="alex.tzonkov@gmail.com",
     license="MIT",
