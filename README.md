@@ -11,26 +11,22 @@ Documentation available at [Read the Docs](http://mmpy_bot.readthedocs.org/).
 
 ## Description
 
-A Python based chat bot for [Mattermost](http://www.mattermost.org). The code for
-this bot was heavily re-factored in v2.0.0 and will only work with Python 3.8 or higher.
-For Python 2 support, please use v1.3.9 or lower.
+A Python based chat bot framework for [Mattermost](http://www.mattermost.org). The code for
+this bot framework was heavily re-factored in v2.0.0 and will only work with Python 3.8 or higher.
+For Python 2 support, please use versions v1.3.9 or lower.
 
 ## Features
+- Based on Mattermost [WebSocket API(V4.0.0)](https://api.mattermost.com)
+- Simple plugins mechanism
+- Concurrent message handling
+- Attachment support
+- Auto-reconnect to Mattermost after connection loss
 
-- [x] Based on Mattermost [WebSocket API(V4.0.0)](https://api.mattermost.com)
-- [x] Simple plugins mechanism
-- [x] Concurrent message handling
-- [x] Attachment support
-- [x] Auto-reconnect to Mattermost after connection loss
-- [x] Python 2 compatible (<=v1.3.9 only)
-
-##### Additional features in v2.0.0:
-- [x] Multi-threading and asyncio execution
-- [x] Integrated webhook server
-- [x] Support for click functions
-- [x] Job scheduling
-- [x] Compatible with Python 3.8+ only
-
+##### Additional features added in v2.x:
+- Multi-threading and asyncio execution
+- Integrated webhook server
+- Support for click functions 
+- Job scheduling
 
 ## Compatibility
 
@@ -42,7 +38,7 @@ For Python 2 support, please use v1.3.9 or lower.
 
 ## Installation
 
-##### v2.0.0 refactor
+##### v2.x refactor
 ```
 pip install mmpy_bot
 ```
@@ -52,7 +48,7 @@ pip install mmpy_bot
 pip install mmpy_bot==1.3.9
 ```
 
-## Usage (v2.0.0)
+## Usage (v2.x)
 
 ### Registration
 
