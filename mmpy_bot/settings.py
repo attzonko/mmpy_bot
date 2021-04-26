@@ -1,7 +1,7 @@
 import collections
 import os
 from dataclasses import dataclass, field, fields
-from typing import Optional, Sequence, get_args, get_origin  # type: ignore
+from typing import Optional, Sequence, Union, get_args, get_origin  # type: ignore
 
 
 def _get_comma_separated_list(string: str, type=str):
@@ -10,6 +10,28 @@ def _get_comma_separated_list(string: str, type=str):
     if type is not str:
         values = list([type(value) for value in values])
     return values
+
+
+def _is_valid_option(_type, valid_types):
+    """Test whether the specified type is an option with an argument type we can support
+    (int, float, str, bool)"""
+    maintype = get_origin(_type)
+    if maintype is not Union:
+        # Optional is an alias for Union
+        return False
+
+    subtypes = get_args(_type)
+
+    # We need to cast the value in the end so we need a single type
+    # As such the only Union type that allows this is Union[Any, None]
+    if len(subtypes) != 2 or type(None) not in subtypes:
+        return False
+
+    # The non-None type must be one of the types we can support
+    if not set(valid_types).intersection(subtypes):
+        return False
+
+    return True
 
 
 @dataclass
@@ -76,6 +98,12 @@ class Settings:
             value = f.type(value)
         elif f.type is bool:
             value = f.type(value.lower() in ("yes", "y", "true", "1"))
+        elif _is_valid_option(f.type, [int, float, str]):
+            subtype = set(get_args(f.type)).intersection([int, float, str]).pop()
+            value = subtype(value)
+        elif _is_valid_option(f.type, [bool]):
+            subtype = set(get_args(f.type)).intersection([bool]).pop()
+            value = subtype(value.lower() in ("yes", "y", "true", "1"))
         else:
             raise TypeError(
                 f"Attribute {f.name} has type {f.type}, which is not supported."
