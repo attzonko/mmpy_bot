@@ -14,7 +14,8 @@ def requires(filename: str):
 
 setup(
     name="mmpy_bot",
-    version=Path("version.txt").read_text(),  # Updated by publish workflow
+    # Updated by publish workflow
+    version=Path(__file__).parent.joinpath("version.txt").read_text(),
     author="Alex Tzonkov",
     author_email="alex.tzonkov@gmail.com",
     license="MIT",
