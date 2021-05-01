@@ -1,0 +1,27 @@
+name: Publish
+
+on:
+  release:
+    types: [published]
+    tags:
+      - v*
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+  
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2.2.1
+        with:
+          python-version: 3.8
+      - name: Upgrade setuptools
+        run: pip install --upgrade setuptools wheel
+      - name: Build distribution
+        run: python setup.py sdist bdist_wheel
+      - name: Publish package
+        uses: pypa/gh-action-pypi-publish@master
+        with:
+          user: __token__
+          password: ${{ secrets.pypi_password }}
