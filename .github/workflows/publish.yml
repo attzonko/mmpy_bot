@@ -1,10 +1,11 @@
-name: Publish
+name: Release new version
 
 on:
-  release:
-    types: [published]
-    tags:
-      - v*
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Semantic version of the form M.m.p[.devXYZ]'
+        required: true
 
 jobs:
   build:
@@ -16,12 +17,19 @@ jobs:
         uses: actions/setup-python@v2.2.1
         with:
           python-version: 3.8
-      - name: Upgrade setuptools
-        run: pip install --upgrade setuptools wheel
-      - name: Build distribution
-        run: python setup.py sdist bdist_wheel
-      - name: Publish package
-        uses: pypa/gh-action-pypi-publish@master
+      - name: Install requirements
+        run: pip install --upgrade setuptools twine wheel
+      - name: Create wheel
+        run: |
+          echo ${{ github.event.inputs.version }} > version.txt
+          python setup.py bdist_wheel
+      - name: Upload wheel
+        run: twine upload dist/* -u __token__ -p '${{ secrets.PYPI_API_TOKEN }}' --verbose
+      - uses: "marvinpinto/action-automatic-releases@latest"
         with:
-          user: __token__
-          password: ${{ secrets.pypi_password }}
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          prerelease: false
+          title: v'${{ github.event.inputs.version }}''
+          files: |
+            LICENSE
+            dist/*.whl

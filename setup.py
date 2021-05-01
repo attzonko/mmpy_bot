@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from setuptools import find_packages, setup
 
 excludes = (
@@ -12,7 +14,7 @@ def requires(filename: str):
 
 setup(
     name="mmpy_bot",
-    version="2.0.2",
+    version=Path("version.txt").read_text(),  # Updated by publish workflow
     author="Alex Tzonkov",
     author_email="alex.tzonkov@gmail.com",
     license="MIT",
