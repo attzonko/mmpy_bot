@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from mmpy_bot.bot import Bot
 from mmpy_bot.function import (
     MessageFunction,
@@ -10,7 +12,7 @@ from mmpy_bot.scheduler import schedule
 from mmpy_bot.settings import Settings
 from mmpy_bot.wrappers import ActionEvent, Message, WebHookEvent
 
-__version__ = "2.0.2"
+__version__ = Path(__file__).parent.parent.joinpath("version.txt").read_text()
 
 __all__ = [
     "__version__",
