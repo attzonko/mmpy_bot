@@ -5,6 +5,7 @@ import re
 from abc import ABC
 from collections import defaultdict
 from typing import Dict, Optional, Sequence
+from dataclasses import dataclass
 
 from mmpy_bot.driver import Driver
 from mmpy_bot.function import Function, MessageFunction, WebHookFunction, listen_to
@@ -126,6 +127,17 @@ class Plugin(ABC, PluginMixin):
         return string
 
 
+@dataclass
+class PluginHelp:
+    help_type: str
+    location: str
+    function: str
+    pattern: str
+    doc_header: str
+    doc_full: str
+    annotations: Dict
+
+
 class PluginManager(PluginMixin):
     def __init__(
         self,
@@ -165,18 +177,51 @@ class PluginManager(PluginMixin):
         for plugin in self.plugins:
             plugin.initialize(self.driver, settings)
 
-    def get_help_string(self):
-        string = f"Plugin {self.__class__.__name__} has the following functions:\n"
-        string += "----\n"
-        for functions in self.message_listeners.values():
-            for function in functions:
-                string += f"- {function.get_help_string()}"
-            string += "----\n"
+    def get_help(self):
+        response: Sequence[PluginHelp] = []
 
-        if len(self.webhook_listeners) > 0:
-            string += "### Registered webhooks:\n"
-            for functions in self.webhook_listeners.values():
+        for plugin in self.plugins:
+            for matcher, functions in plugin.message_listeners.items():
                 for function in functions:
-                    string += f"- {function.get_help_string()}"
+                    response.append(
+                        PluginHelp(
+                            help_type="message",
+                            location=self.__class__.__name__,
+                            function=function,
+                            pattern=matcher.pattern,
+                            doc_header=function.function.__doc__.split("\n", 1)[0],
+                            doc_full=function.function.__doc__,
+                            annotations=function.annotations,
+                        )
+                    )
+
+            if len(plugin.webhook_listeners) > 0:
+                for matcher, functions in plugin.webhook_listeners.items():
+                    for function in functions:
+                        response.append(
+                            PluginHelp(
+                                help_type="webhook",
+                                location=self.__class__.__name__,
+                                function=function,
+                                pattern=matcher.pattern,
+                                doc_header=function.function.__doc__.split("\n", 1)[0],
+                                doc_full=function.function.__doc__,
+                                annotations=function.annotations,
+                            )
+                        )
+
+        return response
+
+    def get_help_string(self):
+        def custom_sort(rec):
+            return (rec.help_type, rec.pattern.lstrip("^[(-"))
+
+        string = "## The following functions have been registered:\n\n"
+        for h in sorted(self.get_help(), key=custom_sort):
+            cmd = h.annotations.get("syntax", h.pattern)
+            if h.help_type == "webhook":
+                string += f"- `{cmd}` - (webhook) {h.doc_header}\n"
+            else:
+                string += f"- `{cmd}` - {h.doc_header}\n"
 
         return string
