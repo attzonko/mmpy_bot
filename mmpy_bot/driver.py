@@ -57,29 +57,24 @@ class Driver(mattermostdriver.Driver):
         file_ids = (
             self.upload_files(file_paths, channel_id) if len(file_paths) > 0 else []
         )
+
+        post = dict(
+            channel_id=channel_id,
+            message=message,
+            file_ids=file_ids,
+            root_id=root_id,
+            props=props,
+        )
+
         if ephemeral_user_id:
             return self.posts.create_ephemeral_post(
                 {
                     "user_id": ephemeral_user_id,
-                    "post": {
-                        "channel_id": channel_id,
-                        "message": message,
-                        "file_ids": file_ids,
-                        "root_id": root_id,
-                        "props": props,
-                    },
+                    "post": post,
                 }
             )
 
-        return self.posts.create_post(
-            {
-                "channel_id": channel_id,
-                "message": message,
-                "file_ids": file_ids,
-                "root_id": root_id,
-                "props": props,
-            }
-        )
+        return self.posts.create_post(post)
 
     def get_thread(self, post_id: str):
         """Wrapper around driver.posts.get_thread, which for some reason returns
