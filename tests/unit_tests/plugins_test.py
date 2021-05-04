@@ -93,7 +93,7 @@ class TestPlugin:
             mock_function.assert_called_once_with(p, message)
 
     def test_help_string(self, snapshot):
-        p = FakePlugin(help_trigger=True, help_trigger_nomention=True).initialize(
+        p = FakePlugin(help_trigger=True, help_trigger_bang=True).initialize(
             Driver()
         )
         # Compare the help string with the snapshotted version.

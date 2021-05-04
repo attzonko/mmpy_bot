@@ -30,7 +30,10 @@ class PluginMixin:
 
     async def help(self, message: Message):
         """Prints the list of functions registered on every active plugin."""
-        self.driver.reply_to(message, self.get_help_string())
+        if self.direct_help:
+            self.driver.reply_to(message, self.get_help_string(), direct=True)
+        else:
+            self.driver.reply_to(message, self.get_help_string())
 
 
 class Plugin(ABC, PluginMixin):
@@ -42,7 +45,12 @@ class Plugin(ABC, PluginMixin):
     way, you can implement multithreading or multiprocessing as desired.
     """
 
-    def __init__(self, help_trigger=False, help_trigger_nomention=False):
+    def __init__(
+        self,
+        help_trigger: bool = False,
+        help_trigger_bang: bool = False,
+        direct_help: bool = False,
+    ):
         self.driver: Optional[Driver] = None
         self.message_listeners: Dict[
             re.Pattern, Sequence[MessageFunction]
@@ -50,6 +58,7 @@ class Plugin(ABC, PluginMixin):
         self.webhook_listeners: Dict[
             re.Pattern, Sequence[WebHookFunction]
         ] = defaultdict(list)
+        self.direct_help: bool = direct_help
 
         # We have to register the help function listeners at runtime to prevent the
         # Function object from being shared across different Plugins.
@@ -57,7 +66,7 @@ class Plugin(ABC, PluginMixin):
         # instance is (message) not (self, message) causing failures later
         if help_trigger:
             self.help = listen_to("^help$", needs_mention=True)(PluginMixin.help)
-        if help_trigger_nomention:
+        if help_trigger_bang:
             if not help_trigger:
                 self.help = listen_to("^!help$")(PluginMixin.help)
             else:
@@ -118,9 +127,16 @@ class Plugin(ABC, PluginMixin):
 
 
 class PluginManager(PluginMixin):
-    def __init__(self, plugins: Sequence[Plugin], help_trigger=True):
+    def __init__(
+        self,
+        plugins: Sequence[Plugin],
+        help_trigger: bool = True,
+        help_trigger_bang: bool = False,
+        direct_help: bool = True,
+    ):
         self.driver: Optional[Driver] = None
         self.plugins: Sequence[Plugin] = plugins
+        self.direct_help: bool = direct_help
 
         self.message_listeners: Dict[
             re.Pattern, Sequence[MessageFunction]
@@ -130,7 +146,7 @@ class PluginManager(PluginMixin):
         # instance is (message) not (self, message) causing failures later
         if help_trigger:
             self.help = listen_to("^help$", needs_mention=True)(PluginMixin.help)
-        if help_trigger_nomention:
+        if help_trigger_bang:
             if not help_trigger:
                 self.help = listen_to("^!help$")(PluginMixin.help)
             else:
