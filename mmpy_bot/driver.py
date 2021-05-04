@@ -111,31 +111,67 @@ class Driver(mattermostdriver.Driver):
         file_paths: Optional[Sequence[str]] = None,
         props: Dict = {},
         ephemeral: bool = False,
+        direct: bool = False,
     ):
         """Reply to the given message.
 
         Supports sending ephemeral messages if the bot permissions allow it. If the
         message is part of a thread, the reply will be added to that thread.
+
+        Also supports replying privately by setting direct=True.
         """
         if file_paths is None:
             file_paths = []
 
-        if ephemeral:
-            return self.create_post(
-                channel_id=message.channel_id,
+        if direct and not message.is_direct_message:
+            # NOTE we explicitly don't pass root_id as it would refer to a
+            # post in a channel not a private session
+            direct_args = dict(
+                receiver_id=message.user_id,
                 message=response,
-                root_id=message.reply_id,
                 file_paths=file_paths,
                 props=props,
-                ephemeral_user_id=message.user_id,
             )
+            if ephemeral:
+                direct_args["ephemeral_user_id"] = message.user_id
 
-        return self.create_post(
+            return self.direct_message(**direct_args)
+
+        reply_args = dict(
             channel_id=message.channel_id,
             message=response,
             root_id=message.reply_id,
             file_paths=file_paths,
             props=props,
+        )
+
+        if ephemeral:
+            reply_args["ephemeral_user_id"] = message.user_id
+
+        return self.create_post(**reply_args)
+
+    def direct_message(
+        self,
+        receiver_id: str,
+        message: str,
+        file_paths: Optional[Sequence[str]] = None,
+        root_id: str = "",
+        props: Dict = {},
+        ephemeral_user_id: Optional[str] = None,
+    ):
+        # Private/direct messages are sent to a special channel that
+        # includes the bot and the recipient
+        direct_id = self.channels.create_direct_message_channel(
+            [self.user_id, receiver_id]
+        )["id"]
+
+        return self.create_post(
+            channel_id=direct_id,
+            message=message,
+            root_id=root_id,
+            file_paths=file_paths,
+            props=props,
+            ephemeral_user_id=ephemeral_user_id,
         )
 
     def respond_to_web(self, event: WebHookEvent, response):
