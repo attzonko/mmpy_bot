@@ -7,7 +7,7 @@ from collections import defaultdict
 from typing import Sequence
 
 from mmpy_bot.driver import Driver
-from mmpy_bot.plugins import Plugin
+from mmpy_bot.plugins import PluginManager
 from mmpy_bot.settings import Settings
 from mmpy_bot.webhook_server import NoResponse
 from mmpy_bot.wrappers import Message, WebHookEvent
@@ -20,7 +20,7 @@ class EventHandler(object):
         self,
         driver: Driver,
         settings: Settings,
-        plugins: Sequence[Plugin],
+        plugins: PluginManager,
         ignore_own_messages=True,
     ):
         """The EventHandler class takes care of the connection to mattermost and calling
@@ -28,18 +28,23 @@ class EventHandler(object):
         self.driver = driver
         self.settings = settings
         self.ignore_own_messages = ignore_own_messages
-        self.plugins = plugins
+        self.plug_manager = plugins
 
         self._name_matcher = re.compile(rf"^@?{self.driver.username}\:?\s?")
 
         # Collect the listeners from all plugins
         self.message_listeners = defaultdict(list)
         self.webhook_listeners = defaultdict(list)
-        for plugin in self.plugins:
+
+        for plugin in self.plug_manager:
             for matcher, functions in plugin.message_listeners.items():
                 self.message_listeners[matcher].extend(functions)
             for matcher, functions in plugin.webhook_listeners.items():
                 self.webhook_listeners[matcher].extend(functions)
+
+        # PluginManager also has listeners for "help"
+        for matcher, functions in self.plug_manager.message_listeners.items():
+            self.message_listeners[matcher].extend(functions)
 
     def start(self):
         # This is blocking, will loop forever

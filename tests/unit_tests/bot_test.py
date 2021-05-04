@@ -3,6 +3,7 @@ from unittest import mock
 import pytest
 
 from mmpy_bot import Bot, ExamplePlugin, Settings
+from mmpy_bot.plugins import PluginManager
 
 from ..integration_tests.utils import TestPlugin
 
@@ -29,7 +30,8 @@ class TestBot:
         )
         assert bot.driver.options["url"] == "test_url.org"
         assert bot.driver.options["token"] == "random_token"
-        assert bot.plugins == plugins
+        assert isinstance(bot.plugins, PluginManager)
+        assert bot.plugins.plugins == plugins
         login.assert_called_once()
 
         # Verify that all of the passed plugins were initialized

@@ -14,7 +14,26 @@ from mmpy_bot.wrappers import EventWrapper, Message
 log = logging.getLogger("mmpy.plugin_base")
 
 
-class Plugin(ABC):
+class PluginMixin:
+    async def call_function(
+        self,
+        function: Function,
+        event: EventWrapper,
+        groups: Optional[Sequence[str]] = [],
+    ):
+        if function.is_coroutine:
+            await function(event, *groups)  # type:ignore
+        else:
+            # By default, we use the global threadpool of the driver, but we could use
+            # a plugin-specific thread or process pool if we wanted.
+            self.driver.threadpool.add_task(function, event, *groups)
+
+    async def help(self, message: Message):
+        """Prints the list of functions registered on every active plugin."""
+        self.driver.reply_to(message, self.get_help_string())
+
+
+class Plugin(ABC, PluginMixin):
     """A Plugin is a self-contained class that defines what functions should be executed
     given different inputs.
 
@@ -23,7 +42,7 @@ class Plugin(ABC):
     way, you can implement multithreading or multiprocessing as desired.
     """
 
-    def __init__(self):
+    def __init__(self, help_trigger=False, help_trigger_nomention=False):
         self.driver: Optional[Driver] = None
         self.message_listeners: Dict[
             re.Pattern, Sequence[MessageFunction]
@@ -34,8 +53,15 @@ class Plugin(ABC):
 
         # We have to register the help function listeners at runtime to prevent the
         # Function object from being shared across different Plugins.
-        self.help = listen_to("^help$", needs_mention=True)(Plugin.help)
-        self.help = listen_to("^!help$")(self.help)
+        # This code is a bit hairy because the function signature of an
+        # instance is (message) not (self, message) causing failures later
+        if help_trigger:
+            self.help = listen_to("^help$", needs_mention=True)(PluginMixin.help)
+        if help_trigger_nomention:
+            if not help_trigger:
+                self.help = listen_to("^!help$")(PluginMixin.help)
+            else:
+                self.help = listen_to("^!help$")(self.help)
 
     def initialize(self, driver: Driver, settings: Optional[Settings] = None):
         self.driver = driver
@@ -75,19 +101,6 @@ class Plugin(ABC):
         log.debug(f"Plugin {self.__class__.__name__} stopped!")
         return self
 
-    async def call_function(
-        self,
-        function: Function,
-        event: EventWrapper,
-        groups: Optional[Sequence[str]] = [],
-    ):
-        if function.is_coroutine:
-            await function(event, *groups)  # type:ignore
-        else:
-            # By default, we use the global threadpool of the driver, but we could use
-            # a plugin-specific thread or process pool if we wanted.
-            self.driver.threadpool.add_task(function, event, *groups)
-
     def get_help_string(self):
         string = f"Plugin {self.__class__.__name__} has the following functions:\n"
         string += "----\n"
@@ -103,6 +116,51 @@ class Plugin(ABC):
 
         return string
 
-    async def help(self, message: Message):
-        """Prints the list of functions registered on every active plugin."""
-        self.driver.reply_to(message, self.get_help_string())
+
+class PluginManager(PluginMixin):
+    def __init__(self, plugins: Sequence[Plugin], help_trigger=True):
+        self.driver: Optional[Driver] = None
+        self.plugins: Sequence[Plugin] = plugins
+
+        self.message_listeners: Dict[
+            re.Pattern, Sequence[MessageFunction]
+        ] = defaultdict(list)
+
+        # This code is a bit hairy because the function signature of an
+        # instance is (message) not (self, message) causing failures later
+        if help_trigger:
+            self.help = listen_to("^help$", needs_mention=True)(PluginMixin.help)
+        if help_trigger_nomention:
+            if not help_trigger:
+                self.help = listen_to("^!help$")(PluginMixin.help)
+            else:
+                self.help = listen_to("^!help$")(self.help)
+
+    def __iter__(self):
+        return iter(self.plugins)
+
+    def initialize(self, driver: Driver, settings: Optional[Settings] = None):
+        self.driver = driver
+
+        # Add Plugin manager help to message listeners
+        self.help.plugin = self
+        self.message_listeners[self.help.matcher].append(self.help)
+
+        for plugin in self.plugins:
+            plugin.initialize(self.driver, settings)
+
+    def get_help_string(self):
+        string = f"Plugin {self.__class__.__name__} has the following functions:\n"
+        string += "----\n"
+        for functions in self.message_listeners.values():
+            for function in functions:
+                string += f"- {function.get_help_string()}"
+            string += "----\n"
+
+        if len(self.webhook_listeners) > 0:
+            string += "### Registered webhooks:\n"
+            for functions in self.webhook_listeners.values():
+                for function in functions:
+                    string += f"- {function.get_help_string()}"
+
+        return string

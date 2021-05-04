@@ -1,11 +1,11 @@
 import asyncio
 import logging
 import sys
-from typing import Optional, Sequence
+from typing import Optional, Sequence, Union
 
 from mmpy_bot.driver import Driver
 from mmpy_bot.event_handler import EventHandler
-from mmpy_bot.plugins import ExamplePlugin, Plugin, WebHookExample
+from mmpy_bot.plugins import ExamplePlugin, PluginManager, WebHookExample
 from mmpy_bot.settings import Settings
 from mmpy_bot.webhook_server import WebHookServer
 
@@ -22,10 +22,17 @@ class Bot:
     def __init__(
         self,
         settings: Optional[Settings] = None,
-        plugins: Optional[Sequence[Plugin]] = None,
+        plugins: Optional[Union[list, PluginManager]] = None,
     ):
+        self.plugins: PluginManager
+
         if plugins is None:
-            plugins = [ExamplePlugin(), WebHookExample()]
+            self.plugins = PluginManager([ExamplePlugin(), WebHookExample()])
+        elif isinstance(plugins, list):
+            self.plugins = PluginManager(plugins)
+        else:
+            self.plugins = plugins
+
         # Use default settings if none were specified.
         self.settings = settings or Settings()
         logging.basicConfig(
@@ -54,7 +61,7 @@ class Bot:
             }
         )
         self.driver.login()
-        self.plugins = self._initialize_plugins(plugins)
+        self.plugins.initialize(self.driver, self.settings)
         self.event_handler = EventHandler(
             self.driver, settings=self.settings, plugins=self.plugins
         )
@@ -64,11 +71,6 @@ class Bot:
             self._initialize_webhook_server()
 
         self.running = False
-
-    def _initialize_plugins(self, plugins: Sequence[Plugin]):
-        for plugin in plugins:
-            plugin.initialize(self.driver, self.settings)
-        return plugins
 
     def _initialize_webhook_server(self):
         self.webhook_server = WebHookServer(

@@ -3,6 +3,7 @@ import json
 from unittest import mock
 
 from mmpy_bot import ExamplePlugin, Message, Settings, WebHookExample
+from mmpy_bot.plugins import PluginManager
 from mmpy_bot.driver import Driver
 from mmpy_bot.event_handler import EventHandler
 from mmpy_bot.wrappers import WebHookEvent
@@ -58,7 +59,9 @@ class TestEventHandler:
     @mock.patch("mmpy_bot.driver.Driver.username", new="my_username")
     def test_init(self):
         handler = EventHandler(
-            Driver(), Settings(), plugins=[ExamplePlugin(), WebHookExample()]
+            Driver(),
+            Settings(),
+            plugins=PluginManager([ExamplePlugin(), WebHookExample()]),
         )
         # Test the name matcher regexp
         assert handler._name_matcher.match("@my_username are you there?")
@@ -66,7 +69,7 @@ class TestEventHandler:
 
         # Test that all listeners from the individual plugins are now registered on
         # the handler
-        for plugin in handler.plugins:
+        for plugin in handler.plug_manager:
             for pattern, listener in plugin.message_listeners.items():
                 assert listener in handler.message_listeners[pattern]
             for pattern, listener in plugin.webhook_listeners.items():
@@ -80,7 +83,7 @@ class TestEventHandler:
                     [
                         pattern in plugin.message_listeners
                         and listener in plugin.message_listeners[pattern]
-                        for plugin in handler.plugins
+                        for plugin in handler.plug_manager
                     ]
                 )
         for pattern, listeners in handler.webhook_listeners.items():
@@ -89,14 +92,14 @@ class TestEventHandler:
                     [
                         pattern in plugin.webhook_listeners
                         and listener in plugin.webhook_listeners[pattern]
-                        for plugin in handler.plugins
+                        for plugin in handler.plug_manager
                     ]
                 )
 
     @mock.patch("mmpy_bot.driver.Driver.username", new="my_username")
     def test_should_ignore(self):
         handler = EventHandler(
-            Driver(), Settings(IGNORE_USERS=["ignore_me"]), plugins=[]
+            Driver(), Settings(IGNORE_USERS=["ignore_me"]), plugins=PluginManager([])
         )
         # We shouldn't ignore a message from betty, since she is not listed
         assert not handler._should_ignore(create_message(sender_name="betty"))
@@ -109,14 +112,14 @@ class TestEventHandler:
         handler = EventHandler(
             Driver(),
             Settings(IGNORE_USERS=["ignore_me"]),
-            plugins=[],
+            plugins=PluginManager([]),
             ignore_own_messages=False,
         )
         assert not handler._should_ignore(create_message(sender_name="my_username"))
 
     @mock.patch("mmpy_bot.event_handler.EventHandler._handle_post")
     def test_handle_event(self, handle_post):
-        handler = EventHandler(Driver(), Settings(), plugins=[])
+        handler = EventHandler(Driver(), Settings(), plugins=PluginManager([]))
         # This event should trigger _handle_post
         asyncio.run(handler._handle_event(json.dumps(create_message().body)))
         # This event should not
@@ -130,7 +133,7 @@ class TestEventHandler:
         driver = Driver()
         plugin = ExamplePlugin().initialize(driver)
         # Construct a handler with it
-        handler = EventHandler(driver, Settings(), plugins=[plugin])
+        handler = EventHandler(driver, Settings(), plugins=PluginManager([plugin]))
 
         # Mock the call_function of the plugin so we can make some asserts
         async def mock_call_function(function, message, groups):
@@ -156,7 +159,7 @@ class TestEventHandler:
         driver = Driver()
         plugin = WebHookExample().initialize(driver, Settings())
         # Construct a handler with it
-        handler = EventHandler(driver, Settings(), plugins=[plugin])
+        handler = EventHandler(driver, Settings(), plugins=PluginManager([plugin]))
 
         # Mock the call_function of the plugin so we can make some asserts
         async def mock_call_function(function, event, groups):
