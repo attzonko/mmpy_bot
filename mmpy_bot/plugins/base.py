@@ -5,7 +5,7 @@ import re
 from abc import ABC
 from collections import defaultdict
 from dataclasses import dataclass
-from typing import Dict, Optional, Sequence
+from typing import Dict, List, Optional, Sequence
 
 from mmpy_bot.driver import Driver
 from mmpy_bot.function import Function, MessageFunction, WebHookFunction, listen_to
@@ -178,7 +178,7 @@ class PluginManager(PluginMixin):
             plugin.initialize(self.driver, settings)
 
     def get_help(self):
-        response: Sequence[PluginHelp] = []
+        response: List[PluginHelp] = []
 
         for plugin in self.plugins:
             for matcher, functions in plugin.message_listeners.items():
