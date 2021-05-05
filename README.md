@@ -25,7 +25,7 @@ For Python 2 and Python3 < 3.8 support, please use versions v1.3.9 or lower.
 ##### Additional features added in v2.x:
 - Multi-threading and asyncio execution
 - Integrated webhook server
-- Support for click functions 
+- Support for click functions
 - Job scheduling
 
 ## Compatibility

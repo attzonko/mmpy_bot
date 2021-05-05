@@ -3,9 +3,9 @@ import json
 from unittest import mock
 
 from mmpy_bot import ExamplePlugin, Message, Settings, WebHookExample
-from mmpy_bot.plugins import PluginManager
 from mmpy_bot.driver import Driver
 from mmpy_bot.event_handler import EventHandler
+from mmpy_bot.plugins import PluginManager
 from mmpy_bot.wrappers import WebHookEvent
 
 

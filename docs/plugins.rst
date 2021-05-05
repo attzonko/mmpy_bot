@@ -1,12 +1,15 @@
 Plugins
 =======
 
-A chat bot is meaningless unless you can extend/customize it to fit your own use cases, which can be achieved through custom plugins.
+A chat bot is meaningless unless you can extend/customize it to fit your own
+use cases, which can be achieved through custom plugins.
 
 Writing your first plugin
 -------------------------
 
-#. To demonstrate how easy it is to create a plugin for `mmpy_bot`, let's write a basic plugin and run it. Start with an empty Python file and import these three `mmpy_bot` modules:
+#. To demonstrate how easy it is to create a plugin for `mmpy_bot`, let's
+   write a basic plugin and run it. Start with an empty Python file and
+   import these three `mmpy_bot` modules:
 
     .. code-block:: python
 
@@ -19,7 +22,9 @@ Writing your first plugin
 
         class MyPlugin(Plugin):
 
-#. Now we can write the methods that control how the bot will respond to certain messages. Let's start with a basic one that will simply trigger a response from the bot:
+#. Now we can write the methods that control how the bot will respond to
+   certain messages. Let's start with a basic one that will simply trigger a
+   response from the bot:
 
     .. code-block:: python
 
@@ -27,9 +32,10 @@ Writing your first plugin
         async def wake_up(self, message: Message):
             self.driver.reply_to(message, "I'm awake!")
 
-    In the above code block, the `@listen_to` decorator tells the bot to listen on any channel for the string "wake up", and respond with "I'm awake!".
+    In the above code block, the ``@listen_to`` decorator tells the bot to listen on any channel for the string "wake up", and respond with "I'm awake!".
 
-#. Save your plugin file and open a fresh Python file which will be the entrypoint to start the bot and include your plugin:
+#. Save your plugin file and open a fresh Python file which will be the
+   entrypoint to start the bot and include your plugin:
 
     .. code-block:: python
 
@@ -58,7 +64,8 @@ Writing your first plugin
 
         $ ./my_bot.py
 
-If everything went as planned you can now start your bot, send the message "wake up" and expect the appropriate reply.
+If everything went as planned you can now start your bot, send the message
+"wake up" and expect the appropriate reply.
 
 Further configuration
 ---------------------
@@ -83,10 +90,13 @@ Implementing regular expression
 
 
 Only accept messages that mention the bot
-----------------------------------
+-----------------------------------------
 
-If you want the bot to only respond to messages containing a mention (e.g. "hey @bot_name !"), you can use the `needs_mention` flag.
-Note that this will also trigger if you send the bot a direct message without mentioning its name!
+If you want the bot to only respond to messages containing a mention (e.g.
+"hey @bot_name !"), you can use the `needs_mention` flag. Note that this will
+also trigger if you send the bot a direct message without mentioning its
+name!
+
     .. code-block:: python
 
         @listen_to("hey", needs_mention=True)
@@ -95,9 +105,10 @@ Note that this will also trigger if you send the bot a direct message without me
 
 
 Only accept direct messages
-----------------------------------
+---------------------------
 
-Using `direct_only=True`, the bot will only respond if you send it a direct message.
+Using `direct_only=True`, the bot will only respond if you send it a direct
+message.
 
     .. code-block:: python
 
@@ -107,7 +118,7 @@ Using `direct_only=True`, the bot will only respond if you send it a direct mess
 
 
 Restrict messages to specific users
-----------------------------------
+-----------------------------------
 
     .. code-block:: python
 
@@ -130,11 +141,15 @@ Restrict messages to specific channels
 Click support
 -------------
 
-`mmpy_bot` now supports `click <https://click.palletsprojects.com/en/7.x/>`_ commands, so you can build a robust CLI-like experience if you need it.
-The example below registers a `hello_click` command that takes a positional argument, a keyword argument and a toggleable flag, which are automatically converted to the correct type.
-For example, it can be called with `hello_click my_argument --keyword-arg=3 -f` and will parse the arguments accordingly.
-A nice benefit of `click` commands is that they also automatically generate nicely formatted help strings.
-Try sending "help" to the `ExamplePlugin` to see what it looks like!
+`mmpy_bot` now supports `click <https://click.palletsprojects.com/en/7.x/>`_
+commands, so you can build a robust CLI-like experience if you need it. The
+example below registers a `hello_click` command that takes a positional
+argument, a keyword argument and a toggleable flag, which are automatically
+converted to the correct type. For example, it can be called with
+`hello_click my_argument --keyword-arg=3 -f` and will parse the arguments
+accordingly. A nice benefit of `click` commands is that they also
+automatically generate nicely formatted help strings. Try sending "help" to
+the `ExamplePlugin` to see what it looks like!
 
 .. code-block:: python
 
@@ -157,8 +172,9 @@ Try sending "help" to the `ExamplePlugin` to see what it looks like!
 Custom help messages
 --------------------
 
-`mmpy_bot` defaults to responding to `@botname help` or `help` in a direct message.
-If you wish to customize the way help information is displayed you can:
+`mmpy_bot` defaults to responding to `@botname help` or `help` in a direct
+message. If you wish to customize the way help information is displayed you
+can:
 
 .. code-block:: python
 
@@ -169,8 +185,8 @@ If you wish to customize the way help information is displayed you can:
             help_elements = self.get_help()
             return f"This is all the help I can share {help_elements}"
 
-You can then specify how the bot should react and where the help
-text should be displayed by using:
+You can then specify how the bot should react and where the help text should
+be displayed by using:
 
 .. code-block:: python
 
@@ -223,8 +239,9 @@ File upload
 Plugin startup and shutdown
 ---------------------------
 
-The `Plugin` class comes with an `on_start` and `on_stop` function, which will be called when the bot starts up or shuts down.
-They can be used as follows:
+The `Plugin` class comes with an `on_start` and `on_stop` function, which
+will be called when the bot starts up or shuts down. They can be used as
+follows:
 
 .. code-block:: python
 
@@ -257,7 +274,8 @@ Then, on your custom `Plugin` you can create a function like this:
             event.body["channel_id"], f"Webhook {event.webhook_id} triggered!"
         )
 
-And if you want to send a web response back to the incoming HTTP POST request, you can use `Driver.respond_to_web`:
+And if you want to send a web response back to the incoming HTTP POST
+request, you can use `Driver.respond_to_web`:
 
 .. code-block:: python
 

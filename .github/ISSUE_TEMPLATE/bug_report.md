@@ -18,6 +18,6 @@ A clear and concise description of what you expected to happen.
  - Python Version: [e.g. 3.4, 3.8]
  - Mattermost Version: [e.g. 5.1.0]
  - mmpy_bot Version: [e.g. 1.2.1]
- 
+
 **Additional context**
 Add any other context about the problem here [e.g. Settings for your bot, API Version]

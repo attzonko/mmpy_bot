@@ -4,7 +4,6 @@ import logging
 import queue
 import re
 from collections import defaultdict
-from typing import Sequence
 
 from mmpy_bot.driver import Driver
 from mmpy_bot.plugins import PluginManager
