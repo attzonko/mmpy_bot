@@ -129,32 +129,86 @@ Restrict messages to specific channels
 
 Click support
 -------------
-    `mmpy_bot` now supports `click <https://click.palletsprojects.com/en/7.x/>`_ commands, so you can build a robust CLI-like experience if you need it.
-    The example below registers a `hello_click` command that takes a positional argument, a keyword argument and a toggleable flag, which are automatically converted to the correct type.
-    For example, it can be called with `hello_click my_argument --keyword-arg=3 -f` and will parse the arguments accordingly.
-    A nice benefit of `click` commands is that they also automatically generate nicely formatted help strings.
-    Try sending "help" to the `ExamplePlugin` to see what it looks like!
 
-    .. code-block:: python
+`mmpy_bot` now supports `click <https://click.palletsprojects.com/en/7.x/>`_ commands, so you can build a robust CLI-like experience if you need it.
+The example below registers a `hello_click` command that takes a positional argument, a keyword argument and a toggleable flag, which are automatically converted to the correct type.
+For example, it can be called with `hello_click my_argument --keyword-arg=3 -f` and will parse the arguments accordingly.
+A nice benefit of `click` commands is that they also automatically generate nicely formatted help strings.
+Try sending "help" to the `ExamplePlugin` to see what it looks like!
 
-        @listen_to("hello_click", needs_mention=True)
-        @click.command(help="An example click command with various arguments.")
-        @click.argument("POSITIONAL_ARG", type=str)
-        @click.option("--keyword-arg", type=float, default=5.0, help="A keyword arg.")
-        @click.option("-f", "--flag", is_flag=True, help="Can be toggled.")
-        def hello_click(
-            self, message: Message, positional_arg: str, keyword_arg: float, flag: bool
-        ):
-            response = (
-                "Received the following arguments:\n"
-                f"- positional_arg: {positional_arg}\n"
-                f"- keyword_arg: {keyword_arg}\n"
-                f"- flag: {flag}\n"
-            )
-            self.driver.reply_to(message, response)
+.. code-block:: python
+
+    @listen_to("hello_click", needs_mention=True)
+    @click.command(help="An example click command with various arguments.")
+    @click.argument("POSITIONAL_ARG", type=str)
+    @click.option("--keyword-arg", type=float, default=5.0, help="A keyword arg.")
+    @click.option("-f", "--flag", is_flag=True, help="Can be toggled.")
+    def hello_click(
+        self, message: Message, positional_arg: str, keyword_arg: float, flag: bool
+    ):
+        response = (
+            "Received the following arguments:\n"
+            f"- positional_arg: {positional_arg}\n"
+            f"- keyword_arg: {keyword_arg}\n"
+            f"- flag: {flag}\n"
+        )
+        self.driver.reply_to(message, response)
+
+Custom help messages
+--------------------
+
+`mmpy_bot` defaults to responding to `@botname help` or `help` in a direct message.
+If you wish to customize the way help information is displayed you can:
+
+.. code-block:: python
+
+    from mmpy_bot.plugins import PluginManager
+
+    class MyPluginManager(PluginManager):
+        def get_help_string(self):
+            help_elements = self.get_help()
+            return f"This is all the help I can share {help_elements}"
+
+You can then specify how the bot should react and where the help
+text should be displayed by using:
+
+.. code-block:: python
+
+    from mmpy_bot import Bot, Settings
+    from my_plugin import MyPlugin
+
+    plugins=[
+        MyPlugin()
+    ]
+
+    bot = Bot(
+        settings=Settings(
+            ...,
+        ),
+        plugins=MyPluginManager(  # Add your PluginManager here
+            plugins,
+            help_trigger=True  # bot reacts to "@botname help"
+            help_trigger_bang=True  # bot reacts to "!help"
+            direct_help=True  # help is sent in a private/direct message
+        ]),
+    )
+    bot.run()
+
+The options ``help_trigger``, ``help_trigger_bang`` and ``direct_help`` are
+also available for every ``Plugin()`` individually.
+
+.. code-block:: python
+
+    plugins=[
+        MyPlugin(
+            help_trigger=True  # bot reacts to "@botname help"
+            help_trigger_bang=True  # bot reacts to "!help"
+            direct_help=True  # help is sent in a private/direct message
+        )
+    ]
 
 File upload
-------------------
+-----------
 
 .. code-block:: python
 
@@ -168,6 +222,7 @@ File upload
 
 Plugin startup and shutdown
 ---------------------------
+
 The `Plugin` class comes with an `on_start` and `on_stop` function, which will be called when the bot starts up or shuts down.
 They can be used as follows:
 
@@ -183,7 +238,8 @@ They can be used as follows:
 
 
 Webhook listener
----------------------
+----------------
+
 If you want to interact with your bot not only through chat messages but also through web requests (for example to implement an `interactive dialog <https://docs.mattermost.com/developer/interactive-dialogs.html>`_), you can use enable the built-in `WebHookServer`.
 In your `Settings`, make sure to set `WEBHOOK_HOST_ENABLED=True` and provide a value for `WEBHOOK_HOST_URL` and `WEBHOOK_HOST_PORT` (see `settings.py <https://github.com/attzonko/mmpy_bot/blob/master/mmpy_bot/settings.py>`_ for more info).
 Then, on your custom `Plugin` you can create a function like this:
