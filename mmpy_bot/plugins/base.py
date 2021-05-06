@@ -5,7 +5,7 @@ import re
 from abc import ABC
 from collections import defaultdict
 from dataclasses import dataclass
-from typing import Dict, List, Optional, Sequence
+from typing import Callable, Dict, List, Optional, Sequence
 
 from mmpy_bot.driver import Driver
 from mmpy_bot.function import Function, MessageFunction, WebHookFunction, listen_to
@@ -13,6 +13,24 @@ from mmpy_bot.settings import Settings
 from mmpy_bot.wrappers import EventWrapper, Message
 
 log = logging.getLogger("mmpy.plugin_base")
+
+
+def caller(driver):
+    """Implements a callback with access to the mattermost driver."""
+
+    async def call_function(
+        function: Function,
+        event: EventWrapper,
+        groups: Optional[Sequence[str]] = [],
+    ):
+        if function.is_coroutine:
+            await function(event, *groups)  # type:ignore
+        else:
+            # By default, we use the global threadpool of the driver, but we could use
+            # a plugin-specific thread or process pool if we wanted.
+            driver.threadpool.add_task(function, event, *groups)
+
+    return call_function
 
 
 class Plugin(ABC):
@@ -31,13 +49,15 @@ class Plugin(ABC):
         direct_help: bool = False,
     ):
         self.driver: Optional[Driver] = None
+        self.direct_help: bool = direct_help
+        self.call_function: Optional[Callable] = None
+
         self.message_listeners: Dict[re.Pattern, List[MessageFunction]] = defaultdict(
             list
         )
         self.webhook_listeners: Dict[re.Pattern, List[WebHookFunction]] = defaultdict(
             list
         )
-        self.direct_help: bool = direct_help
 
         # We have to register the help function listeners at runtime to prevent the
         # Function object from being shared across different Plugins.
@@ -53,6 +73,7 @@ class Plugin(ABC):
 
     def initialize(self, driver: Driver, settings: Optional[Settings] = None):
         self.driver = driver
+        self.call_function = caller(driver)
 
         # Register listeners for any listener functions we might have
         for attribute in dir(self):
@@ -104,19 +125,6 @@ class Plugin(ABC):
 
         return string
 
-    async def call_function(
-        self,
-        function: Function,
-        event: EventWrapper,
-        groups: Optional[Sequence[str]] = [],
-    ):
-        if function.is_coroutine:
-            await function(event, *groups)  # type:ignore
-        else:
-            # By default, we use the global threadpool of the driver, but we could use
-            # a plugin-specific thread or process pool if we wanted.
-            self.driver.threadpool.add_task(function, event, *groups)
-
     async def help(self, message: Message):
         """Prints the list of functions registered on every active plugin."""
         if self.direct_help:
@@ -156,6 +164,7 @@ class PluginManager:
         self.driver: Optional[Driver] = None
         self.plugins: Sequence[Plugin] = plugins
         self.direct_help: bool = direct_help
+        self.call_function: Optional[Callable] = None
 
         self.message_listeners: Dict[
             re.Pattern, Sequence[MessageFunction]
@@ -164,10 +173,10 @@ class PluginManager:
         # This code is a bit hairy because the function signature of an
         # instance is (message) not (self, message) causing failures later
         if help_trigger:
-            self.help = listen_to("^help$", needs_mention=True)(PluginManager.help)
+            self.help = listen_to("^help$", needs_mention=True)(Plugin.help)
         if help_trigger_bang:
             if not help_trigger:
-                self.help = listen_to("^!help$")(PluginManager.help)
+                self.help = listen_to("^!help$")(Plugin.help)
             else:
                 self.help = listen_to("^!help$")(self.help)
 
@@ -176,6 +185,7 @@ class PluginManager:
 
     def initialize(self, driver: Driver, settings: Optional[Settings] = None):
         self.driver = driver
+        self.call_function = caller(driver)
 
         # Add Plugin manager help to message listeners
         self.help.plugin = self
@@ -256,10 +266,3 @@ class PluginManager:
                     string += f"- `{cmd}` {direct} {mention} - {h.doc_header}\n"
 
         return string
-
-    async def help(self, message: Message):
-        """Prints the help message in a channel or privately."""
-        if self.direct_help:
-            self.driver.reply_to(message, self.get_help_string(), direct=True)
-        else:
-            self.driver.reply_to(message, self.get_help_string())
