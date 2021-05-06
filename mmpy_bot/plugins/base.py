@@ -15,29 +15,7 @@ from mmpy_bot.wrappers import EventWrapper, Message
 log = logging.getLogger("mmpy.plugin_base")
 
 
-class PluginMixin:
-    async def call_function(
-        self,
-        function: Function,
-        event: EventWrapper,
-        groups: Optional[Sequence[str]] = [],
-    ):
-        if function.is_coroutine:
-            await function(event, *groups)  # type:ignore
-        else:
-            # By default, we use the global threadpool of the driver, but we could use
-            # a plugin-specific thread or process pool if we wanted.
-            self.driver.threadpool.add_task(function, event, *groups)
-
-    async def help(self, message: Message):
-        """Prints the list of functions registered on every active plugin."""
-        if self.direct_help:
-            self.driver.reply_to(message, self.get_help_string(), direct=True)
-        else:
-            self.driver.reply_to(message, self.get_help_string())
-
-
-class Plugin(ABC, PluginMixin):
+class Plugin(ABC):
     """A Plugin is a self-contained class that defines what functions should be executed
     given different inputs.
 
@@ -66,10 +44,10 @@ class Plugin(ABC, PluginMixin):
         # This code is a bit hairy because the function signature of an
         # instance is (message) not (self, message) causing failures later
         if help_trigger:
-            self.help = listen_to("^help$", needs_mention=True)(PluginMixin.help)
+            self.help = listen_to("^help$", needs_mention=True)(Plugin.help)
         if help_trigger_bang:
             if not help_trigger:
-                self.help = listen_to("^!help$")(PluginMixin.help)
+                self.help = listen_to("^!help$")(Plugin.help)
             else:
                 self.help = listen_to("^!help$")(self.help)
 
@@ -126,6 +104,26 @@ class Plugin(ABC, PluginMixin):
 
         return string
 
+    async def call_function(
+        self,
+        function: Function,
+        event: EventWrapper,
+        groups: Optional[Sequence[str]] = [],
+    ):
+        if function.is_coroutine:
+            await function(event, *groups)  # type:ignore
+        else:
+            # By default, we use the global threadpool of the driver, but we could use
+            # a plugin-specific thread or process pool if we wanted.
+            self.driver.threadpool.add_task(function, event, *groups)
+
+    async def help(self, message: Message):
+        """Prints the list of functions registered on every active plugin."""
+        if self.direct_help:
+            self.driver.reply_to(message, self.get_help_string(), direct=True)
+        else:
+            self.driver.reply_to(message, self.get_help_string())
+
 
 @dataclass
 class PluginHelp:
@@ -138,7 +136,14 @@ class PluginHelp:
     annotations: Dict
 
 
-class PluginManager(PluginMixin):
+class PluginManager:
+    """PluginManager is responsible for initializing all plugins and display aggregated
+    help from each of them.
+
+    It is supposed to be transparent to EventHandler that interacts directly with each
+    individual Plugin.
+    """
+
     def __init__(
         self,
         plugins: Sequence[Plugin],
@@ -157,10 +162,10 @@ class PluginManager(PluginMixin):
         # This code is a bit hairy because the function signature of an
         # instance is (message) not (self, message) causing failures later
         if help_trigger:
-            self.help = listen_to("^help$", needs_mention=True)(PluginMixin.help)
+            self.help = listen_to("^help$", needs_mention=True)(PluginManager.help)
         if help_trigger_bang:
             if not help_trigger:
-                self.help = listen_to("^!help$")(PluginMixin.help)
+                self.help = listen_to("^!help$")(PluginManager.help)
             else:
                 self.help = listen_to("^!help$")(self.help)
 
@@ -225,3 +230,10 @@ class PluginManager(PluginMixin):
                 string += f"- `{cmd}` - {h.doc_header}\n"
 
         return string
+
+    async def help(self, message: Message):
+        """Prints the help message in a channel or privately."""
+        if self.direct_help:
+            self.driver.reply_to(message, self.get_help_string(), direct=True)
+        else:
+            self.driver.reply_to(message, self.get_help_string())
