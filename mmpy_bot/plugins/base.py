@@ -31,12 +31,12 @@ class Plugin(ABC):
         direct_help: bool = False,
     ):
         self.driver: Optional[Driver] = None
-        self.message_listeners: Dict[
-            re.Pattern, Sequence[MessageFunction]
-        ] = defaultdict(list)
-        self.webhook_listeners: Dict[
-            re.Pattern, Sequence[WebHookFunction]
-        ] = defaultdict(list)
+        self.message_listeners: Dict[re.Pattern, List[MessageFunction]] = defaultdict(
+            list
+        )
+        self.webhook_listeners: Dict[re.Pattern, List[WebHookFunction]] = defaultdict(
+            list
+        )
         self.direct_help: bool = direct_help
 
         # We have to register the help function listeners at runtime to prevent the
@@ -133,6 +133,8 @@ class PluginHelp:
     pattern: str
     doc_header: str
     doc_full: str
+    direct: bool
+    mention: bool
     annotations: Dict
 
 
@@ -188,14 +190,22 @@ class PluginManager:
         for plugin in self.plugins:
             for matcher, functions in plugin.message_listeners.items():
                 for function in functions:
+                    doc_full = function.function.__doc__
+                    if doc_full is None:
+                        doc_header = ""
+                        doc_full = ""
+                    else:
+                        doc_header = function.function.__doc__.split("\n", 1)[0]
                     response.append(
                         PluginHelp(
                             help_type="message",
                             location=self.__class__.__name__,
                             function=function,
                             pattern=matcher.pattern,
-                            doc_header=function.function.__doc__.split("\n", 1)[0],
-                            doc_full=function.function.__doc__,
+                            doc_header=doc_header,
+                            doc_full=doc_full,
+                            direct=function.direct_only,
+                            mention=function.needs_mention,
                             annotations=function.annotations,
                         )
                     )
@@ -203,14 +213,22 @@ class PluginManager:
             if len(plugin.webhook_listeners) > 0:
                 for matcher, functions in plugin.webhook_listeners.items():
                     for function in functions:
+                        doc_full = function.function.__doc__
+                        if doc_full is None:
+                            doc_full = ""
+                            doc_header = ""
+                        else:
+                            doc_header = function.function.__doc__.split("\n", 1)[0]
                         response.append(
                             PluginHelp(
                                 help_type="webhook",
                                 location=self.__class__.__name__,
                                 function=function,
                                 pattern=matcher.pattern,
-                                doc_header=function.function.__doc__.split("\n", 1)[0],
-                                doc_full=function.function.__doc__,
+                                doc_header=doc_header,
+                                doc_full=doc_full,
+                                direct=False,
+                                mention=False,
                                 annotations=function.annotations,
                             )
                         )
@@ -221,13 +239,21 @@ class PluginManager:
         def custom_sort(rec):
             return (rec.help_type, rec.pattern.lstrip("^[(-"))
 
-        string = "## The following functions have been registered:\n\n"
+        string = "### The following functions have been registered:\n\n"
+        string += "###### `(*)` require the use of `@botname`, "
+        string += "`(+)` can only be used in direct message\n"
         for h in sorted(self.get_help(), key=custom_sort):
             cmd = h.annotations.get("syntax", h.pattern)
+            direct = "`(*)`" if h.direct else ""
+            mention = "`(+)`" if h.mention else ""
+
             if h.help_type == "webhook":
-                string += f"- `{cmd}` - (webhook) {h.doc_header}\n"
+                string += f"- `{cmd}` {direct} {mention} - (webhook) {h.doc_header}\n"
             else:
-                string += f"- `{cmd}` - {h.doc_header}\n"
+                if not h.doc_header:
+                    string += f"- `{cmd}` {direct} {mention}\n"
+                else:
+                    string += f"- `{cmd}` {direct} {mention} - {h.doc_header}\n"
 
         return string
 
