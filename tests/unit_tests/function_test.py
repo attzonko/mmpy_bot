@@ -121,7 +121,7 @@ class TestMessageFunction:
 
         # If an incorrect argument is passed, the error and help string should be returned.
         def mocked_reply(message, response):
-            assert "no such option: --nonexistent-arg" in response
+            assert "No such option: --nonexistent-arg" in response
             assert f.docstring in response
 
         f.plugin = ExamplePlugin().initialize(Driver(), Settings())
