@@ -116,6 +116,17 @@ Restrict messages to specific users
             """Will only trigger if the username of the sender is 'admin' or 'root'."""
             self.driver.reply_to(message, "Access allowed!")
 
+
+Restrict messages to specific channels
+----------------------------------
+
+    .. code-block:: python
+
+        @listen_to("^poke$", allowed_channels=["#staff", "#town-square"])
+        async def poke(self, message: Message):
+            """Will only trigger if the message has been send in '#staff' or '#town-square'."""
+            self.driver.reply_to(message, "Access allowed!")
+
 Click support
 -------------
     `mmpy_bot` now supports `click <https://click.palletsprojects.com/en/7.x/>`_ commands, so you can build a robust CLI-like experience if you need it.

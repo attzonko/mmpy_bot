@@ -61,6 +61,7 @@ class MessageFunction(Function):
         direct_only: bool = False,
         needs_mention: bool = False,
         allowed_users: Optional[Sequence[str]] = None,
+        allowed_channels: Optional[Sequence[str]] = None,
         **kwargs,
     ):
         super().__init__(*args, **kwargs)
@@ -73,6 +74,11 @@ class MessageFunction(Function):
             self.allowed_users = []
         else:
             self.allowed_users = [user.lower() for user in allowed_users]
+
+        if allowed_channels is None:
+            self.allowed_channels = []
+        else:
+            self.allowed_channels = [channel.lower() for channel in allowed_channels]
 
         if self.is_click_function:
             _function = self.function.callback
@@ -123,6 +129,12 @@ class MessageFunction(Function):
             )
             return return_value
 
+        if self.allowed_channels and message.channel_name not in self.allowed_channels:
+            self.plugin.driver.reply_to(
+                message, "You do not have permission to perform this action!"
+            )
+            return return_value
+
         if self.is_click_function:
             assert len(args) <= 1  # There is only one group, (.*)?
             if len(args) == 1:
@@ -148,6 +160,7 @@ class MessageFunction(Function):
                 self.needs_mention,
                 self.direct_only,
                 self.allowed_users,
+                self.allowed_channels,
             ]
         ):
             # Print some information describing the usage settings.
@@ -163,6 +176,9 @@ class MessageFunction(Function):
             if self.allowed_users:
                 string += f"{spaces(4)}- Restricted to certain users.\n"
 
+            if self.allowed_channels:
+                string += f"{spaces(4)}- Restricted to certain channels.\n"
+
         return string
 
 
@@ -173,12 +189,16 @@ def listen_to(
     direct_only=False,
     needs_mention=False,
     allowed_users=None,
+    allowed_channels=None,
 ):
     """Wrap the given function in a MessageFunction class so we can register some
     properties."""
 
     if allowed_users is None:
         allowed_users = []
+
+    if allowed_channels is None:
+        allowed_channels = []
 
     def wrapped_func(func):
         reg = regexp
@@ -202,6 +222,7 @@ def listen_to(
             direct_only=direct_only,
             needs_mention=needs_mention,
             allowed_users=allowed_users,
+            allowed_channels=allowed_channels,
         )
 
     return wrapped_func
