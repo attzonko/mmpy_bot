@@ -13,7 +13,7 @@ Documentation available at [Read the Docs](http://mmpy_bot.readthedocs.org/).
 
 A Python based chat bot framework for [Mattermost](http://www.mattermost.org). The code for
 this bot framework was heavily re-factored in v2.0.0 and will only work with Python 3.8 or higher.
-For Python 2 support, please use versions v1.3.9 or lower.
+For Python 2 and Python3 < 3.8 support, please use versions v1.3.9 or lower.
 
 ## Features
 - Based on Mattermost [WebSocket API(V4.0.0)](https://api.mattermost.com)
@@ -37,13 +37,14 @@ For Python 2 support, please use versions v1.3.9 or lower.
 
 
 ## Installation
+:warning: Warning: pip will grab v1.x if your Python version is less than 3.8!
 
-##### v2.x refactor
+##### v2.x (latest)
 ```
 pip install mmpy_bot
 ```
 
-##### v1.3.9 legacy
+##### v1.3.9 (force legacy)
 ```
 pip install mmpy_bot==1.3.9
 ```
