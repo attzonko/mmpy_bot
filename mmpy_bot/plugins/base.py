@@ -19,9 +19,7 @@ def caller(driver):
     """Implements a callback with access to the mattermost driver."""
 
     async def call_function(
-        function: Function,
-        event: EventWrapper,
-        groups: Optional[Sequence[str]] = [],
+        function: Function, event: EventWrapper, groups: Optional[Sequence[str]] = [],
     ):
         if function.is_coroutine:
             await function(event, *groups)  # type:ignore
@@ -194,54 +192,50 @@ class PluginManager:
         for plugin in self.plugins:
             plugin.initialize(self.driver, settings)
 
+    def _generate_plugin_help(self, plug_help: List[PluginHelp], help_type: str, items):
+        for matcher, functions in items:
+            for function in functions:
+                doc_full = function.function.__doc__
+                if doc_full is None:
+                    doc_header = ""
+                    doc_full = ""
+                else:
+                    doc_header = function.function.__doc__.split("\n", 1)[0]
+
+                if help_type == "message":
+                    direct = function.direct_only
+                    mention = function.needs_mention
+                elif help_type == "webhook":
+                    direct = mention = False
+                else:
+                    raise NotImplementedError(f"Unknown help type: '{help_type}'")
+
+                plug_help.append(
+                    PluginHelp(
+                        help_type=help_type,
+                        location=self.__class__.__name__,
+                        function=function,
+                        pattern=matcher.pattern,
+                        doc_header=doc_header,
+                        doc_full=doc_full,
+                        direct=direct,
+                        mention=mention,
+                        annotations=function.annotations,
+                    )
+                )
+
     def get_help(self):
         response: List[PluginHelp] = []
 
         for plugin in self.plugins:
-            for matcher, functions in plugin.message_listeners.items():
-                for function in functions:
-                    doc_full = function.function.__doc__
-                    if doc_full is None:
-                        doc_header = ""
-                        doc_full = ""
-                    else:
-                        doc_header = function.function.__doc__.split("\n", 1)[0]
-                    response.append(
-                        PluginHelp(
-                            help_type="message",
-                            location=self.__class__.__name__,
-                            function=function,
-                            pattern=matcher.pattern,
-                            doc_header=doc_header,
-                            doc_full=doc_full,
-                            direct=function.direct_only,
-                            mention=function.needs_mention,
-                            annotations=function.annotations,
-                        )
-                    )
+            self._generate_plugin_help(
+                response, "message", plugin.message_listeners.items()
+            )
 
             if len(plugin.webhook_listeners) > 0:
-                for matcher, functions in plugin.webhook_listeners.items():
-                    for function in functions:
-                        doc_full = function.function.__doc__
-                        if doc_full is None:
-                            doc_full = ""
-                            doc_header = ""
-                        else:
-                            doc_header = function.function.__doc__.split("\n", 1)[0]
-                        response.append(
-                            PluginHelp(
-                                help_type="webhook",
-                                location=self.__class__.__name__,
-                                function=function,
-                                pattern=matcher.pattern,
-                                doc_header=doc_header,
-                                doc_full=doc_full,
-                                direct=False,
-                                mention=False,
-                                annotations=function.annotations,
-                            )
-                        )
+                self._generate_plugin_help(
+                    response, "webhook", plugin.webhook_listeners.items()
+                )
 
         return response
 
