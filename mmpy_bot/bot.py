@@ -1,11 +1,11 @@
 import asyncio
 import logging
 import sys
-from typing import Optional, Union
+from typing import List, Optional, Union
 
 from mmpy_bot.driver import Driver
 from mmpy_bot.event_handler import EventHandler
-from mmpy_bot.plugins import ExamplePlugin, PluginManager, WebHookExample
+from mmpy_bot.plugins import ExamplePlugin, Plugin, PluginManager, WebHookExample
 from mmpy_bot.settings import Settings
 from mmpy_bot.webhook_server import WebHookServer
 
@@ -22,7 +22,7 @@ class Bot:
     def __init__(
         self,
         settings: Optional[Settings] = None,
-        plugins: Optional[Union[list, PluginManager]] = None,
+        plugins: Optional[Union[List[Plugin], PluginManager]] = None,
     ):
         self.plugins: PluginManager
 

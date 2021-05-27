@@ -34,7 +34,7 @@ class Function(ABC):
         self.function = function
         self.is_coroutine = asyncio.iscoroutinefunction(function)
         self.matcher = matcher
-        self.annotations = annotations if annotations is not None else {}
+        self.annotations = annotations or {}
 
         # To be set in the child class or from the parent plugin
         self.plugin = None

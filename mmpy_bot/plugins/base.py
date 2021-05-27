@@ -19,7 +19,9 @@ def caller(driver):
     """Implements a callback with access to the mattermost driver."""
 
     async def call_function(
-        function: Function, event: EventWrapper, groups: Optional[Sequence[str]] = [],
+        function: Function,
+        event: EventWrapper,
+        groups: Optional[Sequence[str]] = [],
     ):
         if function.is_coroutine:
             await function(event, *groups)  # type:ignore
@@ -125,10 +127,7 @@ class Plugin(ABC):
 
     async def help(self, message: Message):
         """Prints the list of functions registered on every active plugin."""
-        if self.direct_help:
-            self.driver.reply_to(message, self.get_help_string(), direct=True)
-        else:
-            self.driver.reply_to(message, self.get_help_string())
+        self.driver.reply_to(message, self.get_help_string(), direct=self.direct_help)
 
 
 @dataclass
