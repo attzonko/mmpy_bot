@@ -58,7 +58,7 @@ We recommend creating an `entrypoint` file for executing the bot, which will loo
         bot.run()
 
 You can then simply launch the bot with `python entrypoint.py`.
-For more information on configuring bot settings and plugins, please see `settings.py <https://github.com/attzonko/mmpy_bot/blob/master/mmpy_bot/settings.py>`_ and the :ref:`plugins <plugins>` page.
+For more information on configuring bot settings and plugins, please see `settings.py <https://github.com/attzonko/mmpy_bot/blob/main/mmpy_bot/settings.py>`_ and the :ref:`plugins <plugins>` page.
 
 Container
 #########
@@ -77,7 +77,7 @@ Using your preferred container management software (Docker/Podman), you can pull
 
         $ podman run -d --name=mmpy_bot --network=host -e MATTERMOST_URL=<mattermost_server_url> -e MATTERMOST_PORT=<mattermost_server_port> -e BOT_TOKEN=<bot_token> docker.io/jneeven/mmpy_bot
 
-You can also find an example `docker-compose.yml` file `here <https://github.com/attzonko/mmpy_bot/blob/master/docker-compose.yml>`_.
+You can also find an example `docker-compose.yml` file `here <https://github.com/attzonko/mmpy_bot/blob/main/docker-compose.yml>`_.
 
 Customizing your bot
 ####################

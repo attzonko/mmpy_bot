@@ -19,7 +19,7 @@ Contents
 Contributing
 ------------
 
-You can grab latest code on ``master`` branch at Github_.
+You can grab latest code on ``main`` branch at Github_.
 
 Feel free to submit issues_, pull requests are also welcome.
 

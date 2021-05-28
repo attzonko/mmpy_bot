@@ -64,7 +64,7 @@ Further configuration
 ---------------------
 
 The below code snippets provide an insight into the functionality that can be added to the bot. For more in-depth examples,
-please refer to `./plugins/example.py <https://github.com/attzonko/mmpy_bot/blob/master/mmpy_bot/plugins/example.py>`_ and `./plugins/webhook_example.py <https://github.com/attzonko/mmpy_bot/blob/master/mmpy_bot/plugins/webhook_example.py>`_.
+please refer to `./plugins/example.py <https://github.com/attzonko/mmpy_bot/blob/main/mmpy_bot/plugins/example.py>`_ and `./plugins/webhook_example.py <https://github.com/attzonko/mmpy_bot/blob/main/mmpy_bot/plugins/webhook_example.py>`_.
 
 Implementing regular expression
 -------------------------------
@@ -185,7 +185,7 @@ They can be used as follows:
 Webhook listener
 ---------------------
 If you want to interact with your bot not only through chat messages but also through web requests (for example to implement an `interactive dialog <https://docs.mattermost.com/developer/interactive-dialogs.html>`_), you can use enable the built-in `WebHookServer`.
-In your `Settings`, make sure to set `WEBHOOK_HOST_ENABLED=True` and provide a value for `WEBHOOK_HOST_URL` and `WEBHOOK_HOST_PORT` (see `settings.py <https://github.com/attzonko/mmpy_bot/blob/master/mmpy_bot/settings.py>`_ for more info).
+In your `Settings`, make sure to set `WEBHOOK_HOST_ENABLED=True` and provide a value for `WEBHOOK_HOST_URL` and `WEBHOOK_HOST_PORT` (see `settings.py <https://github.com/attzonko/mmpy_bot/blob/main/mmpy_bot/settings.py>`_ for more info).
 Then, on your custom `Plugin` you can create a function like this:
 
 .. code-block:: python
@@ -216,7 +216,7 @@ And if you want to send a web response back to the incoming HTTP POST request, y
             },
         )
 
-For more information about the `WebHookServer` and its possibilities, take a look at the `WebHookExample  plugin <https://github.com/attzonko/mmpy_bot/blob/master/mmpy_bot/plugins/webhook_example.py>`_.
+For more information about the `WebHookServer` and its possibilities, take a look at the `WebHookExample  plugin <https://github.com/attzonko/mmpy_bot/blob/main/mmpy_bot/plugins/webhook_example.py>`_.
 
 
 Job scheduling
