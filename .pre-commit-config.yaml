@@ -25,6 +25,7 @@ repos:
     rev: 21.5b1
     hooks:
       - id: black
+        exclude: (.*/)*snapshots/
   - repo: https://gitlab.com/pycqa/flake8
     # Checks the code for PEP8 violations and common pitfals
     rev: 3.9.0
@@ -34,16 +35,18 @@ repos:
     rev: '2020.10.8'
     hooks:
       - id: pytype
+        # Don't run pytype in an isolated venv or it will fail on imports
+        language: system
         args:
           - "-j"
           - "auto"
-          - "."
   - repo: https://github.com/myint/docformatter
     # Formats docstrings following PEP 257
-    rev: v1.3.1
+    rev: v1.4
     hooks:
       - id: docformatter
         args:
+          - "--in-place"
           - "--wrap-summaries"
           - "88"
           - "--wrap-descriptions"
