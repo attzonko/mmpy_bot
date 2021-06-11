@@ -129,7 +129,7 @@ Restrict messages to specific users
 
 
 Restrict messages to specific channels
-----------------------------------
+--------------------------------------
 
     .. code-block:: python
 
@@ -141,11 +141,15 @@ Restrict messages to specific channels
 Click support
 -------------
 
-`mmpy_bot` now supports `click <https://click.palletsprojects.com/en/7.x/>`_ commands, so you can build a robust CLI-like experience if you need it.
-The example below registers a `hello_click` command that takes a positional argument, a keyword argument and a toggleable flag, which are automatically converted to the correct type.
-For example, it can be called with `hello_click my_argument --keyword-arg=3 -f` and will parse the arguments accordingly.
-A nice benefit of `click` commands is that they also automatically generate nicely formatted help strings.
-Try sending "help" to the `ExamplePlugin` to see what it looks like!
+`mmpy_bot` now supports `click <https://click.palletsprojects.com/en/7.x/>`_
+commands, so you can build a robust CLI-like experience if you need it. The
+example below registers a `hello_click` command that takes a positional
+argument, a keyword argument and a toggleable flag, which are automatically
+converted to the correct type. For example, it can be called with
+`hello_click my_argument --keyword-arg=3 -f` and will parse the arguments
+accordingly. A nice benefit of `click` commands is that they also
+automatically generate nicely formatted help strings. Try sending "help" to
+the `ExamplePlugin` to see what it looks like!
 
 .. code-block:: python
 
