@@ -1,0 +1,55 @@
+---
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v3.4.0
+    hooks:
+      - id: end-of-file-fixer
+      - id: fix-byte-order-marker
+      - id: check-symlinks
+      - id: check-docstring-first
+      - id: check-added-large-files
+      - id: check-merge-conflict
+  - repo: https://github.com/pycqa/isort
+    # Formants, sorts and reorganizes imports
+    rev: 5.8.0
+    hooks:
+      - id: isort
+        args:
+          - "--profile"
+          - "black"
+          - "--filter-files"
+  - repo: https://github.com/psf/black
+    # Code style formatting
+    rev: 21.5b1
+    hooks:
+      - id: black
+  - repo: https://gitlab.com/pycqa/flake8
+    # Checks the code for PEP8 violations and common pitfals
+    rev: 3.9.0
+    hooks:
+      - id: flake8
+  - repo: https://github.com/mattseymour/pre-commit-pytype
+    rev: '2020.10.8'
+    hooks:
+      - id: pytype
+        args:
+          - "-j"
+          - "auto"
+          - "."
+  - repo: https://github.com/myint/docformatter
+    # Formats docstrings following PEP 257
+    rev: v1.3.1
+    hooks:
+      - id: docformatter
+        args:
+          - "--wrap-summaries"
+          - "88"
+          - "--wrap-descriptions"
+          - "88"
+  - repo: https://github.com/pycqa/doc8
+    # sphinx rst style checker
+    rev: 0.9.0a1
+    hooks:
+      - id: doc8

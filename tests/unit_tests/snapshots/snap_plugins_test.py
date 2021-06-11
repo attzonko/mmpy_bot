@@ -4,7 +4,6 @@ from __future__ import unicode_literals
 
 from snapshottest import Snapshot
 
-
 snapshots = Snapshot()
 
 snapshots['TestPlugin.test_help_string 1'] = '''Plugin FakePlugin has the following functions:
