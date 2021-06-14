@@ -18,8 +18,20 @@ class OneTimeJob(schedule.Job):
             raise AssertionError("The next_time parameter should be a datetime object.")
         self.at_time = next_time
         self.next_run = next_time
+        self.should_run = True
+
+    @property
+    def should_run(self):
+        return self._keep_running and super().should_run
+
+    @should_run.setter
+    def should_run(self, value):
+        self._keep_running = value
 
     def run(self):
+        # This prevents the job from running more than once
+        self.should_run = False
+
         super().run()
         return schedule.CancelJob()
 

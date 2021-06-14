@@ -3,6 +3,7 @@ import time
 from datetime import datetime
 from pathlib import Path
 from typing import Dict
+from unittest.mock import Mock
 
 import pytest
 
@@ -29,6 +30,19 @@ def test_once():
         file.seek(0)
         # Verify that the written time was within 0.3 seconds of the expected time
         assert float(file.readline()) - 2 == pytest.approx(start, abs=0.3)
+
+
+def test_once_single_call():
+    mock = Mock()
+    mock.side_effect = lambda: time.sleep(0.2)
+
+    schedule.once().do(mock)
+
+    for _ in range(10):
+        schedule.run_pending()
+        time.sleep(0.05)
+
+    mock.assert_called_once()
 
 
 def test_recurring_thread():
