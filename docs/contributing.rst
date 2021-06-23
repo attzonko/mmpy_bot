@@ -42,7 +42,7 @@ tests and run tests, please install the dev requirements.
 
         $ pip install -r dev-requirements.txt
 
-All the tests are put in `mmpy_bot\tests`.
+All the tests are put in ``mmpy_bot\tests``.
 There are two test packages: :code:`unit_tests` and
 :code:`integration_tests`.
 
@@ -76,18 +76,18 @@ To run the unit tests (in parallel), simply execute:
 Adding integration tests
 ------------------------
 
-The integration tests are run on the `jneeven:mattermost-bot-test` docker
-image, for which dockerfiles are provided in the `tests/intergration_tests`
+The integration tests are run on the ``jneeven:mattermost-bot-test`` docker
+image, for which dockerfiles are provided in the ``tests/intergration_tests``
 folder. The tests are defined as interactions between a bot (the responder)
 and a driver (the one sending test messages), which live inside the docker
 image. Their respective tokens are available in
-`tests/integration_tests/utils.py`, and the two bots are available as pytest
+``tests/integration_tests/utils.py``, and the two bots are available as pytest
 fixtures so they can be easily re-used. Note that while the bot is also a
 fixture, it should not be used in any functions. It will simply be started
 whenever the integration tests are executed.
 
 An integration test might look like this (also have a look at the actual code
-in `tests/integration_tests/test_example_plugin.py`):
+in ``tests/integration_tests/test_example_plugin.py``):
 
     .. code-block:: python
 
@@ -108,7 +108,7 @@ in `tests/integration_tests/test_example_plugin.py`):
 In this test, the driver sends a message in the "off-topic" channel, and
 waits for the bot to reply 'Bring it on!'. If no reply occurs within a
 default response timeout (15 seconds by default, but this can be passed as an
-argument to `expect_reply`), an exception will be raised. The driver fixture
+argument to ``expect_reply``), an exception will be raised. The driver fixture
 is imported from the utils and can be re-used in every test function simply
 by adding it as a function argument.
 
@@ -117,9 +117,9 @@ by adding it as a function argument.
 Running the integration_tests
 -----------------------------
 
-Running the integration_tests is easy: simply `cd` into
-`tests/integration_tests`, and run `docker-compose up -d` to start a local
-mattermost server. Then run `pytest -n auto .` to start the tests! For more
+Running the integration_tests is easy: simply ``cd`` into
+``tests/integration_tests``, and run ``docker-compose up -d`` to start a local
+mattermost server. Then run ``pytest -n auto .`` to start the tests! For more
 info about the integration tests an the docker server, have a look at
 `tests/integration_tests/README.md`.
 
