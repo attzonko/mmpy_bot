@@ -15,7 +15,7 @@ def requires(filename: str):
 setup(
     name="mmpy_bot",
     # Updated by publish workflow
-    version=Path(__file__).parent.joinpath("version.txt").read_text(),
+    version=Path(__file__).parent.joinpath("mmpy_bot/version.txt").read_text().rstrip(),
     author="Alex Tzonkov",
     author_email="alex.tzonkov@gmail.com",
     license="MIT",
@@ -29,6 +29,8 @@ setup(
     packages=find_packages(exclude=excludes),
     install_requires=requires("requirements.txt"),
     extras_require={"dev": requires("dev-requirements.txt")},
+    package_data={"mmpy_bot": ["mmpy_bot/version.txt"]},
+    include_package_data=True,
     entry_points={
         "console_scripts": [
             "mmpy_bot = mmpy_bot.cli:main",

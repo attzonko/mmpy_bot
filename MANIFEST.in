@@ -2,4 +2,4 @@ include README.md
 include AUTHORS.rst
 include requirements.txt
 include dev-requirements.txt
-include version.txt
+include mmpy_bot/version.txt

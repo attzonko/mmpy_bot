@@ -12,7 +12,7 @@ from mmpy_bot.scheduler import schedule
 from mmpy_bot.settings import Settings
 from mmpy_bot.wrappers import ActionEvent, Message, WebHookEvent
 
-__version__ = Path(__file__).parent.parent.joinpath("version.txt").read_text()
+__version__ = Path(__file__).parent.joinpath("version.txt").read_text().rstrip()
 
 __all__ = [
     "__version__",
