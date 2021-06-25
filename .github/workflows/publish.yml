@@ -21,7 +21,7 @@ jobs:
         run: pip install --upgrade setuptools twine wheel
       - name: Create wheel
         run: |
-          echo ${{ github.event.inputs.version }} > version.txt
+          echo ${{ github.event.inputs.version }} > mmpy_bot/version.txt
           python setup.py bdist_wheel
       - name: Upload wheel
         run: twine upload dist/* -u __token__ -p '${{ secrets.PYPI_API_TOKEN }}' --verbose
