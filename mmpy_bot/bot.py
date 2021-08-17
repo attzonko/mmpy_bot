@@ -23,24 +23,26 @@ class Bot:
         self,
         settings: Optional[Settings] = None,
         plugins: Optional[Sequence[Plugin]] = None,
+        enable_logging: bool = True,
     ):
         if plugins is None:
             plugins = [ExamplePlugin(), WebHookExample()]
         # Use default settings if none were specified.
         self.settings = settings or Settings()
-        logging.basicConfig(
-            **{
-                "format": self.settings.LOG_FORMAT,
-                "datefmt": "%m/%d/%Y %H:%M:%S",
-                "level": logging.DEBUG if self.settings.DEBUG else logging.INFO,
-                "filename": self.settings.LOG_FILE,
-                "filemode": "w",
-            }
-        )
-        # define and add a Handler which writes log messages to the sys.stdout
-        self.console = logging.StreamHandler(stream=sys.stdout)
-        self.console.setFormatter(logging.Formatter(self.settings.LOG_FORMAT))
-        logging.getLogger("").addHandler(self.console)
+        if enable_logging:
+            logging.basicConfig(
+                **{
+                    "format": self.settings.LOG_FORMAT,
+                    "datefmt": "%m/%d/%Y %H:%M:%S",
+                    "level": logging.DEBUG if self.settings.DEBUG else logging.INFO,
+                    "filename": self.settings.LOG_FILE,
+                    "filemode": "w",
+                }
+            )
+            # define and add a Handler which writes log messages to the sys.stdout
+            self.console = logging.StreamHandler(stream=sys.stdout)
+            self.console.setFormatter(logging.Formatter(self.settings.LOG_FORMAT))
+            logging.getLogger("").addHandler(self.console)
 
         self.driver = Driver(
             {
