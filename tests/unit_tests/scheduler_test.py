@@ -8,6 +8,7 @@ from unittest.mock import Mock
 import pytest
 
 from mmpy_bot import schedule
+from mmpy_bot.threadpool import ThreadPool
 
 
 def test_once():
@@ -78,10 +79,20 @@ def test_recurring_thread():
 
     start = time.time()
     end = start + 3.5  # We want to wait just over 3 seconds
+
+    pool = ThreadPool(num_workers=10)
+
+    pool.start_scheduler_thread(trigger_period=1)  # in seconds
+
+    # Start the pool thread
+    pool.start()
+
     while time.time() < end:
-        # Launch job and wait one second
-        schedule.run_pending()
+        # Wait until we reach our 3+ second deadline
         time.sleep(1)
+
+    # Stop the pool and scheduler loop
+    pool.stop()
 
     # Stop all scheduled jobs
     schedule.clear()
@@ -116,10 +127,19 @@ def test_recurring_subprocess():
 
         start = time.time()
         end = start + 3.5  # We want to wait just over 3 seconds
+        pool = ThreadPool(num_workers=10)
+
+        pool.start_scheduler_thread(trigger_period=1)  # in seconds
+
+        # Start the pool thread
+        pool.start()
+
         while time.time() < end:
-            # Launch job and wait one second
-            schedule.run_pending()
+            # Wait until we reach our 3+ second deadline
             time.sleep(1)
+
+        # Stop the pool and scheduler loop
+        pool.stop()
 
         # Stop all scheduled jobs
         schedule.clear()
