@@ -1,7 +1,6 @@
 from datetime import datetime
 from multiprocessing import Pipe, Process
 from multiprocessing.connection import Connection
-from threading import Thread
 from typing import Optional
 
 import schedule
@@ -18,20 +17,8 @@ class OneTimeJob(schedule.Job):
             raise AssertionError("The next_time parameter should be a datetime object.")
         self.at_time = next_time
         self.next_run = next_time
-        self.should_run = True
-
-    @property
-    def should_run(self):
-        return self._keep_running and super().should_run
-
-    @should_run.setter
-    def should_run(self, value):
-        self._keep_running = value
 
     def run(self):
-        # This prevents the job from running more than once
-        self.should_run = False
-
         super().run()
         return schedule.CancelJob()
 
@@ -50,26 +37,24 @@ def _run_job(self, job):
     event loop.
     """
 
-    def launch_and_wait():
-        # Launch job in a dedicated process and send the result through a pipe.
-        if "subprocess" in job.tags:
+    # Launch job in a dedicated process and send the result through a pipe.
+    if "subprocess" in job.tags:
 
-            def wrapped_run(pipe: Connection):
-                result = job.run()
-                pipe.send(result)
-
-            pipe, child_pipe = Pipe()
-            p = Process(target=wrapped_run, args=(child_pipe,))
-            p.start()
-            result = pipe.recv()
-        else:
-            # Or simply run the job in this thread
+        def wrapped_run(pipe: Connection):
             result = job.run()
+            pipe.send(result)
 
-        if isinstance(result, schedule.CancelJob) or result is schedule.CancelJob:
-            self.cancel_job(job)
+        pipe, child_pipe = Pipe()
+        p = Process(target=wrapped_run, args=(child_pipe,))
+        p.start()
+        # This still blocks despite running in a subprocess
+        result = pipe.recv()
+    else:
+        # Or simply run the job in this thread
+        result = job.run()
 
-    Thread(target=launch_and_wait).start()
+    if isinstance(result, schedule.CancelJob) or result is schedule.CancelJob:
+        self.cancel_job(job)
 
 
 def _once(trigger_time: Optional[datetime] = None):

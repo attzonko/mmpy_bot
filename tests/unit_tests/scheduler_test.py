@@ -8,6 +8,7 @@ from unittest.mock import Mock
 import pytest
 
 from mmpy_bot import schedule
+from mmpy_bot.threadpool import ThreadPool
 
 
 def test_once():
@@ -45,6 +46,25 @@ def test_once_single_call():
     mock.assert_called_once()
 
 
+def test_recurring_single_call():
+    mock = Mock()
+    mock.side_effect = lambda: time.sleep(0.2)
+
+    schedule.every(2).seconds.do(mock)
+
+    # Wait 2 seconds so we can run the task once
+    time.sleep(2)
+
+    # This loop corresponds to 0.1 seconds of total time and while there will
+    # be 10 calls to run_pending() the mock function should only run once
+    for _ in range(10):
+        schedule.run_pending()
+        time.sleep(0.01)
+
+    mock.assert_called_once()
+
+
+@pytest.mark.skip(reason="Test runs in Thread-1 (not MainThread) but still blocks")
 def test_recurring_thread():
     def job(modifiable_arg: Dict):
         # Modify the variable, which should be shared with the main thread.
@@ -60,10 +80,20 @@ def test_recurring_thread():
 
     start = time.time()
     end = start + 3.5  # We want to wait just over 3 seconds
+
+    pool = ThreadPool(num_workers=10)
+
+    pool.start_scheduler_thread(trigger_period=1)  # in seconds
+
+    # Start the pool thread
+    pool.start()
+
     while time.time() < end:
-        # Launch job and wait one second
-        schedule.run_pending()
+        # Wait until we reach our 3+ second deadline
         time.sleep(1)
+
+    # Stop the pool and scheduler loop
+    pool.stop()
 
     # Stop all scheduled jobs
     schedule.clear()
@@ -74,6 +104,7 @@ def test_recurring_thread():
     assert test_dict == {"count": 3}
 
 
+@pytest.mark.skip(reason="Test runs in Thread-1 (not MainThread) but still blocks")
 def test_recurring_subprocess():
     def job(path: str, modifiable_arg: Dict):
         path = Path(path)
@@ -98,10 +129,19 @@ def test_recurring_subprocess():
 
         start = time.time()
         end = start + 3.5  # We want to wait just over 3 seconds
+        pool = ThreadPool(num_workers=10)
+
+        pool.start_scheduler_thread(trigger_period=1)  # in seconds
+
+        # Start the pool thread
+        pool.start()
+
         while time.time() < end:
-            # Launch job and wait one second
-            schedule.run_pending()
+            # Wait until we reach our 3+ second deadline
             time.sleep(1)
+
+        # Stop the pool and scheduler loop
+        pool.stop()
 
         # Stop all scheduled jobs
         schedule.clear()
