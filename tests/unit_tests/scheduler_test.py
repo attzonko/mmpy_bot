@@ -39,6 +39,8 @@ def test_once_single_call():
 
     schedule.once().do(mock)
 
+    assert repr(schedule.jobs[0]).startswith("Once at")
+
     for _ in range(10):
         schedule.run_pending()
         time.sleep(0.05)
