@@ -12,6 +12,12 @@ class OneTimeJob(schedule.Job):
     def _schedule_next_run(self):
         pass
 
+    def __repr__(self):
+        txt = super().__repr__()
+        # One time jobs always read "Every 0 None at ..."
+        # due undefined self.interval (0) and self.unit (None)
+        return txt.replace("Every 0 None", "Once")
+
     def set_next_run(self, next_time: datetime):
         if not isinstance(next_time, datetime):
             raise AssertionError("The next_time parameter should be a datetime object.")
