@@ -4,6 +4,6 @@ filelock==3.0.12
 flake8==3.9.2
 isort==5.9.3
 pytest==6.2.5
-pytest-xdist==2.3.0
+pytest-xdist==2.4.0
 pytype==2021.9.9
 snapshottest==0.6.0
