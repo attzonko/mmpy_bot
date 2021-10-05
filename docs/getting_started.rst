@@ -51,6 +51,7 @@ look something like this:
             settings=Settings(
                 MATTERMOST_URL = "http://<mattermost_server_url>",
                 MATTERMOST_PORT = 443,
+                MATTERMOST_API_PATH = '/api/v4',
                 BOT_TOKEN = "<your_bot_token>",
                 BOT_TEAM = "<team_name>",
                 SSL_VERIFY = True,
