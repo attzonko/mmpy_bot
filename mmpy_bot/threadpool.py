@@ -60,7 +60,10 @@ class ThreadPool(object):
             function, arguments = self._queue.get()
             # Notify the pool that we started working
             self._busy_workers.put(1)
-            function(*arguments)
+            try:
+                function(*arguments)
+            except Exception:
+                log.exception()
             # Notify the pool that we finished working
             self._queue.task_done()
             self._busy_workers.get()
