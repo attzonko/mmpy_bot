@@ -48,7 +48,7 @@ class Settings:
 
     MATTERMOST_URL: str = "https://chat.com"
     MATTERMOST_PORT: int = 443
-    MATTERMOST_API_PATH: str = '/api/v4'
+    MATTERMOST_API_PATH: str = "/api/v4"
     BOT_TOKEN: str = "token"
     BOT_TEAM: str = "team_name"
     SSL_VERIFY: bool = True
