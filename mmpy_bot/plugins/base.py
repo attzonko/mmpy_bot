@@ -4,7 +4,7 @@ import logging
 import re
 from abc import ABC
 from collections import defaultdict
-from typing import Dict, Optional, Sequence, MutableSequence
+from typing import Dict, MutableSequence, Optional, Sequence
 
 from mmpy_bot.driver import Driver
 from mmpy_bot.function import Function, MessageFunction, WebHookFunction, listen_to
