@@ -4,7 +4,7 @@ import logging
 import re
 from abc import ABC
 from collections import defaultdict
-from typing import Dict, Optional, Sequence
+from typing import Dict, Optional, Sequence, MutableSequence
 
 from mmpy_bot.driver import Driver
 from mmpy_bot.function import Function, MessageFunction, WebHookFunction, listen_to
@@ -26,10 +26,10 @@ class Plugin(ABC):
     def __init__(self):
         self.driver: Optional[Driver] = None
         self.message_listeners: Dict[
-            re.Pattern, Sequence[MessageFunction]
+            re.Pattern, MutableSequence[MessageFunction]
         ] = defaultdict(list)
         self.webhook_listeners: Dict[
-            re.Pattern, Sequence[WebHookFunction]
+            re.Pattern, MutableSequence[WebHookFunction]
         ] = defaultdict(list)
 
         # We have to register the help function listeners at runtime to prevent the
