@@ -23,7 +23,7 @@ jobs:
         uses: actions/setup-python@v2.2.1
         with:
           python-version: ${{ matrix.python-version }}
-      - uses: actions/cache@v2.1.6
+      - uses: actions/cache@v2.1.7
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip3-${{ hashFiles('*requirements.txt') }}
@@ -45,7 +45,7 @@ jobs:
         uses: actions/setup-python@v2.2.1
         with:
           python-version: ${{ matrix.python-version }}
-      - uses: actions/cache@v2.1.6
+      - uses: actions/cache@v2.1.7
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip3-${{ hashFiles('*requirements.txt') }}
