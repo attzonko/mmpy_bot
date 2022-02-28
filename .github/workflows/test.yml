@@ -20,7 +20,7 @@ jobs:
           access_token: ${{ github.token }}
       - uses: actions/checkout@v2
       - name: Set up Python
-        uses: actions/setup-python@v2.2.1
+        uses: actions/setup-python@v3
         with:
           python-version: ${{ matrix.python-version }}
       - uses: actions/cache@v2.1.7
@@ -42,7 +42,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python
-        uses: actions/setup-python@v2.2.1
+        uses: actions/setup-python@v3
         with:
           python-version: ${{ matrix.python-version }}
       - uses: actions/cache@v2.1.7
