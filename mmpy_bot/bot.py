@@ -73,7 +73,11 @@ class Bot:
         # avoid double logging if no log file is specified
         if self.settings.LOG_FILE is not None:
             self.console = logging.StreamHandler(stream=sys.stdout)
-            self.console.setFormatter(logging.Formatter(self.settings.LOG_FORMAT, self.settings.LOG_DATE_FORMAT))
+            self.console.setFormatter(
+                logging.Formatter(
+                    self.settings.LOG_FORMAT, self.settings.LOG_DATE_FORMAT
+                )
+            )
             logging.getLogger("").addHandler(self.console)
 
     def _initialize_plugins(self, plugins: Sequence[Plugin]):
