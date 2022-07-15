@@ -15,17 +15,19 @@ from mmpy_bot.wrappers import Message
 class ExamplePlugin(Plugin):
     """Default plugin with examples of bot functionality and usage."""
 
-    @listen_to("^admin$", direct_only=True, allowed_users=["admin", "root"])
+    @listen_to(
+        "^admin$", direct_only=True, allowed_users=["admin", "root"], category="admin"
+    )
     async def users_access(self, message: Message):
         """Showcases a function with restricted access."""
         self.driver.reply_to(message, "Access allowed!")
 
-    @listen_to("^offtopic_channel$", allowed_channels=["off-topic"])
+    @listen_to("^offtopic_channel$", allowed_channels=["off-topic"], category="admin")
     async def channels_access(self, message: Message):
         """Showcases a function which can only be used in specific channels."""
         self.driver.reply_to(message, "Access allowed!")
 
-    @listen_to("^busy|jobs$", re.IGNORECASE, needs_mention=True)
+    @listen_to("^busy|jobs$", re.IGNORECASE, needs_mention=True, category="admin")
     async def busy_reply(self, message: Message):
         """Show the number of busy worker threads."""
         busy = self.driver.threadpool.get_busy_workers()
@@ -34,7 +36,7 @@ class ExamplePlugin(Plugin):
             f"Number of busy worker threads: {busy}",
         )
 
-    @listen_to("hello_click", needs_mention=True)
+    @listen_to("hello_click", needs_mention=True, category="click")
     @click.command(help="An example click command with various arguments.")
     @click.argument("POSITIONAL_ARG", type=str)
     @click.option("--keyword-arg", type=float, default=5.0, help="A keyword arg.")
@@ -42,6 +44,7 @@ class ExamplePlugin(Plugin):
     def hello_click(
         self, message: Message, positional_arg: str, keyword_arg: float, flag: bool
     ):
+        """A click function documented via docstring."""
         response = (
             "Received the following arguments:\n"
             f"- positional_arg: {positional_arg}\n"
@@ -79,8 +82,9 @@ class ExamplePlugin(Plugin):
         file.write_text("Hello from this file!")
         self.driver.reply_to(message, "Here you go", file_paths=[file])
 
-    @listen_to("^!hello_webhook$", re.IGNORECASE)
+    @listen_to("^!hello_webhook$", re.IGNORECASE, category="webhook")
     async def hello_webhook(self, message: Message):
+        """A webhook that says hello."""
         self.driver.webhooks.call_webhook(
             "eauegoqk4ibxigfybqrsfmt48r",
             options={
@@ -116,7 +120,9 @@ class ExamplePlugin(Plugin):
         """Pong."""
         self.driver.reply_to(message, "pong")
 
-    @listen_to("^reply at (.*)$", re.IGNORECASE, needs_mention=True)
+    @listen_to(
+        "^reply at (.*)$", re.IGNORECASE, needs_mention=True, category="schedule"
+    )
     def schedule_once(self, message: Message, trigger_time: str):
         """Schedules a reply to be sent at the given time.
 
@@ -133,7 +139,12 @@ class ExamplePlugin(Plugin):
         except ValueError as e:
             self.driver.reply_to(message, str(e))
 
-    @listen_to("^schedule every ([0-9]+)$", re.IGNORECASE, needs_mention=True)
+    @listen_to(
+        "^schedule every ([0-9]+)$",
+        re.IGNORECASE,
+        needs_mention=True,
+        category="schedule",
+    )
     def schedule_every(self, message: Message, seconds: int):
         """Schedules a reply every x seconds. Use the `cancel jobs` command to stop.
 
@@ -144,7 +155,7 @@ class ExamplePlugin(Plugin):
             self.driver.reply_to, message, f"Scheduled message every {seconds} seconds!"
         )
 
-    @listen_to("^cancel jobs$", re.IGNORECASE, needs_mention=True)
+    @listen_to("^cancel jobs$", re.IGNORECASE, needs_mention=True, category="schedule")
     def cancel_jobs(self, message: Message):
         """Cancels all scheduled jobs, including recurring and one-time events."""
         schedule.clear()
