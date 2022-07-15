@@ -5,7 +5,7 @@ import inspect
 import logging
 import re
 from abc import ABC, abstractmethod
-from typing import Callable, Optional, Sequence
+from typing import TYPE_CHECKING, Callable, Optional, Sequence, Union
 
 import click
 
@@ -13,13 +13,17 @@ from mmpy_bot.utils import completed_future, spaces
 from mmpy_bot.webhook_server import NoResponse
 from mmpy_bot.wrappers import Message, WebHookEvent
 
+if TYPE_CHECKING:
+    from mmpy_bot.plugins import Plugin
+
+
 log = logging.getLogger("mmpy.function")
 
 
 class Function(ABC):
     def __init__(
         self,
-        function: Callable,
+        function: Union[Callable, Function],
         matcher: re.Pattern,
         **metadata,
     ):
@@ -38,9 +42,9 @@ class Function(ABC):
         self.metadata = metadata
 
         # To be set in the child class or from the parent plugin
-        self.plugin = None
+        self.plugin: Optional[Plugin] = None
         self.name: Optional[str] = None
-        self.docstring: Optional[str] = None
+        self.docstring = self.function.__doc__ or ""
 
         @abstractmethod
         def __call__(self, *args):
@@ -97,12 +101,9 @@ class MessageFunction(Function):
                 info_name=self.matcher.pattern.strip("^").split(" (.*)?")[0],
             ) as ctx:
                 # Get click help string and do some extra formatting
-                self.docstring = self.function.get_help(ctx).replace(
-                    "\n", f"\n{spaces(8)}"
-                )
+                self.docstring += f"\n\n{self.function.get_help(ctx)}"
         else:
             _function = self.function
-            self.docstring = self.function.__doc__
 
         self.name = _function.__qualname__
 
@@ -229,7 +230,7 @@ def listen_to(
             reg = f"^{reg.strip('^')} (.*)?"  # noqa
 
         pattern = re.compile(reg, regexp_flag)
-        return MessageFunction(
+        new_func = MessageFunction(
             func,
             matcher=pattern,
             direct_only=direct_only,
@@ -239,6 +240,10 @@ def listen_to(
             silence_fail_msg=silence_fail_msg,
             **metadata,
         )
+
+        # Preserve docstring
+        new_func.__doc__ = func.__doc__
+        return new_func
 
     return wrapped_func
 
@@ -258,7 +263,6 @@ class WebHookFunction(Function):
             )
 
         self.name = self.function.__qualname__
-        self.docstring = self.function.__doc__
 
         argspec = list(inspect.signature(self.function).parameters.keys())
         if not argspec == ["self", "event"]:
@@ -296,10 +300,14 @@ def listen_webhook(
 
     def wrapped_func(func):
         pattern = re.compile(regexp)
-        return WebHookFunction(
+        new_func = WebHookFunction(
             func,
             matcher=pattern,
             **metadata,
         )
+
+        # Preserve docstring
+        new_func.__doc__ = func.__doc__
+        return new_func
 
     return wrapped_func
