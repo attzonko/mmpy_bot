@@ -5,7 +5,7 @@ import re
 from abc import ABC
 from collections import defaultdict
 from dataclasses import dataclass
-from typing import Any, Dict, List, MutableSequence, Optional, Sequence, Union
+from typing import Any, Dict, List, Optional, Sequence, Union
 
 from mmpy_bot.driver import Driver
 from mmpy_bot.function import Function, MessageFunction, WebHookFunction
@@ -27,34 +27,19 @@ class Plugin(ABC):
 
     def __init__(self):
         self.driver: Optional[Driver] = None
-        self.message_listeners: Dict[
-            re.Pattern, MutableSequence[MessageFunction]
-        ] = defaultdict(list)
-        self.webhook_listeners: Dict[
-            re.Pattern, MutableSequence[WebHookFunction]
-        ] = defaultdict(list)
+        self.plugin_manager: Optional[PluginManager] = None
+        self.settings: Optional[Settings] = None
+        self.docstring = self.__doc__ if self.__doc__ != Plugin.__doc__ else None
 
-    def initialize(self, driver: Driver, settings: Optional[Settings] = None):
+    def initialize(
+        self,
+        driver: Driver,
+        plugin_manager: PluginManager,
+        settings: Settings,
+    ):
         self.driver = driver
-
-        # Register listeners for any listener functions we might have
-        for attribute in dir(self):
-            attribute = getattr(self, attribute)
-            if isinstance(attribute, Function):
-                # Register this function and any potential siblings
-                for function in [attribute] + attribute.siblings:
-                    function.plugin = self
-                    if isinstance(function, MessageFunction):
-                        self.message_listeners[function.matcher].append(function)
-                    elif isinstance(function, WebHookFunction):
-                        self.webhook_listeners[function.matcher].append(function)
-                    else:
-                        raise TypeError(
-                            f"{self.__class__.__name__} has a function of unsupported"
-                            f" type {type(function)}."
-                        )
-
-        return self
+        self.plugin_manager = plugin_manager
+        self.settings = settings
 
     def on_start(self):
         """Will be called after initialization.
