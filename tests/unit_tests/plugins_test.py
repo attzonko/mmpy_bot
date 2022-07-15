@@ -45,8 +45,3 @@ class TestPlugin:
                 p.call_function(FakePlugin.my_async_function, message, groups=[])
             )
             mock_function.assert_called_once_with(p, message)
-
-    def test_help_string(self, snapshot):
-        p = FakePlugin().initialize(Driver())
-        # Compare the help string with the snapshotted version.
-        snapshot.assert_match(p.get_help_string())

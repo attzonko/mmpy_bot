@@ -50,13 +50,6 @@ class Function(ABC):
         def __call__(self, *args):
             pass
 
-    def get_help_string(self):
-        string = f"`{self.matcher.pattern}`:\n"
-        # Add a docstring
-        doc = self.docstring or "No description provided."
-        string += f"{spaces(8)}{doc}\n"
-        return string
-
 
 class MessageFunction(Function):
     """Wrapper around a Plugin class method that should respond to certain Mattermost
@@ -160,38 +153,6 @@ class MessageFunction(Function):
                 return self.plugin.driver.reply_to(message, f"{e}\n{self.docstring}")
 
         return self.function(self.plugin, message, *args)
-
-    def get_help_string(self):
-        string = super().get_help_string()
-        if any(
-            [
-                self.needs_mention,
-                self.direct_only,
-                self.allowed_users,
-                self.allowed_channels,
-                self.silence_fail_msg,
-            ]
-        ):
-            # Print some information describing the usage settings.
-            string += f"{spaces(4)}Additional information:\n"
-            if self.needs_mention:
-                string += (
-                    f"{spaces(4)}- Needs to either mention @{self.plugin.driver.username}"
-                    " or be a direct message.\n"
-                )
-            if self.direct_only:
-                string += f"{spaces(4)}- Needs to be a direct message.\n"
-
-            if self.allowed_users:
-                string += f"{spaces(4)}- Restricted to certain users.\n"
-
-            if self.allowed_channels:
-                string += f"{spaces(4)}- Restricted to certain channels.\n"
-
-            if self.silence_fail_msg:
-                string += f"{spaces(4)}- If it should reply to a non privileged user / in a non privileged channel.\n"
-
-        return string
 
 
 def listen_to(

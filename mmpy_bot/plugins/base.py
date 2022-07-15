@@ -11,19 +11,9 @@ from mmpy_bot.driver import Driver
 from mmpy_bot.function import Function, MessageFunction, WebHookFunction
 from mmpy_bot.settings import Settings
 from mmpy_bot.utils import split_docstring
-from mmpy_bot.wrappers import EventWrapper, Message
+from mmpy_bot.wrappers import EventWrapper
 
 log = logging.getLogger("mmpy.plugin_base")
-
-
-def collect_listener_help(values):
-    chunks = []
-
-    for functions in values:
-        for function in functions:
-            chunks.append(f"- {function.get_help_string()}")
-
-    return "".join(chunks)
 
 
 class Plugin(ABC):
@@ -79,24 +69,6 @@ class Plugin(ABC):
             # By default, we use the global threadpool of the driver, but we could use
             # a plugin-specific thread or process pool if we wanted.
             self.driver.threadpool.add_task(function, event, *groups)
-
-    def get_help_string(self):
-        string = f"Plugin {self.__class__.__name__} has the following functions:\n"
-        string += "----\n"
-        string += collect_listener_help(self.plugin_manager.message_listeners.values())
-        string += "----\n"
-
-        if len(self.plugin_manager.webhook_listeners) > 0:
-            string += "### Registered webhooks:\n"
-            string += collect_listener_help(
-                self.plugin_manager.webhook_listeners.values()
-            )
-
-        return string
-
-    async def help(self, message: Message):
-        """Prints the list of functions registered on every active plugin."""
-        self.driver.reply_to(message, self.get_help_string())
 
 
 @dataclass
