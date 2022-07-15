@@ -138,6 +138,36 @@ Restrict messages to specific channels
             """Will only trigger if the message has been send in '#staff' or '#town-square'."""
             self.driver.reply_to(message, "Access allowed!")
 
+Extra listener metadata
+-----------------------
+
+In some cases, it is helpful to add extra metadata to listeners.
+The example below shows ``category`` and ``human_description``.
+
+``category`` is used by ``HelpPlugin`` to group listeners from the same
+category while ``human_description`` is displayed instead of the listener
+regular expression. The latter is particularly useful if users of the bot
+are not familiar with or don't know how to read regular expressions.
+
+.. code-block:: python
+
+    import re
+
+    @listen_to(
+        "^reply at (.*)$",
+        re.IGNORECASE,
+        needs_mention=True,
+        category="schedule",
+        human_description="reply at TIMESTAMP",
+    )
+    def schedule_once(self, message: Message, trigger_time: str):
+        """Schedules a reply to be sent at the given time."""
+        (...)
+
+You can also pass arbitrary keywords in the ``listen_to`` decorator.
+These will be made available through ``FunctionInfo.metadata`` instances,
+described in more detail below.
+
 Click support
 -------------
 
@@ -161,6 +191,7 @@ the `ExamplePlugin` to see what it looks like!
     def hello_click(
         self, message: Message, positional_arg: str, keyword_arg: float, flag: bool
     ):
+        """A click function documented via docstring"""
         response = (
             "Received the following arguments:\n"
             f"- positional_arg: {positional_arg}\n"
