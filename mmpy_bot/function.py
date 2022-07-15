@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, Callable, Optional, Sequence, Union
 
 import click
 
-from mmpy_bot.utils import completed_future, spaces
+from mmpy_bot.utils import completed_future
 from mmpy_bot.webhook_server import NoResponse
 from mmpy_bot.wrappers import Message, WebHookEvent
 
