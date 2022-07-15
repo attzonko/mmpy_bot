@@ -5,7 +5,13 @@ from typing import List, Optional, Union
 
 from mmpy_bot.driver import Driver
 from mmpy_bot.event_handler import EventHandler
-from mmpy_bot.plugins import ExamplePlugin, Plugin, PluginManager, WebHookExample
+from mmpy_bot.plugins import (
+    ExamplePlugin,
+    HelpPlugin,
+    Plugin,
+    PluginManager,
+    WebHookExample,
+)
 from mmpy_bot.settings import Settings
 from mmpy_bot.webhook_server import WebHookServer
 
@@ -26,7 +32,9 @@ class Bot:
         enable_logging: bool = True,
     ):
         if plugins is None:
-            self.plugin_manager = PluginManager([ExamplePlugin(), WebHookExample()])
+            self.plugin_manager = PluginManager(
+                [HelpPlugin(), ExamplePlugin(), WebHookExample()]
+            )
         elif isinstance(plugins, PluginManager):
             self.plugin_manager = plugins
         else:
