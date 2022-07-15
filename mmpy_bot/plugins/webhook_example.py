@@ -1,6 +1,6 @@
 from mmpy_bot.driver import Driver
 from mmpy_bot.function import listen_to, listen_webhook
-from mmpy_bot.plugins.base import Plugin
+from mmpy_bot.plugins.base import Plugin, PluginManager
 from mmpy_bot.settings import Settings
 from mmpy_bot.wrappers import ActionEvent, Message, WebHookEvent
 
@@ -8,8 +8,10 @@ from mmpy_bot.wrappers import ActionEvent, Message, WebHookEvent
 class WebHookExample(Plugin):
     """Webhook plugin with examples of webhook server functionality."""
 
-    def initialize(self, driver: Driver, settings: Settings):
-        super().initialize(driver, settings)
+    def initialize(
+        self, driver: Driver, plugin_manager: PluginManager, settings: Settings
+    ):
+        super().initialize(driver, plugin_manager, settings)
         self.webhook_host_url = settings.WEBHOOK_HOST_URL
         self.webhook_host_port = settings.WEBHOOK_HOST_PORT
         return self
