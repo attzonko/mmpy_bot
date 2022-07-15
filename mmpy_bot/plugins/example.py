@@ -6,7 +6,8 @@ from pathlib import Path
 import click
 import mattermostdriver
 
-from mmpy_bot.plugins.base import Plugin, listen_to
+from mmpy_bot.function import listen_to
+from mmpy_bot.plugins.base import Plugin
 from mmpy_bot.scheduler import schedule
 from mmpy_bot.wrappers import Message
 
