@@ -143,3 +143,70 @@ def generate_plugin_help(
             )
 
     return plug_help
+
+
+class PluginManager:
+    """PluginManager is responsible for initializing all plugins and display aggregated
+    help from each of them.
+
+    It is supposed to be transparent to EventHandler that interacts directly with each
+    individual Plugin.
+    """
+
+    def __init__(
+        self,
+        plugins: Sequence[Plugin],
+    ):
+        self.settings: Optional[Settings] = None
+        self.plugins = plugins
+
+        self.message_listeners: Dict[re.Pattern, List[MessageFunction]] = defaultdict(
+            list
+        )
+        self.webhook_listeners: Dict[re.Pattern, List[WebHookFunction]] = defaultdict(
+            list
+        )
+
+    def initialize(self, driver: Driver, settings: Settings):
+        for plugin in self.plugins:
+            plugin.initialize(driver, self, settings)
+
+            # Register listeners for any listener functions in the plugin
+            for attribute in dir(plugin):
+                attribute = getattr(plugin, attribute)
+                if not isinstance(attribute, Function):
+                    continue
+
+                # Register this function and any potential siblings
+                for function in [attribute] + attribute.siblings:
+                    # Plugin message/webhook handlers can be decorated multiple times
+                    # resulting in multiple siblings that do not have .plugin defined
+                    # or where the relationship with the parent plugin is incorrect
+                    function.plugin = plugin
+                    if isinstance(function, MessageFunction):
+                        self.message_listeners[function.matcher].append(function)
+                    elif isinstance(function, WebHookFunction):
+                        self.webhook_listeners[function.matcher].append(function)
+                    else:
+                        raise TypeError(
+                            f"{plugin.__class__.__name__} has a function of unsupported"
+                            f" type {type(function)}."
+                        )
+
+    def start(self):
+        """Trigger on_start() on every registered plugin."""
+        for plugin in self.plugins:
+            plugin.on_start()
+
+    def stop(self):
+        """Trigger on_stop() on every registered plugin."""
+        for plugin in self.plugins:
+            plugin.on_stop()
+
+    def get_help(self) -> List[FunctionInfo]:
+        """Returns a list of FunctionInfo items for every registered message and webhook
+        listener."""
+        plug_help = generate_plugin_help(self.message_listeners)
+        plug_help += generate_plugin_help(self.webhook_listeners)
+
+        return plug_help
