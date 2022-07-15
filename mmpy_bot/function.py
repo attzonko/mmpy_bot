@@ -33,6 +33,7 @@ class Function(ABC):
 
         self.function = function
         self.is_coroutine = asyncio.iscoroutinefunction(function)
+        self.is_click_function: bool = False
         self.matcher = matcher
         self.metadata = metadata
 
