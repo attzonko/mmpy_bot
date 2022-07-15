@@ -8,6 +8,7 @@ import pytest
 from mmpy_bot import ExamplePlugin, Settings, listen_to
 from mmpy_bot.driver import Driver
 from mmpy_bot.function import Function, MessageFunction, WebHookFunction, listen_webhook
+from mmpy_bot.plugins import PluginManager
 from mmpy_bot.webhook_server import NoResponse
 from mmpy_bot.wrappers import WebHookEvent
 
@@ -124,7 +125,8 @@ class TestMessageFunction:
             assert "no such option: --nonexistent-arg" in response.lower()
             assert f.docstring in response
 
-        f.plugin = ExamplePlugin().initialize(Driver(), Settings())
+        f.plugin = ExamplePlugin()
+        f.plugin.initialize(Driver(), PluginManager([f.plugin]), Settings())
         with mock.patch.object(
             f.plugin.driver, "reply_to", wraps=mocked_reply
         ) as mock_function:
@@ -136,7 +138,8 @@ class TestMessageFunction:
         wrapped = mock.create_autospec(example_listener)
         wrapped.__qualname__ = "wrapped"
         f = listen_to("", needs_mention=True)(wrapped)
-        f.plugin = ExamplePlugin().initialize(Driver())
+        f.plugin = ExamplePlugin()
+        f.plugin.initialize(Driver(), PluginManager([f.plugin]), Settings())
 
         # The default message mentions the specified user ID, so should be called
         f(create_message(mentions=["qmw86q7qsjriura9jos75i4why"]))
@@ -176,7 +179,8 @@ class TestMessageFunction:
         driver.reply_to = mock.Mock(wraps=fake_reply)
 
         f = listen_to("", allowed_users=["Betty"])(wrapped)
-        f.plugin = ExamplePlugin().initialize(driver)
+        f.plugin = ExamplePlugin()
+        f.plugin.initialize(driver, PluginManager([f.plugin]), Settings())
 
         # This is fine, the names are not caps sensitive
         f(create_message(sender_name="betty"))
@@ -236,7 +240,9 @@ class TestWebHookFunction:
             listen_webhook("")(click.command()(example_webhook_listener))
 
     def test_ensure_response(self):
-        p = ExamplePlugin().initialize(Driver())
+        p = ExamplePlugin()
+        plugin_manager = PluginManager([p])
+        p.initialize(Driver(), plugin_manager, Settings())
 
         def mock_respond(event, response):
             event.responded = True
