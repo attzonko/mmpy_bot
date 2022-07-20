@@ -138,6 +138,36 @@ Restrict messages to specific channels
             """Will only trigger if the message has been send in '#staff' or '#town-square'."""
             self.driver.reply_to(message, "Access allowed!")
 
+Extra listener metadata
+-----------------------
+
+In some cases, it is helpful to add extra metadata to listeners.
+The example below shows ``category`` and ``human_description``.
+
+``category`` is used by ``HelpPlugin`` to group listeners from the same
+category while ``human_description`` is displayed instead of the listener
+regular expression. The latter is particularly useful if users of the bot
+are not familiar with or don't know how to read regular expressions.
+
+.. code-block:: python
+
+    import re
+
+    @listen_to(
+        "^reply at (.*)$",
+        re.IGNORECASE,
+        needs_mention=True,
+        category="schedule",
+        human_description="reply at TIMESTAMP",
+    )
+    def schedule_once(self, message: Message, trigger_time: str):
+        """Schedules a reply to be sent at the given time."""
+        (...)
+
+You can also pass arbitrary keywords in the ``listen_to`` decorator.
+These will be made available through ``FunctionInfo.metadata`` instances,
+described in more detail below.
+
 Click support
 -------------
 
@@ -161,6 +191,7 @@ the `ExamplePlugin` to see what it looks like!
     def hello_click(
         self, message: Message, positional_arg: str, keyword_arg: float, flag: bool
     ):
+        """A click function documented via docstring"""
         response = (
             "Received the following arguments:\n"
             f"- positional_arg: {positional_arg}\n"
@@ -168,6 +199,80 @@ the `ExamplePlugin` to see what it looks like!
             f"- flag: {flag}\n"
         )
         self.driver.reply_to(message, response)
+
+Custom help messages
+--------------------
+
+`mmpy_bot` defaults to responding to `@botname help` or `help` in a direct
+message if the `HelpPlugin` is enabled. If you wish to customize the way help
+is displayed you can subclass `HelpPlugin` and override `get_help_string`.
+If instead you want to customize which help functions are displayed but
+not the format of the help text you can override `get_help`.
+To access information about active plugins call `self.plugin_manager.get_help()`
+which will return `FunctionInfo` instances. See below for an example.
+
+.. code-block:: python
+
+    from mmpy_bot.plugins import HelpPlugin
+
+    class MyAdminOnlyHelpPlugin(HelpPlugin):
+        def get_help(self, message):
+            """Show admin plugins only to admin_user."""
+            function_info = super().get_help(message)
+
+            if message.sender_name != "admin_user":
+                return [x for x in function_info if x.metadata.get("category") != "admin"]
+            else:
+                return function_info
+
+        def get_help_string(self, message):
+            list_of_help_info = self.get_help(message)
+            return f"This is all the help I can share {list_of_help_info}"
+
+`FunctionInfo` provides the following attributes:
+
+* `help_type` - a string *message* or *webhook*
+* `location` - name of the plugin class
+* `function` - function object decorated with `listen_to`
+* `pattern` - regular expression or pattern that triggers the function
+* `docheader` - first line of docstring of decorated function
+* `docfull` - docstring of decorated function - for `click` functions,
+  includes formatted help text
+* `direct` - *True* if function can only be used via direct message
+* `mention` - *True* if function can only be triggered by prefixing with
+  `@botname`
+* `metadata` - a dictionary with additional keyword arguments passed to
+  `listen_to` or `listen_webhook`.
+
+If necessary, you can also access the docstring of the plugin class with:
+
+.. code-block:: python
+
+    from mmpy_bot.utils import split_docstring
+
+    head, full = split_docstring(FunctionInfo.function.plugin.__doc__)
+
+You should then enable your custom plugin by adding it to the list of enabled
+plugins:
+
+.. code-block:: python
+
+    from mmpy_bot import Bot, Settings
+    from my_help_plugin import MyHelpPlugin
+
+    bot = Bot(
+        settings=Settings(
+            ...,
+        ),
+        plugins=[
+            MyHelpPlugin()
+            ...,
+        ],
+    )
+    bot.run()
+
+If you wish to have the bot respond to `!help` in any channel, you can set the
+`RESPOND_CHANNEL_HELP` setting to `True`.
 
 File upload
 -----------
