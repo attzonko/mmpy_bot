@@ -13,13 +13,14 @@ def create_message(
     mentions=["qmw86q7qsjriura9jos75i4why"],
     channel_type="O",
     sender_name="betty",
+    channel_name="off-topic",
 ):
     return Message(
         {
             "event": "posted",
             "data": {
                 "channel_display_name": "Off-Topic",
-                "channel_name": "off-topic",
+                "channel_name": channel_name,
                 "channel_type": channel_type,
                 "mentions": mentions,
                 "post": {
