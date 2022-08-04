@@ -129,6 +129,10 @@ class MessageFunction(Function):
             return return_value
 
         if self.allowed_users and message.sender_name not in self.allowed_users:
+            if self.no_reply is False:
+                self.plugin.driver.reply_to(
+                    message, "You do not have permission to perform this action!"
+                )
             return return_value
 
         if self.allowed_channels and message.channel_name not in self.allowed_channels:
