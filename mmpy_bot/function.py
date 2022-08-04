@@ -21,6 +21,7 @@ class Function(ABC):
         self,
         function: Callable,
         matcher: re.Pattern,
+        **metadata,
     ):
         # If another Function was passed, keep track of all these siblings.
         # We later use them to register not only the outermost Function, but also any
@@ -32,7 +33,9 @@ class Function(ABC):
 
         self.function = function
         self.is_coroutine = asyncio.iscoroutinefunction(function)
+        self.is_click_function: bool = False
         self.matcher = matcher
+        self.metadata = metadata
 
         # To be set in the child class or from the parent plugin
         self.plugin = None
@@ -187,6 +190,7 @@ def listen_to(
     needs_mention=False,
     allowed_users=None,
     allowed_channels=None,
+    **metadata,
 ):
     """Wrap the given function in a MessageFunction class so we can register some
     properties."""
@@ -220,6 +224,7 @@ def listen_to(
             needs_mention=needs_mention,
             allowed_users=allowed_users,
             allowed_channels=allowed_channels,
+            **metadata,
         )
 
     return wrapped_func
@@ -272,6 +277,7 @@ class WebHookFunction(Function):
 
 def listen_webhook(
     regexp: str,
+    **metadata,
 ):
     """Wrap the given function in a WebHookFunction class with the specified regexp."""
 
@@ -280,6 +286,7 @@ def listen_webhook(
         return WebHookFunction(
             func,
             matcher=pattern,
+            **metadata,
         )
 
     return wrapped_func

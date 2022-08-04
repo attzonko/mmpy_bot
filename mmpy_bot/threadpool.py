@@ -63,7 +63,7 @@ class ThreadPool(object):
             try:
                 function(*arguments)
             except Exception:
-                log.exception()
+                log.exception("Unhandled exception in main loop")
             # Notify the pool that we finished working
             self._queue.task_done()
             self._busy_workers.get()

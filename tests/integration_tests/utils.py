@@ -46,6 +46,17 @@ class TestPlugin(Plugin):
         self.driver.reply_to(message, "Bring it on!")
 
 
+# For direct message tests
+class DirectPlugin(Plugin):
+    @listen_to("^starting direct tests")
+    async def reply_start_direct(self, message: Message):
+        self.driver.reply_to(message, "Bring direct on!")
+
+    @listen_to("^direct reply (.*)")
+    async def reply_direct(self, message: Message, text):
+        self.driver.reply_to(message, f"Telling you privately! {text}", direct=True)
+
+
 @pytest.fixture(scope="session")
 def driver():
     return Bot(
@@ -81,7 +92,7 @@ def start_bot(request):
                 WEBHOOK_HOST_URL="http://127.0.0.1",
                 WEBHOOK_HOST_PORT=8579,
             ),
-            plugins=[TestPlugin(), ExamplePlugin(), WebHookExample()],
+            plugins=[DirectPlugin(), TestPlugin(), ExamplePlugin(), WebHookExample()],
         )
 
         def run_bot():

@@ -4,11 +4,13 @@ import logging
 import re
 from abc import ABC
 from collections import defaultdict
-from typing import Dict, MutableSequence, Optional, Sequence
+from dataclasses import dataclass
+from typing import Any, Dict, List, MutableSequence, Optional, Sequence, Union
 
 from mmpy_bot.driver import Driver
 from mmpy_bot.function import Function, MessageFunction, WebHookFunction, listen_to
 from mmpy_bot.settings import Settings
+from mmpy_bot.utils import split_docstring
 from mmpy_bot.wrappers import EventWrapper, Message
 
 log = logging.getLogger("mmpy.plugin_base")
@@ -106,3 +108,62 @@ class Plugin(ABC):
     async def help(self, message: Message):
         """Prints the list of functions registered on every active plugin."""
         self.driver.reply_to(message, self.get_help_string())
+
+
+@dataclass
+class FunctionInfo:
+    help_type: str
+    location: str
+    function: Function
+    pattern: str
+    docheader: str
+    docfull: str
+    direct: bool
+    mention: bool
+    is_click: bool
+    metadata: Dict
+
+
+def generate_plugin_help(
+    listeners: Dict[re.Pattern[Any], List[Union[MessageFunction, WebHookFunction]]],
+):
+    """Build FunctionInfo objects from plugin and function information.
+
+    Returns one FunctionInfo instance for every listener (message or webhook)
+    """
+
+    plug_help: List[FunctionInfo] = []
+
+    for matcher, functions in listeners.items():
+        for function in functions:
+            plug_head, plug_full = split_docstring(function.plugin.__doc__)
+            func_head, func_full = split_docstring(function.docstring)
+
+            if isinstance(function, MessageFunction):
+                direct = function.direct_only
+                mention = function.needs_mention
+                help_type = "message"
+            elif isinstance(function, WebHookFunction):
+                direct = mention = False
+                help_type = "webhook"
+            else:
+                raise NotImplementedError(
+                    f"Unknown/Unsupported listener type: '{type(function)}'"
+                )
+
+            plug_help.append(
+                FunctionInfo(
+                    help_type=help_type,
+                    location=function.plugin.__class__.__name__,
+                    function=function,
+                    pattern=matcher.pattern,
+                    docheader=func_head,
+                    docfull=func_full,
+                    direct=direct,
+                    mention=mention,
+                    is_click=function.is_click_function,
+                    metadata=function.metadata,
+                )
+            )
+
+    return plug_help
