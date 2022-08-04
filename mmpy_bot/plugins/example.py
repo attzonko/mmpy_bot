@@ -19,6 +19,11 @@ class ExamplePlugin(Plugin):
         """Showcases a function with restricted access."""
         self.driver.reply_to(message, "Access allowed!")
 
+    @listen_to("^offtopic_channel$", allowed_channels=["off-topic"])
+    async def channels_access(self, message: Message):
+        """Showcases a function which can only be used in specific channels"""
+        self.driver.reply_to(message, "Access allowed!")
+
     @listen_to("^busy|jobs$", re.IGNORECASE, needs_mention=True)
     async def busy_reply(self, message: Message):
         """Show the number of busy worker threads."""
