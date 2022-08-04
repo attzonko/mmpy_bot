@@ -63,6 +63,7 @@ class MessageFunction(Function):
         *args,
         direct_only: bool = False,
         needs_mention: bool = False,
+        no_reply: bool = False,
         allowed_users: Optional[Sequence[str]] = None,
         allowed_channels: Optional[Sequence[str]] = None,
         **kwargs,
@@ -72,6 +73,7 @@ class MessageFunction(Function):
         self.is_click_function = isinstance(self.function, click.Command)
         self.direct_only = direct_only
         self.needs_mention = needs_mention
+        self.no_reply = no_reply
 
         if allowed_users is None:
             self.allowed_users = []
@@ -130,9 +132,10 @@ class MessageFunction(Function):
             return return_value
 
         if self.allowed_channels and message.channel_name not in self.allowed_channels:
-            self.plugin.driver.reply_to(
-                message, "You do not have permission to perform this action!"
-            )
+            if self.no_reply:
+                self.plugin.driver.reply_to(
+                    message, "You do not have permission to perform this action!"
+                )
             return return_value
 
         if self.is_click_function:
@@ -161,6 +164,7 @@ class MessageFunction(Function):
                 self.direct_only,
                 self.allowed_users,
                 self.allowed_channels,
+                self.no_reply
             ]
         ):
             # Print some information describing the usage settings.
@@ -179,6 +183,9 @@ class MessageFunction(Function):
             if self.allowed_channels:
                 string += f"{spaces(4)}- Restricted to certain channels.\n"
 
+            if self.no_reply:
+                string += f"{spaces(4)}- If it should reply to a non privileged user / in a non privileged channel.\n"
+
         return string
 
 
@@ -190,6 +197,7 @@ def listen_to(
     needs_mention=False,
     allowed_users=None,
     allowed_channels=None,
+    no_reply=False,
     **metadata,
 ):
     """Wrap the given function in a MessageFunction class so we can register some
@@ -224,6 +232,7 @@ def listen_to(
             needs_mention=needs_mention,
             allowed_users=allowed_users,
             allowed_channels=allowed_channels,
+            no_reply=no_reply,
             **metadata,
         )
 
