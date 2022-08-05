@@ -168,7 +168,7 @@ class MessageFunction(Function):
                 self.direct_only,
                 self.allowed_users,
                 self.allowed_channels,
-                self.no_reply
+                self.no_reply,
             ]
         ):
             # Print some information describing the usage settings.
