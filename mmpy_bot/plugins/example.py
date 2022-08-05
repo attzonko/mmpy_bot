@@ -21,7 +21,7 @@ class ExamplePlugin(Plugin):
 
     @listen_to("^offtopic_channel$", allowed_channels=["off-topic"])
     async def channels_access(self, message: Message):
-        """Showcases a function which can only be used in specific channels"""
+        """Showcases a function which can only be used in specific channels."""
         self.driver.reply_to(message, "Access allowed!")
 
     @listen_to("^busy|jobs$", re.IGNORECASE, needs_mention=True)
