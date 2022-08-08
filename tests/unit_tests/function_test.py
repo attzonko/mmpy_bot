@@ -212,7 +212,7 @@ class TestMessageFunction:
         wrapped.assert_not_called()
         driver.reply_to.assert_called_once()
 
-    def test_allowed_channels_no_reply(self):
+    def test_allowed_channels_silence_fail_msg(self):
         wrapped = mock.create_autospec(example_listener)
         wrapped.__qualname__ = "wrapped"
         # Create a driver with a mocked reply function
@@ -223,7 +223,7 @@ class TestMessageFunction:
 
         driver.reply_to = mock.Mock(wraps=fake_reply)
 
-        f = listen_to("", allowed_channels=["off-topic"], no_reply=True)(wrapped)
+        f = listen_to("", allowed_channels=["off-topic"], silence_fail_msg=True)(wrapped)
         f.plugin = ExamplePlugin().initialize(driver)
 
         # This is fine, the names are not caps sensitive
