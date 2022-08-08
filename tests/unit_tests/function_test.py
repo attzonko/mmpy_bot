@@ -223,7 +223,9 @@ class TestMessageFunction:
 
         driver.reply_to = mock.Mock(wraps=fake_reply)
 
-        f = listen_to("", allowed_channels=["off-topic"], silence_fail_msg=True)(wrapped)
+        f = listen_to("", allowed_channels=["off-topic"], silence_fail_msg=True)(
+            wrapped
+        )
         f.plugin = ExamplePlugin().initialize(driver)
 
         # This is fine, the names are not caps sensitive
