@@ -188,6 +188,56 @@ class TestMessageFunction:
         wrapped.assert_not_called()
         driver.reply_to.assert_called_once()
 
+    def test_allowed_channels(self):
+        wrapped = mock.create_autospec(example_listener)
+        wrapped.__qualname__ = "wrapped"
+        # Create a driver with a mocked reply function
+        driver = Driver()
+
+        def fake_reply(message, text):
+            assert "you do not have permission" in text.lower()
+
+        driver.reply_to = mock.Mock(wraps=fake_reply)
+
+        f = listen_to("", allowed_channels=["off-topic"])(wrapped)
+        f.plugin = ExamplePlugin().initialize(driver)
+
+        # This is fine, the names are not caps sensitive
+        f(create_message(channel_name="off-topic"))
+        wrapped.assert_called_once()
+        wrapped.reset_mock()
+
+        # This is not fine, and we expect the fake reply to be called.
+        f(create_message(channel_name="town-square"))
+        wrapped.assert_not_called()
+        driver.reply_to.assert_called_once()
+
+    def test_allowed_channels_silence_fail_msg(self):
+        wrapped = mock.create_autospec(example_listener)
+        wrapped.__qualname__ = "wrapped"
+        # Create a driver with a mocked reply function
+        driver = Driver()
+
+        def fake_reply(message, text):
+            assert "you do not have permission" in text.lower()
+
+        driver.reply_to = mock.Mock(wraps=fake_reply)
+
+        f = listen_to("", allowed_channels=["off-topic"], silence_fail_msg=True)(
+            wrapped
+        )
+        f.plugin = ExamplePlugin().initialize(driver)
+
+        # This is fine, the names are not caps sensitive
+        f(create_message(channel_name="off-topic"))
+        wrapped.assert_called_once()
+        wrapped.reset_mock()
+
+        # This is not fine, and we expect the fake reply not to be called.
+        f(create_message(channel_name="town-square"))
+        wrapped.assert_not_called()
+        driver.reply_to.assert_not_called()
+
 
 def example_webhook_listener(self, event):
     # Used to copy the arg specs to mock.Mock functions.
