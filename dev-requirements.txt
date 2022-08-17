@@ -1,6 +1,6 @@
 black==22.6.0
 docformatter==1.4
-filelock==3.7.1
+filelock==3.8.0
 flake8==5.0.4
 isort==5.10.1
 pytest==7.1.2
