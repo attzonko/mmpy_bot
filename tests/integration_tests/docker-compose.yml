@@ -5,6 +5,7 @@ services:
     container_name: "mattermost-bot-test"
     build: .
     command: ./mm/docker-entry.sh
-    network_mode: host
+    ports:
+      - 8065:8065
     extra_hosts:
       - "dockerhost:127.0.0.1"
