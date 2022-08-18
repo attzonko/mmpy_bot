@@ -5,7 +5,7 @@ import inspect
 import logging
 import re
 from abc import ABC, abstractmethod
-from typing import Callable, Optional, Sequence
+from typing import Callable, Optional, Sequence, Union
 
 import click
 
@@ -19,7 +19,7 @@ log = logging.getLogger("mmpy.function")
 class Function(ABC):
     def __init__(
         self,
-        function: Callable,
+        function: Union[Callable, click.command],
         matcher: re.Pattern,
         **metadata,
     ):
@@ -27,15 +27,23 @@ class Function(ABC):
         # We later use them to register not only the outermost Function, but also any
         # stacked ones.
         self.siblings = []
+
         while isinstance(function, Function):
             self.siblings.append(function)
             function = function.function
 
+        # FIXME: After this while loop it is possible that function is not a Function, do we really want to assign self.function to something which is not a Function? Check if this is needed for the click.Command case
         self.function = function
         self.is_coroutine = asyncio.iscoroutinefunction(function)
         self.is_click_function: bool = False
         self.matcher = matcher
         self.metadata = metadata
+
+        if not isinstance(function, click.command):
+            self.function.callback = None
+            self.function.get_help = None
+            self.function.make_context = None
+            self.function.invoke = None
 
         # To be set in the child class or from the parent plugin
         self.plugin = None
@@ -85,6 +93,10 @@ class MessageFunction(Function):
         else:
             self.allowed_channels = [channel.lower() for channel in allowed_channels]
 
+        # Default for non-click functions
+        _function: Union[Callable, click.Command] = self.function
+        self.docstring = self.function.__doc__
+
         if self.is_click_function:
             _function = self.function.callback
             if asyncio.iscoroutinefunction(_function):
@@ -100,11 +112,8 @@ class MessageFunction(Function):
                 self.docstring = self.function.get_help(ctx).replace(
                     "\n", f"\n{spaces(8)}"
                 )
-        else:
-            _function = self.function
-            self.docstring = self.function.__doc__
-
-        self.name = _function.__qualname__
+        if _function is not None:
+            self.name = _function.__qualname__
 
         argspec = list(inspect.signature(_function).parameters.keys())
         if not argspec[:2] == ["self", "message"]:
