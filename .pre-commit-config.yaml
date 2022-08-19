@@ -22,7 +22,7 @@ repos:
           - "--filter-files"
   - repo: https://github.com/psf/black
     # Code style formatting
-    rev: 21.5b1
+    rev: 22.3.0
     hooks:
       - id: black
         exclude: (.*/)*snapshots/
