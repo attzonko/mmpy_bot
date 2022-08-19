@@ -39,7 +39,7 @@ class Function(ABC):
         self.matcher = matcher
         self.metadata = metadata
 
-        if not isinstance(function, click.command):
+        if not isinstance(function, click.Command):
             self.function.callback = None
             self.function.get_help = None
             self.function.make_context = None
