@@ -31,6 +31,7 @@ repos:
     rev: 3.9.0
     hooks:
       - id: flake8
+        exclude: (.*/)*snapshots/
   - repo: https://github.com/mattseymour/pre-commit-pytype
     rev: '2020.10.8'
     hooks:
