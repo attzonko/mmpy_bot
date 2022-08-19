@@ -205,7 +205,7 @@ class TestMessageFunction:
 
         f = listen_to("", allowed_channels=["off-topic"])(wrapped)
         f.plugin = ExamplePlugin()
-        f.plugin.initialize(Driver(), PluginManager([f.plugin]), Settings())
+        f.plugin.initialize(driver, PluginManager([f.plugin]), Settings())
 
         # This is fine, the names are not caps sensitive
         f(create_message(channel_name="off-topic"))
@@ -232,7 +232,7 @@ class TestMessageFunction:
             wrapped
         )
         f.plugin = ExamplePlugin()
-        f.plugin.initialize(Driver(), PluginManager([f.plugin]), Settings())
+        f.plugin.initialize(driver, PluginManager([f.plugin]), Settings())
 
         # This is fine, the names are not caps sensitive
         f(create_message(channel_name="off-topic"))
