@@ -19,7 +19,7 @@ log = logging.getLogger("mmpy.function")
 class Function(ABC):
     def __init__(
         self,
-        function: Union[Callable, click.command],
+        function: Union[Function, click.command],
         matcher: re.Pattern,
         **metadata,
     ):
