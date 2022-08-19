@@ -31,22 +31,15 @@ class Bot:
         plugins: Optional[Union[List[Plugin], PluginManager]] = None,
         enable_logging: bool = True,
     ):
-        if plugins is None:
-            self.plugin_manager = PluginManager(
-                [HelpPlugin(), ExamplePlugin(), WebHookExample()]
-            )
-        elif isinstance(plugins, PluginManager):
-            self.plugin_manager = plugins
-        else:
-            self.plugin_manager = PluginManager(plugins)
+        self._setup_plugin_manager(plugins)
 
         # Use default settings if none were specified.
         self.settings = settings or Settings()
 
+        self.console = None
+
         if enable_logging:
             self._register_logger()
-        else:
-            self.console = None
 
         self.driver = Driver(
             {
@@ -71,6 +64,16 @@ class Bot:
             self._initialize_webhook_server()
 
         self.running = False
+
+    def _setup_plugin_manager(self, plugins):
+        if plugins is None:
+            self.plugin_manager = PluginManager(
+                [HelpPlugin(), ExamplePlugin(), WebHookExample()]
+            )
+        elif isinstance(plugins, PluginManager):
+            self.plugin_manager = plugins
+        else:
+            self.plugin_manager = PluginManager(plugins)
 
     def _register_logger(self):
         logging.basicConfig(
