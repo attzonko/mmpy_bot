@@ -83,12 +83,14 @@ class Plugin(ABC):
     def get_help_string(self):
         string = f"Plugin {self.__class__.__name__} has the following functions:\n"
         string += "----\n"
-        string += collect_listener_help(self.message_listeners.values())
+        string += collect_listener_help(self.plugin_manager.message_listeners.values())
         string += "----\n"
 
-        if len(self.webhook_listeners) > 0:
+        if len(self.plugin_manager.webhook_listeners) > 0:
             string += "### Registered webhooks:\n"
-            string += collect_listener_help(self.webhook_listeners.values())
+            string += collect_listener_help(
+                self.plugin_manager.webhook_listeners.values()
+            )
 
         return string
 
