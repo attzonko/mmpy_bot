@@ -7,6 +7,30 @@ from mmpy_bot.settings import Settings
 from mmpy_bot.wrappers import Message
 
 
+def _custom_help_sort(rec):
+    return (
+        rec.metadata.get("category", ""),  # No categories first
+        rec.help_type,
+        rec.pattern.lstrip("^[(-"),
+    )
+
+
+def _prepare_function_help_message(h, string):
+    cmd = h.metadata.get("human_description", h.pattern)
+    direct = "`(*)`" if h.direct else ""
+    mention = "`(+)`" if h.mention else ""
+
+    if h.help_type == "webhook":
+        string += f"- `{cmd}` {direct} {mention} - (webhook) {h.docheader}\n"
+    else:
+        if not h.docheader:
+            string += f"- `{cmd}` {direct} {mention}\n"
+        else:
+            string += f"- `{cmd}` {direct} {mention} - {h.docheader}\n"
+
+    return string
+
+
 class HelpPlugin(Plugin):
     """Provide a `help` command that lists functions provided by all plugins.
 
@@ -41,14 +65,7 @@ class HelpPlugin(Plugin):
         Help information is presented in a condensed format, grouped into categories
         """
 
-        def custom_sort(rec):
-            return (
-                rec.metadata.get("category", ""),  # No categories first
-                rec.help_type,
-                rec.pattern.lstrip("^[(-"),
-            )
-
-        help_function_info = sorted(self.get_help(message), key=custom_sort)
+        help_function_info = sorted(self.get_help(message), key=_custom_help_sort)
 
         string = "### The following functions have been registered:\n\n"
         string += "###### `(*)` require the use of `@botname`, "
@@ -63,17 +80,7 @@ class HelpPlugin(Plugin):
                 category = "uncategorized" if category is None else category
                 string += f"Category `{category}`:\n"
 
-            cmd = h.metadata.get("human_description", h.pattern)
-            direct = "`(*)`" if h.direct else ""
-            mention = "`(+)`" if h.mention else ""
-
-            if h.help_type == "webhook":
-                string += f"- `{cmd}` {direct} {mention} - (webhook) {h.docheader}\n"
-            else:
-                if not h.docheader:
-                    string += f"- `{cmd}` {direct} {mention}\n"
-                else:
-                    string += f"- `{cmd}` {direct} {mention} - {h.docheader}\n"
+            string = _prepare_function_help_message(h, string)
 
         return string
 
