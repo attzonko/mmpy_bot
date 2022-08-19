@@ -85,6 +85,21 @@ class FunctionInfo:
     metadata: Dict
 
 
+def get_function_characteristics(function):
+    """Returns a tuple describing the function user interface.
+
+    Returns (direct_only, needs_mention, help_type)
+    """
+    if isinstance(function, MessageFunction):
+        return (function.direct_only, function.needs_mention, "message")
+    elif isinstance(function, WebHookFunction):
+        return (False, False, "webhook")
+    else:
+        raise NotImplementedError(
+            f"Unknown/Unsupported listener type: '{type(function)}'"
+        )
+
+
 def generate_plugin_help(
     listeners: Dict[re.Pattern[Any], List[Union[MessageFunction, WebHookFunction]]],
 ):
@@ -99,18 +114,7 @@ def generate_plugin_help(
         for function in functions:
             plug_head, plug_full = split_docstring(function.plugin.__doc__)
             func_head, func_full = split_docstring(function.docstring)
-
-            if isinstance(function, MessageFunction):
-                direct = function.direct_only
-                mention = function.needs_mention
-                help_type = "message"
-            elif isinstance(function, WebHookFunction):
-                direct = mention = False
-                help_type = "webhook"
-            else:
-                raise NotImplementedError(
-                    f"Unknown/Unsupported listener type: '{type(function)}'"
-                )
+            direct, mention, help_type = get_function_characteristics(function)
 
             plug_help.append(
                 FunctionInfo(
