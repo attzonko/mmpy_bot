@@ -16,6 +16,16 @@ from mmpy_bot.wrappers import EventWrapper, Message
 log = logging.getLogger("mmpy.plugin_base")
 
 
+def collect_listener_help(values):
+    chunks = []
+
+    for functions in values:
+        for function in functions:
+            chunks.append(f"- {function.get_help_string()}")
+
+    return "".join(chunks)
+
+
 class Plugin(ABC):
     """A Plugin is a self-contained class that defines what functions should be executed
     given different inputs.
@@ -73,15 +83,12 @@ class Plugin(ABC):
     def get_help_string(self):
         string = f"Plugin {self.__class__.__name__} has the following functions:\n"
         string += "----\n"
-        for functions in self.message_listeners.values():
-            for function in functions:
-                string += f"- {function.get_help_string()}"
-            string += "----\n"
+        string += collect_listener_help(self.message_listeners.values())
+        string += "----\n"
+
         if len(self.webhook_listeners) > 0:
             string += "### Registered webhooks:\n"
-            for functions in self.webhook_listeners.values():
-                for function in functions:
-                    string += f"- {function.get_help_string()}"
+            string += collect_listener_help(self.webhook_listeners.values())
 
         return string
 
