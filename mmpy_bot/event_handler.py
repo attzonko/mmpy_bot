@@ -77,7 +77,7 @@ class EventHandler(object):
         # the rest.
         tasks = []
         for matcher, functions in self.plugin_manager.message_listeners.items():
-            match = matcher.match(message.text)
+            match = matcher.search(message.text)
             if match:
                 groups = list([group for group in match.groups() if group != ""])
                 for function in functions:
@@ -97,7 +97,7 @@ class EventHandler(object):
         # handle the rest.
         tasks = []
         for matcher, functions in self.plugin_manager.webhook_listeners.items():
-            match = matcher.match(event.webhook_id)
+            match = matcher.search(event.webhook_id)
             if match:
                 for function in functions:
                     # Create an asyncio task to handle this callback
