@@ -3,11 +3,9 @@ import json
 import logging
 import queue
 import re
-from collections import defaultdict
-from typing import Sequence
 
 from mmpy_bot.driver import Driver
-from mmpy_bot.plugins import Plugin
+from mmpy_bot.plugins import PluginManager
 from mmpy_bot.settings import Settings
 from mmpy_bot.webhook_server import NoResponse
 from mmpy_bot.wrappers import Message, WebHookEvent
@@ -20,7 +18,7 @@ class EventHandler(object):
         self,
         driver: Driver,
         settings: Settings,
-        plugins: Sequence[Plugin],
+        plugin_manager: PluginManager,
         ignore_own_messages=True,
     ):
         """The EventHandler class takes care of the connection to mattermost and calling
@@ -28,18 +26,9 @@ class EventHandler(object):
         self.driver = driver
         self.settings = settings
         self.ignore_own_messages = ignore_own_messages
-        self.plugins = plugins
+        self.plugin_manager = plugin_manager
 
         self._name_matcher = re.compile(rf"^@?{self.driver.username}\:?\s?")
-
-        # Collect the listeners from all plugins
-        self.message_listeners = defaultdict(list)
-        self.webhook_listeners = defaultdict(list)
-        for plugin in self.plugins:
-            for matcher, functions in plugin.message_listeners.items():
-                self.message_listeners[matcher].extend(functions)
-            for matcher, functions in plugin.webhook_listeners.items():
-                self.webhook_listeners[matcher].extend(functions)
 
     def start(self):
         # This is blocking, will loop forever
@@ -87,7 +76,7 @@ class EventHandler(object):
         # Find all the listeners that match this message, and have their plugins handle
         # the rest.
         tasks = []
-        for matcher, functions in self.message_listeners.items():
+        for matcher, functions in self.plugin_manager.message_listeners.items():
             match = matcher.search(message.text)
             if match:
                 groups = list([group for group in match.groups() if group != ""])
@@ -107,7 +96,7 @@ class EventHandler(object):
         # Find all the listeners that match this webhook id, and have their plugins
         # handle the rest.
         tasks = []
-        for matcher, functions in self.webhook_listeners.items():
+        for matcher, functions in self.plugin_manager.webhook_listeners.items():
             match = matcher.search(event.webhook_id)
             if match:
                 for function in functions:

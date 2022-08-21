@@ -1,11 +1,17 @@
 import asyncio
 import logging
 import sys
-from typing import Optional, Sequence
+from typing import List, Optional, Union
 
 from mmpy_bot.driver import Driver
 from mmpy_bot.event_handler import EventHandler
-from mmpy_bot.plugins import ExamplePlugin, Plugin, WebHookExample
+from mmpy_bot.plugins import (
+    ExamplePlugin,
+    HelpPlugin,
+    Plugin,
+    PluginManager,
+    WebHookExample,
+)
 from mmpy_bot.settings import Settings
 from mmpy_bot.webhook_server import WebHookServer
 
@@ -22,18 +28,18 @@ class Bot:
     def __init__(
         self,
         settings: Optional[Settings] = None,
-        plugins: Optional[Sequence[Plugin]] = None,
+        plugins: Optional[Union[List[Plugin], PluginManager]] = None,
         enable_logging: bool = True,
     ):
-        if plugins is None:
-            plugins = [ExamplePlugin(), WebHookExample()]
+        self._setup_plugin_manager(plugins)
+
         # Use default settings if none were specified.
         self.settings = settings or Settings()
 
+        self.console = None
+
         if enable_logging:
             self._register_logger()
-        else:
-            self.console = None
 
         self.driver = Driver(
             {
@@ -48,9 +54,9 @@ class Bot:
             }
         )
         self.driver.login()
-        self.plugins = self._initialize_plugins(plugins)
+        self.plugin_manager.initialize(self.driver, self.settings)
         self.event_handler = EventHandler(
-            self.driver, settings=self.settings, plugins=self.plugins
+            self.driver, settings=self.settings, plugin_manager=self.plugin_manager
         )
         self.webhook_server = None
 
@@ -58,6 +64,16 @@ class Bot:
             self._initialize_webhook_server()
 
         self.running = False
+
+    def _setup_plugin_manager(self, plugins):
+        if plugins is None:
+            self.plugin_manager = PluginManager(
+                [HelpPlugin(), ExamplePlugin(), WebHookExample()]
+            )
+        elif isinstance(plugins, PluginManager):
+            self.plugin_manager = plugins
+        else:
+            self.plugin_manager = PluginManager(plugins)
 
     def _register_logger(self):
         logging.basicConfig(
@@ -79,11 +95,6 @@ class Bot:
                 )
             )
             logging.getLogger("").addHandler(self.console)
-
-    def _initialize_plugins(self, plugins: Sequence[Plugin]):
-        for plugin in plugins:
-            plugin.initialize(self.driver, self.settings)
-        return plugins
 
     def _initialize_webhook_server(self):
         self.webhook_server = WebHookServer(
@@ -110,8 +121,8 @@ class Bot:
             if self.settings.WEBHOOK_HOST_ENABLED:
                 self.driver.threadpool.start_webhook_server_thread(self.webhook_server)
 
-            for plugin in self.plugins:
-                plugin.on_start()
+            # Trigger "start" methods on every plugin
+            self.plugin_manager.start()
 
             # Start listening for events
             self.event_handler.start()
@@ -129,9 +140,10 @@ class Bot:
             return
 
         log.info("Stopping bot.")
+
         # Shutdown the running plugins
-        for plugin in self.plugins:
-            plugin.on_stop()
+        self.plugin_manager.stop()
+
         # Stop the threadpool
         self.driver.threadpool.stop()
         self.running = False

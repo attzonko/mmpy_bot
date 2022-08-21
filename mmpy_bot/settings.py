@@ -56,6 +56,8 @@ class Settings:
     WEBHOOK_HOST_URL: str = "http://127.0.0.1"
     WEBHOOK_HOST_PORT: int = 8579
     DEBUG: bool = False
+    # Respond to channel message "!help" (without @bot)
+    RESPOND_CHANNEL_HELP: bool = False
     LOG_FILE: Optional[str] = None
     LOG_FORMAT: str = "[%(asctime)s][%(name)s][%(levelname)s] %(message)s"
     LOG_DATE_FORMAT: str = "%m/%d/%Y %H:%M:%S"

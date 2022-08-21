@@ -35,7 +35,7 @@ jobs:
       - name: Run Flake8
         run: flake8
       - name: Black code style
-        run: black . --check --target-version py38 --exclude '\.mypy_cache/|\.venv/|env/|(.*/)*snapshots/|.pytype/'
+        run: black . --check --target-version py310 --exclude '\.mypy_cache/|\.venv/|env/|(.*/)*snapshots/|.pytype/'
       - name: Docstring formatting
         run: docformatter -c -r . --wrap-summaries 88 --wrap-descriptions 88
       - name: Check import order with isort

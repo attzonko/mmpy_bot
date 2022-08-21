@@ -5,13 +5,17 @@ import inspect
 import logging
 import re
 from abc import ABC, abstractmethod
-from typing import Callable, Optional, Sequence, Union
+from typing import TYPE_CHECKING, Callable, Optional, Sequence, Union
 
 import click
 
-from mmpy_bot.utils import completed_future, spaces
+from mmpy_bot.utils import completed_future
 from mmpy_bot.webhook_server import NoResponse
 from mmpy_bot.wrappers import Message, WebHookEvent
+
+if TYPE_CHECKING:
+    from mmpy_bot.plugins import Plugin
+
 
 log = logging.getLogger("mmpy.function")
 
@@ -19,7 +23,7 @@ log = logging.getLogger("mmpy.function")
 class Function(ABC):
     def __init__(
         self,
-        function: Union[Function, click.command],
+        function: Union[Function, click.Command],
         matcher: re.Pattern,
         **metadata,
     ):
@@ -32,7 +36,11 @@ class Function(ABC):
             self.siblings.append(function)
             function = function.function
 
-        # FIXME: After this while loop it is possible that function is not a Function, do we really want to assign self.function to something which is not a Function? Check if this is needed for the click.Command case
+        if function is None:
+            raise ValueError(
+                "ERROR: Possible bug, inside the Function class function should not end up being None"
+            )
+
         self.function = function
         self.is_coroutine = asyncio.iscoroutinefunction(function)
         self.is_click_function: bool = False
@@ -46,20 +54,13 @@ class Function(ABC):
             self.function.invoke = None
 
         # To be set in the child class or from the parent plugin
-        self.plugin = None
+        self.plugin: Optional[Plugin] = None
         self.name: Optional[str] = None
-        self.docstring: Optional[str] = None
+        self.docstring = self.function.__doc__ or ""
 
         @abstractmethod
         def __call__(self, *args):
             pass
-
-    def get_help_string(self):
-        string = f"`{self.matcher.pattern}`:\n"
-        # Add a docstring
-        doc = self.docstring or "No description provided."
-        string += f"{spaces(8)}{doc}\n"
-        return string
 
 
 class MessageFunction(Function):
@@ -95,7 +96,6 @@ class MessageFunction(Function):
 
         # Default for non-click functions
         _function: Union[Callable, click.Command] = self.function
-        self.docstring = self.function.__doc__
 
         if self.is_click_function:
             _function = self.function.callback
@@ -109,9 +109,8 @@ class MessageFunction(Function):
                 info_name=self.matcher.pattern.strip("^").split(" (.*)?")[0],
             ) as ctx:
                 # Get click help string and do some extra formatting
-                self.docstring = self.function.get_help(ctx).replace(
-                    "\n", f"\n{spaces(8)}"
-                )
+                self.docstring += f"\n\n{self.function.get_help(ctx)}"
+
         if _function is not None:
             self.name = _function.__qualname__
 
@@ -169,38 +168,6 @@ class MessageFunction(Function):
 
         return self.function(self.plugin, message, *args)
 
-    def get_help_string(self):
-        string = super().get_help_string()
-        if any(
-            [
-                self.needs_mention,
-                self.direct_only,
-                self.allowed_users,
-                self.allowed_channels,
-                self.silence_fail_msg,
-            ]
-        ):
-            # Print some information describing the usage settings.
-            string += f"{spaces(4)}Additional information:\n"
-            if self.needs_mention:
-                string += (
-                    f"{spaces(4)}- Needs to either mention @{self.plugin.driver.username}"
-                    " or be a direct message.\n"
-                )
-            if self.direct_only:
-                string += f"{spaces(4)}- Needs to be a direct message.\n"
-
-            if self.allowed_users:
-                string += f"{spaces(4)}- Restricted to certain users.\n"
-
-            if self.allowed_channels:
-                string += f"{spaces(4)}- Restricted to certain channels.\n"
-
-            if self.silence_fail_msg:
-                string += f"{spaces(4)}- If it should reply to a non privileged user / in a non privileged channel.\n"
-
-        return string
-
 
 def listen_to(
     regexp: str,
@@ -238,7 +205,7 @@ def listen_to(
             reg = f"^{reg.strip('^')} (.*)?"  # noqa
 
         pattern = re.compile(reg, regexp_flag)
-        return MessageFunction(
+        new_func = MessageFunction(
             func,
             matcher=pattern,
             direct_only=direct_only,
@@ -248,6 +215,10 @@ def listen_to(
             silence_fail_msg=silence_fail_msg,
             **metadata,
         )
+
+        # Preserve docstring
+        new_func.__doc__ = func.__doc__
+        return new_func
 
     return wrapped_func
 
@@ -267,7 +238,6 @@ class WebHookFunction(Function):
             )
 
         self.name = self.function.__qualname__
-        self.docstring = self.function.__doc__
 
         argspec = list(inspect.signature(self.function).parameters.keys())
         if not argspec == ["self", "event"]:
@@ -305,10 +275,14 @@ def listen_webhook(
 
     def wrapped_func(func):
         pattern = re.compile(regexp)
-        return WebHookFunction(
+        new_func = WebHookFunction(
             func,
             matcher=pattern,
             **metadata,
         )
+
+        # Preserve docstring
+        new_func.__doc__ = func.__doc__
+        return new_func
 
     return wrapped_func
