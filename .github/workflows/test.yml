@@ -8,10 +8,10 @@ on:
 
 jobs:
   unit_test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
-        python-version: [3.8, 3.9]
+        python-version: [3.8, 3.9, '3.10']
 
     steps:
       - name: Cancel Outdated Runs
@@ -35,10 +35,10 @@ jobs:
         run: pytest -vv tests/unit_tests -n auto
 
   integration_test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
-        python-version: [3.8, 3.9]
+        python-version: [3.8, 3.9, '3.10']
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python
