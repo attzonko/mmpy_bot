@@ -37,7 +37,7 @@ class Function(ABC):
             function = function.function
 
         if function is None:
-            raise ValueRrror("ERROR: Possible bug, inside the Function class function should not end up being None")
+            raise ValueError("ERROR: Possible bug, inside the Function class function should not end up being None")
 
         self.function = function
         self.is_coroutine = asyncio.iscoroutinefunction(function)
