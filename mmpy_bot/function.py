@@ -5,7 +5,7 @@ import inspect
 import logging
 import re
 from abc import ABC, abstractmethod
-from typing import Callable, Optional, Sequence, Union
+from typing import TYPE_CHECKING, Callable, Optional, Sequence, Union
 
 import click
 
@@ -23,7 +23,7 @@ log = logging.getLogger("mmpy.function")
 class Function(ABC):
     def __init__(
         self,
-        function: Union[Function, click.command],
+        function: Union[Function, click.Command],
         matcher: re.Pattern,
         **metadata,
     ):
@@ -36,7 +36,9 @@ class Function(ABC):
             self.siblings.append(function)
             function = function.function
 
-        # FIXME: After this while loop it is possible that function is not a Function, do we really want to assign self.function to something which is not a Function? Check if this is needed for the click.Command case
+        if function is None:
+            raise ValueRrror("ERROR: Possible bug, inside the Function class function should not end up being None")
+
         self.function = function
         self.is_coroutine = asyncio.iscoroutinefunction(function)
         self.is_click_function: bool = False
@@ -92,7 +94,6 @@ class MessageFunction(Function):
 
         # Default for non-click functions
         _function: Union[Callable, click.Command] = self.function
-        self.docstring = self.function.__doc__
 
         if self.is_click_function:
             _function = self.function.callback
@@ -106,11 +107,8 @@ class MessageFunction(Function):
                 info_name=self.matcher.pattern.strip("^").split(" (.*)?")[0],
             ) as ctx:
                 # Get click help string and do some extra formatting
+                self.docstring += f"\n\n{self.function.get_help(ctx)}"
 
-                self.docstring = self.function.get_help(ctx).replace(
-                    "\n", f"\n{spaces(8)}"
-                )
-        
         if _function is not None:
             self.name = _function.__qualname__
 
