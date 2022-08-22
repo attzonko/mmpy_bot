@@ -10,9 +10,12 @@ from ..integration_tests.utils import TestPlugin
 
 @pytest.fixture(scope="function")
 def bot():
-    bot = Bot(plugins=[ExamplePlugin()], settings=Settings(DEBUG=True))
-    yield bot
-    bot.stop()  # if the bot was started, stop it
+    # Patch login to avoid sending requests to the internet
+    with mock.patch("mmpy_bot.driver.Driver.login") as login:
+        bot = Bot(plugins=[ExamplePlugin()], settings=Settings(DEBUG=True))
+        login.assert_called_once()
+        yield bot
+        bot.stop()  # if the bot was started, stop it
 
 
 class TestBot:
