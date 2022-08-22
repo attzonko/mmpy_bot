@@ -41,7 +41,7 @@ class TestDirectPlugin:
         # which is implemented by mattermost as a channel
         driver.create_post(OFF_TOPIC_ID, trigger)
 
-        user_channels = driver.channels.get_channels_for_user(driver.user_id, TEAM_ID)
+        user_channels = driver.channels.get_channels_for_team_for_user(driver.user_id, TEAM_ID)
         channels = list(filter(bot_and_user_direct_channel, user_channels))
 
         # We need to wait for the reply to be processed by mattermost
@@ -51,7 +51,7 @@ class TestDirectPlugin:
         for _ in range(retries):
             if len(channels) != 1:
                 time.sleep(RESPONSE_TIMEOUT)
-                user_channels = driver.channels.get_channels_for_user(
+                user_channels = driver.channels.get_channels_for_team_for_user(
                     driver.user_id, TEAM_ID
                 )
                 channels = list(filter(bot_and_user_direct_channel, user_channels))
