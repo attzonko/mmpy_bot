@@ -96,7 +96,7 @@ class Driver(mattermostdriver.Driver):
 
     def react_to(self, message: Message, emoji_name: str):
         """Adds an emoji reaction to the given message."""
-        return self.reactions.create_reaction(
+        return self.reactions.save_reaction(
             {
                 "user_id": self.user_id,
                 "post_id": message.id,
