@@ -16,8 +16,8 @@ class Driver(mattermostautodriver.Driver):
     username: str = ""
 
     def __init__(self, *args, num_threads=10, **kwargs):
-        """Wrapper around the mattermostautodriver Driver with some convenience functions
-        and attributes.
+        """Wrapper around the mattermostautodriver Driver with some convenience
+        functions and attributes.
 
         Arguments:
         - num_threads: int, number of threads to use for the default worker threadpool.
@@ -78,7 +78,9 @@ class Driver(mattermostautodriver.Driver):
         return self.posts.create_post(post)
 
     def get_thread(self, post_id: str):
-        warnings.warn("get_thread is deprecated. Use get_post_thread instead", DeprecationWarning)
+        warnings.warn(
+            "get_thread is deprecated. Use get_post_thread instead", DeprecationWarning
+        )
         return self.get_post_thread(post_id)
 
     def get_post_thread(self, post_id: str):
@@ -163,9 +165,9 @@ class Driver(mattermostautodriver.Driver):
     ):
         # Private/direct messages are sent to a special channel that
         # includes the bot and the recipient
-        direct_id = self.channels.create_direct_channel(
-            [self.user_id, receiver_id]
-        )["id"]
+        direct_id = self.channels.create_direct_channel([self.user_id, receiver_id])[
+            "id"
+        ]
 
         return self.create_post(
             channel_id=direct_id,
