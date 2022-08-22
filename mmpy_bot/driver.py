@@ -3,7 +3,7 @@ import warnings
 from pathlib import Path
 from typing import Dict, List, Optional, Sequence, Union
 
-import mattermostdriver
+import mattermostautodriver
 from aiohttp.client import ClientSession
 
 from mmpy_bot.threadpool import ThreadPool
@@ -11,12 +11,12 @@ from mmpy_bot.webhook_server import WebHookServer
 from mmpy_bot.wrappers import Message, WebHookEvent
 
 
-class Driver(mattermostdriver.Driver):
+class Driver(mattermostautodriver.Driver):
     user_id: str = ""
     username: str = ""
 
     def __init__(self, *args, num_threads=10, **kwargs):
-        """Wrapper around the mattermostdriver Driver with some convenience functions
+        """Wrapper around the mattermostautodriver Driver with some convenience functions
         and attributes.
 
         Arguments:

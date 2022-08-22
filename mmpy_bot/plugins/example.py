@@ -4,7 +4,7 @@ from datetime import datetime
 from pathlib import Path
 
 import click
-import mattermostdriver
+import mattermostautodriver
 
 from mmpy_bot.function import listen_to
 from mmpy_bot.plugins.base import Plugin
@@ -65,7 +65,7 @@ class ExamplePlugin(Plugin):
         permissions."""
         try:
             self.driver.reply_to(message, "hello sender!", ephemeral=True)
-        except mattermostdriver.exceptions.NotEnoughPermissions:
+        except mattermostautodriver.exceptions.NotEnoughPermissions:
             self.driver.reply_to(
                 message, "I do not have permission to create ephemeral posts!"
             )
