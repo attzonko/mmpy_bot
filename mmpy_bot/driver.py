@@ -67,7 +67,7 @@ class Driver(mattermostdriver.Driver):
         )
 
         if ephemeral_user_id:
-            return self.posts.create_ephemeral_post(
+            return self.posts.create_post_ephemeral(
                 {
                     "user_id": ephemeral_user_id,
                     "post": post,
