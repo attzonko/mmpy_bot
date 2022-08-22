@@ -93,7 +93,7 @@ class TestExamplePlugin:
     def test_react(self, driver):
         post_id = driver.create_post(OFF_TOPIC_ID, "@main_bot hello_react")["id"]
         time.sleep(RESPONSE_TIMEOUT)
-        reactions = driver.reactions.get_reactions_of_post(post_id)
+        reactions = driver.reactions.get_reactions(post_id)
         assert len(reactions) == 1
         assert reactions[0]["emoji_name"] == "+1"
 
