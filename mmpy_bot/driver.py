@@ -1,4 +1,5 @@
 import queue
+import warnings
 from pathlib import Path
 from typing import Dict, List, Optional, Sequence, Union
 
@@ -77,9 +78,13 @@ class Driver(mattermostdriver.Driver):
         return self.posts.create_post(post)
 
     def get_thread(self, post_id: str):
-        """Wrapper around driver.posts.get_thread, which for some reason returns
+        warnings.warn("get_thread is deprecated. Use get_post_thread instead", DeprecationWarning)
+        return self.get_post_thread(post_id)
+
+    def get_post_thread(self, post_id: str):
+        """Wrapper around driver.posts.get_post_thread, which for some reason returns
         duplicate and wrongly ordered entries in the ordered list."""
-        thread_info = self.posts.get_thread(post_id)
+        thread_info = self.posts.get_post_thread(post_id)
 
         id_stamps = []
         for id, post in thread_info["posts"].items():

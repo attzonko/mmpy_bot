@@ -27,7 +27,7 @@ def expect_reply(driver: Driver, post: Dict, wait=RESPONSE_TIMEOUT, retries=1):
     reply = None
     for _ in range(retries + 1):
         time.sleep(wait)
-        thread_info = driver.get_thread(post["id"])
+        thread_info = driver.get_post_thread(post["id"])
         print(thread_info)
         reply_id = thread_info["order"][-1]
         if reply_id != post["id"]:

@@ -28,7 +28,7 @@ class TestExamplePlugin:
         # Since this is not a direct message, we expect no reply at all
         post_id = driver.create_post(OFF_TOPIC_ID, "@main_bot admin")["id"]
         time.sleep(RESPONSE_TIMEOUT)
-        thread_info = driver.get_thread(post_id)
+        thread_info = driver.get_post_thread(post_id)
         assert len(thread_info["order"]) == 1
 
         # For the direct message, we expect to have insufficient permissions, since
