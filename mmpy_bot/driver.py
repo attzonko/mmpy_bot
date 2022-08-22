@@ -158,7 +158,7 @@ class Driver(mattermostdriver.Driver):
     ):
         # Private/direct messages are sent to a special channel that
         # includes the bot and the recipient
-        direct_id = self.channels.create_direct_message_channel(
+        direct_id = self.channels.create_direct_channel(
             [self.user_id, receiver_id]
         )["id"]
 

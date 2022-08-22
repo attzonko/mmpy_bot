@@ -33,7 +33,7 @@ class TestExamplePlugin:
 
         # For the direct message, we expect to have insufficient permissions, since
         # our name isn't admin
-        private_channel = driver.channels.create_direct_message_channel(
+        private_channel = driver.channels.create_direct_channel(
             [driver.user_id, MAIN_BOT_ID]
         )["id"]
         post = driver.create_post(private_channel, "admin")
