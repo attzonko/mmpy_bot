@@ -85,7 +85,7 @@ class ExamplePlugin(Plugin):
     @listen_to("^!hello_webhook$", re.IGNORECASE, category="webhook")
     async def hello_webhook(self, message: Message):
         """A webhook that says hello."""
-        self.driver.webhooks.call_webhook(
+        self.driver.client.call_webhook(
             "eauegoqk4ibxigfybqrsfmt48r",
             options={
                 "username": "webhook_test",  # Requires the right webhook permissions
