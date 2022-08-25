@@ -199,10 +199,22 @@ class Driver(mattermostautodriver.Driver):
     ) -> List[str]:
         """Given a list of file paths and the channel id, uploads the corresponding
         files and returns a list their internal file IDs."""
-        file_dict = {}
+        file_list = []
         for path in file_paths:
             path = Path(path)
-            file_dict[path.name] = Path(path).read_bytes()
+            # Note: 'files' should be a name of an expected attribute in the body
+            # but seems to be ignored when simply uploading files to mattermost
+            file_list.append(
+                (
+                    "files",
+                    (
+                        path.name,
+                        Path(path).read_bytes(),
+                    ),
+                )
+            )
 
-        result = self.files.upload_file(channel_id, file_dict)
+        result = self.files.upload_file(
+            files=file_list, data={"channel_id": channel_id}
+        )
         return list(info["id"] for info in result["file_infos"])
