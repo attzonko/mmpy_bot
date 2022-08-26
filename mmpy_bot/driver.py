@@ -1,8 +1,9 @@
 import queue
+import warnings
 from pathlib import Path
 from typing import Dict, List, Optional, Sequence, Union
 
-import mattermostdriver
+import mattermostautodriver
 from aiohttp.client import ClientSession
 
 from mmpy_bot.threadpool import ThreadPool
@@ -10,13 +11,13 @@ from mmpy_bot.webhook_server import WebHookServer
 from mmpy_bot.wrappers import Message, WebHookEvent
 
 
-class Driver(mattermostdriver.Driver):
+class Driver(mattermostautodriver.Driver):
     user_id: str = ""
     username: str = ""
 
     def __init__(self, *args, num_threads=10, **kwargs):
-        """Wrapper around the mattermostdriver Driver with some convenience functions
-        and attributes.
+        """Wrapper around the mattermostautodriver Driver with some convenience
+        functions and attributes.
 
         Arguments:
         - num_threads: int, number of threads to use for the default worker threadpool.
@@ -67,7 +68,7 @@ class Driver(mattermostdriver.Driver):
         )
 
         if ephemeral_user_id:
-            return self.posts.create_ephemeral_post(
+            return self.posts.create_post_ephemeral(
                 {
                     "user_id": ephemeral_user_id,
                     "post": post,
@@ -77,9 +78,15 @@ class Driver(mattermostdriver.Driver):
         return self.posts.create_post(post)
 
     def get_thread(self, post_id: str):
-        """Wrapper around driver.posts.get_thread, which for some reason returns
+        warnings.warn(
+            "get_thread is deprecated. Use get_post_thread instead", DeprecationWarning
+        )
+        return self.get_post_thread(post_id)
+
+    def get_post_thread(self, post_id: str):
+        """Wrapper around driver.posts.get_post_thread, which for some reason returns
         duplicate and wrongly ordered entries in the ordered list."""
-        thread_info = self.posts.get_thread(post_id)
+        thread_info = self.posts.get_post_thread(post_id)
 
         id_stamps = []
         for id, post in thread_info["posts"].items():
@@ -96,7 +103,7 @@ class Driver(mattermostdriver.Driver):
 
     def react_to(self, message: Message, emoji_name: str):
         """Adds an emoji reaction to the given message."""
-        return self.reactions.create_reaction(
+        return self.reactions.save_reaction(
             {
                 "user_id": self.user_id,
                 "post_id": message.id,
@@ -158,9 +165,9 @@ class Driver(mattermostdriver.Driver):
     ):
         # Private/direct messages are sent to a special channel that
         # includes the bot and the recipient
-        direct_id = self.channels.create_direct_message_channel(
-            [self.user_id, receiver_id]
-        )["id"]
+        direct_id = self.channels.create_direct_channel([self.user_id, receiver_id])[
+            "id"
+        ]
 
         return self.create_post(
             channel_id=direct_id,
@@ -192,10 +199,22 @@ class Driver(mattermostdriver.Driver):
     ) -> List[str]:
         """Given a list of file paths and the channel id, uploads the corresponding
         files and returns a list their internal file IDs."""
-        file_dict = {}
+        file_list = []
         for path in file_paths:
             path = Path(path)
-            file_dict[path.name] = Path(path).read_bytes()
+            # Note: 'files' should be a name of an expected attribute in the body
+            # but seems to be ignored when simply uploading files to mattermost
+            file_list.append(
+                (
+                    "files",
+                    (
+                        path.name,
+                        Path(path).read_bytes(),
+                    ),
+                )
+            )
 
-        result = self.files.upload_file(channel_id, file_dict)
+        result = self.files.upload_file(
+            files=file_list, data={"channel_id": channel_id}
+        )
         return list(info["id"] for info in result["file_infos"])

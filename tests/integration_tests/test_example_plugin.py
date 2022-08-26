@@ -28,12 +28,12 @@ class TestExamplePlugin:
         # Since this is not a direct message, we expect no reply at all
         post_id = driver.create_post(OFF_TOPIC_ID, "@main_bot admin")["id"]
         time.sleep(RESPONSE_TIMEOUT)
-        thread_info = driver.get_thread(post_id)
+        thread_info = driver.get_post_thread(post_id)
         assert len(thread_info["order"]) == 1
 
         # For the direct message, we expect to have insufficient permissions, since
         # our name isn't admin
-        private_channel = driver.channels.create_direct_message_channel(
+        private_channel = driver.channels.create_direct_channel(
             [driver.user_id, MAIN_BOT_ID]
         )["id"]
         post = driver.create_post(private_channel, "admin")
@@ -93,7 +93,7 @@ class TestExamplePlugin:
     def test_react(self, driver):
         post_id = driver.create_post(OFF_TOPIC_ID, "@main_bot hello_react")["id"]
         time.sleep(RESPONSE_TIMEOUT)
-        reactions = driver.reactions.get_reactions_of_post(post_id)
+        reactions = driver.reactions.get_reactions(post_id)
         assert len(reactions) == 1
         assert reactions[0]["emoji_name"] == "+1"
 
