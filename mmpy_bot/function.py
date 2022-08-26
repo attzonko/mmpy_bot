@@ -163,7 +163,10 @@ class MessageFunction(Function):
                 return self.function.invoke(ctx)
             # If there are any missing arguments or the function is otherwise called
             # incorrectly, send the click message back to the user and print help string.
-            except click.exceptions.ClickException as e:
+            except (click.exceptions.ClickException, click.exceptions.Exit) as e:
+                if isinstance(e, click.exceptions.Exit):
+                    e = "Requested `--help`:"
+
                 return self.plugin.driver.reply_to(message, f"{e}\n{self.docstring}")
 
         return self.function(self.plugin, message, *args)
