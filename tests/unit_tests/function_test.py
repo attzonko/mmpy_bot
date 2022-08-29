@@ -123,7 +123,11 @@ class TestMessageFunction:
         # Test that click can handle arguments with unexpected spacing
         # See GitHub issue #338
         assert f(create_message(), "--arg1 'yes' --arg2 no") == ("yes", "no", False)
-        assert f(create_message(), "-f   --arg2=nop   --arg1=yes") == ("yes", "nop", True)
+        assert f(create_message(), "-f   --arg2=nop   --arg1=yes") == (
+            "yes",
+            "nop",
+            True,
+        )
 
         # If an incorrect argument is passed, the error and help string should be returned.
         def mocked_reply(message, response):
