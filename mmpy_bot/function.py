@@ -4,6 +4,7 @@ import asyncio
 import inspect
 import logging
 import re
+import shlex
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Callable, Optional, Sequence, Union
 
@@ -154,7 +155,7 @@ class MessageFunction(Function):
             assert len(args) <= 1  # There is only one group, (.*)?
             if len(args) == 1:
                 # Turn space-separated string into list
-                args = args[0].strip(" ").split(" ")
+                args = tuple(shlex.split(args[0]))
             try:
                 ctx = self.function.make_context(
                     info_name=self.plugin.__class__.__name__, args=list(args)
