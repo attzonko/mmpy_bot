@@ -4,7 +4,7 @@
 [![Mattermost](https://img.shields.io/badge/mattermost-4.0+-blue.svg)](http://www.mattermost.org)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://pypi.org/project/mmpy-bot/)
 
-Documentation available at [Read the Docs](http://mmpy_bot.readthedocs.org/).
+Documentation available at [Read the Docs](https://mmpy-bot.readthedocs.org/).
 
 
 ## Description
@@ -39,12 +39,12 @@ For Python 2 and Python3 < 3.8 support, please use versions v1.3.9 or lower.
 
 ##### v2.x (latest)
 ```
-pip install mmpy_bot
+pip install mmpy-bot
 ```
 
 ##### v1.3.9 (force legacy)
 ```
-pip install mmpy_bot==1.3.9
+pip install mmpy-bot==1.3.9
 ```
 
 ## Usage (v2.x)
