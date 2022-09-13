@@ -12,7 +12,7 @@ from mmpy_bot.plugins import PluginManager
 from mmpy_bot.webhook_server import NoResponse
 from mmpy_bot.wrappers import WebHookEvent
 
-from .event_handler_test import create_message
+from .event_handler_test import BOT_ID, create_message
 
 
 class TestFunction:
@@ -142,7 +142,7 @@ class TestMessageFunction:
             f(create_message(), "-f --arg2=no --nonexistent-arg")
             mock_function.assert_called_once()
 
-    @mock.patch("mmpy_bot.driver.Driver.user_id", "qmw86q7qsjriura9jos75i4why")
+    @mock.patch("mmpy_bot.driver.Driver.user_id", BOT_ID)
     def test_needs_mention(self):  # noqa
         wrapped = mock.create_autospec(example_listener)
         wrapped.__qualname__ = "wrapped"
@@ -151,7 +151,7 @@ class TestMessageFunction:
         f.plugin.initialize(Driver(), PluginManager([f.plugin]), Settings())
 
         # The default message mentions the specified user ID, so should be called
-        f(create_message(mentions=["qmw86q7qsjriura9jos75i4why"]))
+        f(create_message(mentions=[BOT_ID]))
         wrapped.assert_called_once()
         wrapped.reset_mock()
 
@@ -163,14 +163,14 @@ class TestMessageFunction:
         f(create_message(mentions=[], channel_type="D"))
         wrapped.assert_called_once()
 
-    @mock.patch("mmpy_bot.driver.Driver.user_id", "qmw86q7qsjriura9jos75i4why")
+    @mock.patch("mmpy_bot.driver.Driver.user_id", BOT_ID)
     def test_direct_only(self):
         wrapped = mock.create_autospec(example_listener)
         wrapped.__qualname__ = "wrapped"
         f = listen_to("", direct_only=True)(wrapped)
 
         # A mention is not a direct message, so shouldn't trigger
-        f(create_message(mentions=["qmw86q7qsjriura9jos75i4why"], channel_type="O"))
+        f(create_message(mentions=[BOT_ID], channel_type="O"))
         wrapped.assert_not_called()
 
         f(create_message(mentions=[], channel_type="D"))

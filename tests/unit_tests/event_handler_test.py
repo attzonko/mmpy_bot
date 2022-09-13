@@ -8,10 +8,12 @@ from mmpy_bot.event_handler import EventHandler
 from mmpy_bot.plugins import PluginManager
 from mmpy_bot.wrappers import WebHookEvent
 
+BOT_ID = "qmw86q7qsjriura9jos75i4why"
+
 
 def create_message(
     text="hello",
-    mentions=["qmw86q7qsjriura9jos75i4why"],
+    mentions=[BOT_ID],
     channel_type="O",
     sender_name="betty",
     channel_name="off-topic",
