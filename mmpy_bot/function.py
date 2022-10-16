@@ -107,7 +107,7 @@ class MessageFunction(Function):
                 )
             with click.Context(
                 self.function,
-                info_name=self.matcher.pattern.strip("^").split(" (.*)?")[0],
+                info_name=self.matcher.pattern.strip("^").split("(?: |$)(.*)?")[0],
             ) as ctx:
                 # Get click help string and do some extra formatting
                 self.docstring += f"\n\n{self.function.get_help(ctx)}"
@@ -206,7 +206,7 @@ def listen_to(
             # Modify the regexp so that it won't try to match the individual arguments.
             # Click will take care of those. We also manually add the ^ if necessary,
             # so that the commands can't be inserted in the middle of a sentence.
-            reg = f"^{reg.strip('^')} (.*)?"  # noqa
+            reg = rf"^{reg.strip('^')}(?: |$)(.*)?"  # noqa
 
         pattern = re.compile(reg, regexp_flag)
         new_func = MessageFunction(
