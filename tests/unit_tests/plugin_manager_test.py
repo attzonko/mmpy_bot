@@ -67,7 +67,9 @@ msg_listeners = {
     re.compile("async_pattern"): expand_func_names(FakePlugin.my_async_function),
     re.compile("hi_custom"): expand_func_names(FakePlugin.hi_custom),
     # Click commands construct a regex pattern from the listen_to pattern
-    re.compile("^click_command (.*)?"): expand_func_names(FakePlugin.click_commmand),
+    re.compile("^click_command(?: |$)(.*)?"): expand_func_names(
+        FakePlugin.click_commmand
+    ),
 }
 
 hook_listeners = {
