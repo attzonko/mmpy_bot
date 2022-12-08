@@ -16,3 +16,4 @@ coverage.xml
 **/*.lock
 test.py
 .venv
+.env
