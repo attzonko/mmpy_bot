@@ -91,7 +91,7 @@ class HelpPlugin(Plugin):
         """
         return self.plugin_manager.get_help()
 
-    @listen_to("^help$", needs_mention=True)
+    @listen_to("^help$", needs_mention=True, human_description="help")
     async def help(self, message: Message):
         """Shows this help information."""
         self.driver.reply_to(
