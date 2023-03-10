@@ -17,8 +17,8 @@ def _custom_help_sort(rec):
 
 def _prepare_function_help_message(h, string):
     cmd = h.metadata.get("human_description", h.pattern)
-    direct = "`(*)`" if h.direct else ""
-    mention = "`(+)`" if h.mention else ""
+    direct = "`(+)`" if h.direct else ""
+    mention = "`(*)`" if h.mention else ""
 
     if h.help_type == "webhook":
         string += f"- `{cmd}` {direct} {mention} - (webhook) {h.docheader}\n"
