@@ -77,6 +77,62 @@ class Driver(mattermostautodriver.Driver):
 
         return self.posts.create_post(post)
 
+    def patch_post(
+        self,
+        post_id: str,
+        is_pinned: Optional[bool] = None,
+        message: Optional[str] = None, 
+        file_ids: Optional[Sequence[str]] = None,
+        has_reactions: Optional[bool] = None,
+        props: Optional[Dict] = None,
+    ):
+        """Patches a specified post with the specified options.
+
+        Options that are unspecified will not be updated.
+        """
+
+        options = dict()
+
+        if is_pinned is not None:
+            options.update(is_pinned=is_pinned)
+
+        if message is not None:
+            options.update(message=message)
+
+        if file_ids is not None:
+            options.update(file_ids=file_ids)
+
+        if has_reactions is not None:
+            options.update(has_reactions=has_reactions)
+
+        if props is not None:
+            options.update(props=props)
+
+        return self.posts.patch_post(post_id, options)
+
+    def update_post(
+        self,
+        post_id: str,
+        message: str,
+        is_pinned: bool = False,
+        has_reactions: bool = False,
+        props: dict = {},
+    ):
+        """Updates a specified post with the specified options.
+
+        All options need to be specified, use patch_post if you only want to update
+        some options.
+        """
+
+        options = dict(
+            message=message,
+            is_pinned=is_pinned,
+            has_reactions=has_reactions,
+            props=props,
+        )
+
+        return self.posts.update_post(post_id, options)
+
     def get_thread(self, post_id: str):
         warnings.warn(
             "get_thread is deprecated. Use get_post_thread instead", DeprecationWarning
