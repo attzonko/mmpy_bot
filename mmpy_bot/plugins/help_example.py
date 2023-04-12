@@ -64,7 +64,6 @@ class HelpPlugin(Plugin):
 
         Help information is presented in a condensed format, grouped into categories
         """
-
         help_function_info = sorted(self.get_help(message), key=_custom_help_sort)
 
         string = "### The following functions have been registered:\n\n"
