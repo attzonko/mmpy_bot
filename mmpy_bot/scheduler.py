@@ -42,7 +42,6 @@ def _run_job(self, job):
     Either way, this waits for the result in a dedicated thread to prevent blocking the
     event loop.
     """
-
     # Launch job in a dedicated process and send the result through a pipe.
     if "subprocess" in job.tags:
 
