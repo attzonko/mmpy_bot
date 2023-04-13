@@ -10,7 +10,8 @@ Setup your environment
 We recommend using `venv <https://docs.python.org/3.8/library/venv.html>`_ to keep your development environment isolated from your base Python environment. It is part of Python by default.
 
 
-#. Clone the mmpy_bot repository, setup your virtual environment and install the requirements:
+#. Clone the mmpy_bot repository, setup your virtual environment and install
+   the requirements:
 
     .. code-block:: bash
 
