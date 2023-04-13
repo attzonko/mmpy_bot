@@ -54,6 +54,6 @@ repos:
           - "88"
   - repo: https://github.com/pycqa/doc8
     # sphinx rst style checker
-    rev: v1.0.0
+    rev: v1.1.1
     hooks:
       - id: doc8
