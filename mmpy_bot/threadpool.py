@@ -64,6 +64,9 @@ class ThreadPool(object):
                 function(*arguments)
             except Exception:
                 log.exception("Unhandled exception in main loop")
+            except BaseException:
+                # Can be KeyboardInterrupt, SystemExit, ...
+                self.alive = False
             # Notify the pool that we finished working
             self._queue.task_done()
             self._busy_workers.get()
@@ -73,7 +76,13 @@ class ThreadPool(object):
             log.info("Scheduler thread started.")
             while self.alive:
                 time.sleep(trigger_period)
-                default_scheduler.run_pending()
+                try:
+                    default_scheduler.run_pending()
+                except Exception:
+                    log.exception("Unhandled exception in main loop")
+                except BaseException:
+                    # Can be KeyboardInterrupt, SystemExit, ...
+                    self.alive = False
             log.info("Scheduler thread stopped.")
 
         self.add_task(run_pending)
