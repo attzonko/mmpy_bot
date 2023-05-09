@@ -164,8 +164,10 @@ class ExamplePlugin(Plugin):
     @listen_to("^sleep ([0-9]+)$", needs_mention=True)
     async def sleep_reply(self, message: Message, seconds: str):
         """Sleeps for the specified number of seconds.
+
         Arguments:
-            - seconds: How many seconds to sleep for."""
+            - seconds: How many seconds to sleep for.
+        """
         self.driver.reply_to(message, f"Okay, I will be waiting {seconds} seconds.")
         await asyncio.sleep(int(seconds))
         self.driver.reply_to(message, "Done!")
