@@ -43,7 +43,7 @@ repos:
           - "auto"
   - repo: https://github.com/myint/docformatter
     # Formats docstrings following PEP 257
-    rev: v1.7.0
+    rev: v1.7.1
     hooks:
       - id: docformatter
         args:
