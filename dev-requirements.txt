@@ -1,5 +1,5 @@
 black==23.3.0
-docformatter==1.7.1
+docformatter==1.7.2
 filelock==3.12.1
 flake8==6.0.0
 isort==5.12.0
