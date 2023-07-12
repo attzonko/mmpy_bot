@@ -22,7 +22,7 @@ repos:
           - "--filter-files"
   - repo: https://github.com/psf/black
     # Code style formatting
-    rev: 23.3.0
+    rev: 23.7.0
     hooks:
       - id: black
         exclude: (.*/)*snapshots/
@@ -43,7 +43,7 @@ repos:
           - "auto"
   - repo: https://github.com/myint/docformatter
     # Formats docstrings following PEP 257
-    rev: v1.7.2
+    rev: v1.7.5
     hooks:
       - id: docformatter
         args:
