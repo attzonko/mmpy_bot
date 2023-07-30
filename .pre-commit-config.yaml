@@ -28,7 +28,7 @@ repos:
         exclude: (.*/)*snapshots/
   - repo: https://github.com/PyCQA/flake8
     # Checks the code for PEP8 violations and common pitfals
-    rev: 6.0.0
+    rev: 6.1.0
     hooks:
       - id: flake8
         exclude: (.*/)*snapshots/
