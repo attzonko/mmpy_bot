@@ -79,7 +79,6 @@ bot = Bot(
     settings=Settings(
         MATTERMOST_URL = "http://chat.example.com",
         MATTERMOST_PORT = 443,
-        MATTERMOST_API_PATH = '/api/v4',
         BOT_TOKEN = "a69155mvlsobcnqpfdceqihaa",
         BOT_TEAM = "test",
         SSL_VERIFY = True,

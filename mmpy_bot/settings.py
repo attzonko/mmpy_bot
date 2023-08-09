@@ -1,5 +1,6 @@
 import collections
 import os
+import warnings
 from dataclasses import dataclass, field, fields
 from typing import Optional, Sequence, Union, get_args, get_origin  # type: ignore
 
@@ -48,7 +49,7 @@ class Settings:
 
     MATTERMOST_URL: str = "https://chat.com"
     MATTERMOST_PORT: int = 443
-    MATTERMOST_API_PATH: str = "/api/v4"
+    MATTERMOST_API_PATH: str = ""
     BOT_TOKEN: str = "token"
     BOT_TEAM: str = "team_name"
     SSL_VERIFY: bool = True
@@ -76,6 +77,19 @@ class Settings:
             self.SCHEME, self.MATTERMOST_URL = self.MATTERMOST_URL.split("://")
         else:
             self.SCHEME = "https"
+
+        api_url = "/api/v4"
+
+        if self.MATTERMOST_API_PATH.endswith(api_url):
+            warnings.warn(
+                (
+                    f"MATTERMOST_API_PATH should no longer include {api_url} "
+                    "or be set unless you run mattermost in a subfolder "
+                    "(example.com/mattermost/)."
+                ),
+                DeprecationWarning,
+            )
+            self.MATTERMOST_API_PATH = self.MATTERMOST_API_PATH[: -len(api_url)]
 
     def _check_environment_variables(self):
         for f in fields(self):
