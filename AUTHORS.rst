@@ -9,6 +9,7 @@ Active Contributors
 * Jelmer Neeven <jelmer@neeven.tech>
 * Renato Alves <alves.rjc@gmail.com>
 * Thomas Tuffin <ttuffin@redhat.com>
+* Amin Aminian <a.aminian321@gmail.com>
 
 Past Contributors
 -----------------
