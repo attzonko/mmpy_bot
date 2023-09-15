@@ -2,4 +2,3 @@ aiohttp>=3.7.4.post0
 click>=7.0
 mattermostautodriver~=1.3.0
 schedule>=0.6.0
-Sphinx>=1.3.3
