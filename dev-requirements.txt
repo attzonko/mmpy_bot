@@ -1,4 +1,4 @@
-black==23.10.1
+black==23.11.0
 docformatter==1.7.5
 filelock==3.13.1
 flake8==6.1.0
