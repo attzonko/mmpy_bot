@@ -89,19 +89,19 @@ class WebHookEvent(EventWrapper):
         self.responded = False
 
     @cached_property
-    def text(self) -> str:
+    def text(self):
         return self.body.get("text")
 
     @cached_property
-    def channel_name(self) -> str:
+    def channel_name(self):
         return self.body.get("channel", self.body.get("channel_name"))
 
     @cached_property
-    def props(self) -> Dict:
+    def props(self):
         return self.body.get("props", {})
 
     @cached_property
-    def type(self) -> Dict:
+    def type(self):
         return self.body.get("type")
 
 
