@@ -13,7 +13,7 @@ repos:
       - id: check-merge-conflict
   - repo: https://github.com/pycqa/isort
     # Formants, sorts and reorganizes imports
-    rev: 5.13.1
+    rev: 5.13.2
     hooks:
       - id: isort
         args:
