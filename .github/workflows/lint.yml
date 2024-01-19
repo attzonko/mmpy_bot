@@ -32,6 +32,8 @@ jobs:
       - run: pip install wheel
       - name: Install dependencies
         run: pip install -e .[dev]
+      - name: Run Ruff
+        run: ruff .
       - name: Run Flake8
         run: flake8
       - name: Black code style
