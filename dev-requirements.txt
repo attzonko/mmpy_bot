@@ -3,7 +3,7 @@ docformatter==1.7.5
 filelock==3.13.1
 flake8==7.0.0
 isort==5.13.0
-pytest==7.4.3
+pytest==7.4.4
 pytest-xdist==3.5.0
 pytype==2024.1.5
 snapshottest==0.6.0
