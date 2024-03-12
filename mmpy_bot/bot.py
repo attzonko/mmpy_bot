@@ -80,7 +80,9 @@ class Bot:
             **{
                 "format": self.settings.LOG_FORMAT,
                 "datefmt": self.settings.LOG_DATE_FORMAT,
-                "level": logging.DEBUG if self.settings.DEBUG else logging.INFO,
+                "level": (
+                    logging.DEBUG if self.settings.DEBUG else self.settings.LOG_LEVEL
+                ),
                 "filename": self.settings.LOG_FILE,
                 "filemode": "w",
             }

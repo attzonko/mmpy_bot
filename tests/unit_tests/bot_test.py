@@ -1,6 +1,7 @@
 from unittest import mock
 
 import pytest
+import logging
 
 from mmpy_bot import Bot, ExamplePlugin, Settings
 from mmpy_bot.plugins import PluginManager
@@ -12,7 +13,7 @@ from ..integration_tests.utils import TestPlugin
 def bot():
     # Patch login to avoid sending requests to the internet
     with mock.patch("mmpy_bot.driver.Driver.login") as login:
-        bot = Bot(plugins=[ExamplePlugin()], settings=Settings(DEBUG=True))
+        bot = Bot(plugins=[ExamplePlugin()], settings=Settings(LOG_LEVEL=logging.DEBUG))
         login.assert_called_once()
         yield bot
         bot.stop()  # if the bot was started, stop it
