@@ -1,7 +1,7 @@
+import logging
 from unittest import mock
 
 import pytest
-import logging
 
 from mmpy_bot import Bot, ExamplePlugin, Settings
 from mmpy_bot.plugins import PluginManager
