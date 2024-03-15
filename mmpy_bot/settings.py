@@ -1,7 +1,7 @@
 import collections
+import logging
 import os
 import warnings
-import logging
 from dataclasses import dataclass, field, fields
 from typing import Optional, Sequence, Union, get_args, get_origin  # type: ignore
 
