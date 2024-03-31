@@ -32,6 +32,12 @@ repos:
     hooks:
       - id: flake8
         exclude: (.*/)*snapshots/
+  # Ruff is a "fastar than flake8" linter/formatter
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.3.4
+    hooks:
+      # Run the linter.
+      - id: ruff
   - repo: https://github.com/mattseymour/pre-commit-pytype
     rev: '2023.5.8'
     hooks:
