@@ -69,6 +69,7 @@ class EventHandler(object):
         post["data"]["post"]["message"] = self._name_matcher.sub(
             "", post["data"]["post"]["message"]
         )
+        log.info(post)
         message = Message(post)
         if self._should_ignore(message):
             return
