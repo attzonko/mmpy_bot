@@ -30,6 +30,7 @@ class Bot:
         settings: Optional[Settings] = None,
         plugins: Optional[Union[List[Plugin], PluginManager]] = None,
         enable_logging: bool = True,
+        log_post: bool = True
     ):
         self._setup_plugin_manager(plugins)
 
@@ -56,7 +57,10 @@ class Bot:
         self.driver.login()
         self.plugin_manager.initialize(self.driver, self.settings)
         self.event_handler = EventHandler(
-            self.driver, settings=self.settings, plugin_manager=self.plugin_manager
+            self.driver,
+            settings=self.settings,
+            plugin_manager=self.plugin_manager,
+            log_post=log_post
         )
         self.webhook_server = None
 

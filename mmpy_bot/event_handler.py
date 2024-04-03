@@ -20,6 +20,7 @@ class EventHandler(object):
         settings: Settings,
         plugin_manager: PluginManager,
         ignore_own_messages=True,
+        log_post: bool = True
     ):
         """The EventHandler class takes care of the connection to mattermost and calling
         the appropriate response function to each event."""
@@ -69,7 +70,10 @@ class EventHandler(object):
         post["data"]["post"]["message"] = self._name_matcher.sub(
             "", post["data"]["post"]["message"]
         )
-        log.info(post)
+
+        if log_post:
+            log.info(post)
+
         message = Message(post)
         if self._should_ignore(message):
             return
