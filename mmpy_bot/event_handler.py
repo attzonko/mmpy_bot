@@ -24,6 +24,7 @@ class EventHandler(object):
     ):
         """The EventHandler class takes care of the connection to mattermost and calling
         the appropriate response function to each event."""
+        self.log_post = log_post
         self.driver = driver
         self.settings = settings
         self.ignore_own_messages = ignore_own_messages
@@ -71,7 +72,7 @@ class EventHandler(object):
             "", post["data"]["post"]["message"]
         )
 
-        if log_post:
+        if self.log_post:
             log.info(post)
 
         message = Message(post)
