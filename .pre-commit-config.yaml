@@ -3,7 +3,7 @@
 # See https://pre-commit.com/hooks.html for more hooks
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.5.0
+    rev: v4.6.0
     hooks:
       - id: end-of-file-fixer
       - id: fix-byte-order-marker
@@ -22,19 +22,19 @@ repos:
           - "--filter-files"
   - repo: https://github.com/psf/black
     # Code style formatting
-    rev: 24.3.0
+    rev: 24.4.2
     hooks:
       - id: black
         exclude: (.*/)*snapshots/
   - repo: https://github.com/PyCQA/flake8
     # Checks the code for PEP8 violations and common pitfals
-    rev: 7.0.0
+    rev: 7.1.0
     hooks:
       - id: flake8
         exclude: (.*/)*snapshots/
   # Ruff is a "fastar than flake8" linter/formatter
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.3.5
+    rev: v0.5.1
     hooks:
       # Run the linter.
       - id: ruff
