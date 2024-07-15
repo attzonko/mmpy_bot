@@ -1,5 +1,3 @@
-version: "3.7"
-
 services:
   app:
     # This docker-compose file specifies a mmpy_bot

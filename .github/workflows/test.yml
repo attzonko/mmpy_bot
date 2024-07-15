@@ -58,9 +58,9 @@ jobs:
         run: pip install -e .[dev]
       - name: Launch test server
         working-directory: tests/integration_tests
-        run: docker-compose up -d && sleep 30
-      - name: Print docker info
-        run: docker ps -a
+        run: docker compose up -d && sleep 30
+      - name: Print docker services info
+        run: docker compose ps -a
       - name: Run integration tests
         working-directory: tests/integration_tests
         run: pytest . -vv -n auto
