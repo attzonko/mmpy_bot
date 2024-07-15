@@ -43,7 +43,7 @@ class Driver(mattermostautodriver.Driver):
         message: str,
         file_paths: Optional[Sequence[str]] = None,
         root_id: str = "",
-        props: Dict = {},
+        props: Dict = None,
         ephemeral_user_id: Optional[str] = None,
     ):
         """Create a post in the specified channel with the specified text.
@@ -52,8 +52,8 @@ class Driver(mattermostautodriver.Driver):
         paths are specified, those files will be uploaded to mattermost first and then
         attached.
         """
-        if file_paths is None:
-            file_paths = []
+        file_paths = file_paths or []
+        props = props or {}
 
         file_ids = (
             self.upload_files(file_paths, channel_id) if len(file_paths) > 0 else []
@@ -88,9 +88,9 @@ class Driver(mattermostautodriver.Driver):
         duplicate and wrongly ordered entries in the ordered list."""
         thread_info = self.posts.get_post_thread(post_id)
 
-        id_stamps = []
-        for id, post in thread_info["posts"].items():
-            id_stamps.append((id, int(post["create_at"])))
+        id_stamps = (
+            (id, int(post["create_at"])) for id, post in thread_info["posts"].items()
+        )
         # Sort the posts by their timestamps
         sorted_stamps = sorted(id_stamps, key=lambda x: x[-1])
         # Overwrite the order with the sorted list
@@ -116,7 +116,7 @@ class Driver(mattermostautodriver.Driver):
         message: Message,
         response: str,
         file_paths: Optional[Sequence[str]] = None,
-        props: Dict = {},
+        props: Dict = None,
         ephemeral: bool = False,
         direct: bool = False,
     ):
@@ -127,8 +127,8 @@ class Driver(mattermostautodriver.Driver):
 
         Also supports replying privately by setting direct=True.
         """
-        if file_paths is None:
-            file_paths = []
+        file_paths = file_paths or []
+        props = props or {}
 
         if direct and not message.is_direct_message:
             # NOTE we explicitly don't pass root_id as it would refer to a
@@ -160,7 +160,7 @@ class Driver(mattermostautodriver.Driver):
         message: str,
         file_paths: Optional[Sequence[str]] = None,
         root_id: str = "",
-        props: Dict = {},
+        props: Dict = None,
         ephemeral_user_id: Optional[str] = None,
     ):
         # Private/direct messages are sent to a special channel that
@@ -168,6 +168,7 @@ class Driver(mattermostautodriver.Driver):
         direct_id = self.channels.create_direct_channel([self.user_id, receiver_id])[
             "id"
         ]
+        props = props or {}
 
         return self.create_post(
             channel_id=direct_id,
@@ -199,22 +200,20 @@ class Driver(mattermostautodriver.Driver):
     ) -> List[str]:
         """Given a list of file paths and the channel id, uploads the corresponding
         files and returns a list their internal file IDs."""
-        file_list = []
-        for path in file_paths:
-            path = Path(path)
-            # Note: 'files' should be a name of an expected attribute in the body
-            # but seems to be ignored when simply uploading files to mattermost
-            file_list.append(
+        # Note: 'files' should be a name of an expected attribute in the body
+        # but seems to be ignored when simply uploading files to mattermost
+        file_list = [
+            (
+                "files",
                 (
-                    "files",
-                    (
-                        path.name,
-                        Path(path).read_bytes(),
-                    ),
-                )
+                    Path(path).name,
+                    Path(path).read_bytes(),
+                ),
             )
+            for path in file_paths
+        ]
 
         result = self.files.upload_file(
             files=file_list, data={"channel_id": channel_id}
         )
-        return list(info["id"] for info in result["file_infos"])
+        return [info["id"] for info in result["file_infos"]]
