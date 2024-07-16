@@ -6,6 +6,7 @@ import logging
 import re
 import shlex
 from abc import ABC, abstractmethod
+from itertools import islice
 from typing import TYPE_CHECKING, Callable, Optional, Sequence, Union
 
 import click
@@ -85,15 +86,11 @@ class MessageFunction(Function):
         self.needs_mention = needs_mention
         self.silence_fail_msg = silence_fail_msg
 
-        if allowed_users is None:
-            self.allowed_users = []
-        else:
-            self.allowed_users = [user.lower() for user in allowed_users]
+        self.allowed_users = [user.lower() for user in (allowed_users or [])]
 
-        if allowed_channels is None:
-            self.allowed_channels = []
-        else:
-            self.allowed_channels = [channel.lower() for channel in allowed_channels]
+        self.allowed_channels = [
+            channel.lower() for channel in (allowed_channels or [])
+        ]
 
         # Default for non-click functions
         _function: Union[Callable, click.Command] = self.function
@@ -115,7 +112,7 @@ class MessageFunction(Function):
         if _function is not None:
             self.name = _function.__qualname__
 
-        argspec = list(inspect.signature(_function).parameters.keys())
+        argspec = list(islice(inspect.signature(_function).parameters.keys(), 2))
         if not argspec[:2] == ["self", "message"]:
             raise TypeError(
                 "Any message listener function should at least have the positional"
@@ -187,11 +184,9 @@ def listen_to(
     """Wrap the given function in a MessageFunction class so we can register some
     properties."""
 
-    if allowed_users is None:
-        allowed_users = []
+    allowed_users = allowed_users or []
 
-    if allowed_channels is None:
-        allowed_channels = []
+    allowed_channels = allowed_users or []
 
     def wrapped_func(func):
         reg = regexp
