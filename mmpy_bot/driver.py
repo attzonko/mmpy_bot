@@ -1,5 +1,6 @@
 import queue
 import warnings
+from functools import lru_cache
 from pathlib import Path
 from typing import Dict, List, Optional, Sequence, Union
 
@@ -56,7 +57,8 @@ class Driver(mattermostautodriver.Driver):
             file_paths = []
 
         file_ids = (
-            self.upload_files(file_paths, channel_id) if len(file_paths) > 0 else []
+            self.upload_files(file_paths, channel_id) if len(
+                file_paths) > 0 else []
         )
 
         post = dict(
@@ -79,7 +81,8 @@ class Driver(mattermostautodriver.Driver):
 
     def get_thread(self, post_id: str):
         warnings.warn(
-            "get_thread is deprecated. Use get_post_thread instead", DeprecationWarning
+            "get_thread is deprecated. Use get_post_thread instead",
+            DeprecationWarning
         )
         return self.get_post_thread(post_id)
 
@@ -154,6 +157,12 @@ class Driver(mattermostautodriver.Driver):
 
         return self.create_post(**reply_args)
 
+    @lru_cache
+    def get_direct_channel(self, receiver_id: str) -> str:
+        return self.channels.create_direct_channel(
+            [self.user_id, receiver_id]
+        )["id"]
+
     def direct_message(
         self,
         receiver_id: str,
@@ -165,9 +174,7 @@ class Driver(mattermostautodriver.Driver):
     ):
         # Private/direct messages are sent to a special channel that
         # includes the bot and the recipient
-        direct_id = self.channels.create_direct_channel([self.user_id, receiver_id])[
-            "id"
-        ]
+        direct_id = self.get_direct_channel(receiver_id)
 
         return self.create_post(
             channel_id=direct_id,
@@ -186,7 +193,8 @@ class Driver(mattermostautodriver.Driver):
     async def trigger_own_webhook(self, webhook_id: str, data: Dict):
         """Triggers a a webhook with id webhook_id on the running WebHookServer."""
         if not self.webhook_url:
-            raise ValueError("The Driver is not aware of any running webhook server!")
+            raise ValueError(
+                "The Driver is not aware of any running webhook server!")
 
         async with ClientSession() as session:
             return await session.post(
