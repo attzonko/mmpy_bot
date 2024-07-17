@@ -1,4 +1,3 @@
-aiohttp>=3.7.4.post0
 click>=7.0
-mattermostautodriver~=1.3.0
+mattermostautodriver @ git+https://github.com/embl-bio-it/python-mattermost-autodriver
 schedule>=0.6.0
