@@ -30,7 +30,8 @@ class Bot:
         settings: Optional[Settings] = None,
         plugins: Optional[Union[List[Plugin], PluginManager]] = None,
         enable_logging: bool = True,
-        log_post: bool = True
+        log_post: bool = True,
+        num_threads: int = 10
     ):
         self._setup_plugin_manager(plugins)
 
@@ -52,7 +53,8 @@ class Bot:
                 "basepath": self.settings.MATTERMOST_API_PATH,
                 "keepalive": True,
                 "connect_kw_args": {"ping_interval": None},
-            }
+            },
+            num_threads=num_threads
         )
         self.driver.login()
         self.plugin_manager.initialize(self.driver, self.settings)
