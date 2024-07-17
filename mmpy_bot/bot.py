@@ -31,7 +31,8 @@ class Bot:
         plugins: Optional[Union[List[Plugin], PluginManager]] = None,
         enable_logging: bool = True,
         log_post: bool = True,
-        num_threads: int = 10
+        num_threads: int = 10,
+        run_scheduler: bool = False,
     ):
         self._setup_plugin_manager(plugins)
 
@@ -39,6 +40,8 @@ class Bot:
         self.settings = settings or Settings()
 
         self.console = None
+
+        self.run_scheduler = run_scheduler
 
         if enable_logging:
             self._register_logger()
@@ -121,10 +124,13 @@ class Bot:
             self.running = True
 
             self.driver.threadpool.start()
+
             # Start a thread to run potential scheduled jobs
-            self.driver.threadpool.start_scheduler_thread(
-                self.settings.SCHEDULER_PERIOD
-            )
+            if self.run_scheduler:
+                self.driver.threadpool.start_scheduler_thread(
+                    self.settings.SCHEDULER_PERIOD
+                )
+
             # Start the webhook server on a separate thread if necessary
             if self.settings.WEBHOOK_HOST_ENABLED:
                 self.driver.threadpool.start_webhook_server_thread(self.webhook_server)
