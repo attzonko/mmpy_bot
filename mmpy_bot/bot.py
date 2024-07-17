@@ -53,9 +53,9 @@ class Bot:
                 "basepath": self.settings.MATTERMOST_API_PATH,
                 "keepalive": True,
                 "connect_kw_args": {"ping_interval": None},
-            },
-            num_threads=num_threads
+            }
         )
+        self.driver.threadpool.num_workers = num_threads
         self.driver.login()
         self.plugin_manager.initialize(self.driver, self.settings)
         self.event_handler = EventHandler(
