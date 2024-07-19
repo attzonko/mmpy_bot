@@ -43,7 +43,7 @@ class Driver(mattermostautodriver.Driver):
         message: str,
         file_paths: Optional[Sequence[str]] = None,
         root_id: str = "",
-        props: Dict = None,
+        props: Optional[Dict] = None,
         ephemeral_user_id: Optional[str] = None,
     ):
         """Create a post in the specified channel with the specified text.
@@ -116,7 +116,7 @@ class Driver(mattermostautodriver.Driver):
         message: Message,
         response: str,
         file_paths: Optional[Sequence[str]] = None,
-        props: Dict = None,
+        props: Optional[Dict] = None,
         ephemeral: bool = False,
         direct: bool = False,
     ):
@@ -160,7 +160,7 @@ class Driver(mattermostautodriver.Driver):
         message: str,
         file_paths: Optional[Sequence[str]] = None,
         root_id: str = "",
-        props: Dict = None,
+        props: Optional[Dict] = None,
         ephemeral_user_id: Optional[str] = None,
     ):
         # Private/direct messages are sent to a special channel that
