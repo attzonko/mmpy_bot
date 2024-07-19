@@ -112,7 +112,7 @@ class MessageFunction(Function):
         if _function is not None:
             self.name = _function.__qualname__
 
-        argspec = list(islice(inspect.signature(_function).parameters.keys(), 2))
+        argspec = list(inspect.signature(_function).parameters)[:2]
         if argspec != ["self", "message"]:
             raise TypeError(
                 "Any message listener function should at least have the positional"
