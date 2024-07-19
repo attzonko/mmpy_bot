@@ -34,7 +34,7 @@ def expect_reply(driver: Driver, post: Dict, wait=RESPONSE_TIMEOUT, retries=1):
             reply = thread_info["posts"][reply_id]
             break
 
-    if not reply:
+    if reply is None:
         raise ValueError("Expected a response, but didn't get any!")
 
     return reply
