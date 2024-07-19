@@ -113,7 +113,7 @@ class MessageFunction(Function):
             self.name = _function.__qualname__
 
         argspec = list(islice(inspect.signature(_function).parameters.keys(), 2))
-        if not argspec[:2] == ["self", "message"]:
+        if not argspec == ["self", "message"]:
             raise TypeError(
                 "Any message listener function should at least have the positional"
                 f" arguments `self` and `message`, but function {self.name} has"
