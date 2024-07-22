@@ -33,6 +33,8 @@ class Bot:
         log_post: bool = True,
         num_threads: int = 10,
         run_scheduler: bool = False,
+        request_timeout: int = 5,
+        request_timeout_files: int = 60,
     ):
         self._setup_plugin_manager(plugins)
 
@@ -56,6 +58,8 @@ class Bot:
                 "basepath": self.settings.MATTERMOST_API_PATH,
                 "keepalive": True,
                 "connect_kw_args": {"ping_interval": None},
+                "request_timeout_custom": request_timeout,
+                "request_timeout_files": request_timeout_files,
             }
         )
         self.driver.threadpool.num_workers = num_threads
