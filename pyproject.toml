@@ -18,3 +18,96 @@ classifiers = [
 'Topic :: Internet :: WWW/HTTP',
 'Topic :: Software Development :: Libraries :: Python Modules',
 ]
+
+[tool.ruff]
+ignore = [
+    "A003",    # Class attribute shadowing a builtin (models use "id", other interface requirements)
+    "B008",    # Do not perform function call in arg defaults (FastAPI does this with Depends)
+    "D1",      # Missing docstrings (all of them)
+    "D203",    # 1 blank line required before docstring
+    "D206",    # Use spaces, not tabs, to indent docstrings (incompatible with formatter)
+    "D212",    # Multi-line docstring summary starts at first line
+    "D300",    # Docstrings use triple double quotes (incompatible with formatter)
+    "E111",    # Indentation uses 4 spaces (incompatible with formatter)
+    "E114",    # Comment indentation uses 4 spaces (incompatible with formatter)
+    "E117",    # Don't over-indent code (incompatible with formatter)
+    "ISC001",  # Don't implicitly concatenate strings on a single line (imcompatible with formatter)
+    "ISC002",  # Don't implicitly concatenate strings using backslash (imcompatible with formatter)
+    "PGH003",  # Use specific code when ignoring typechecking (makes lines too long)
+    "PLW0603", # Don't update global variables within functions
+    "RET503",  # Always use explicit return for non-None functions (some functions raise exceptions)
+    "RUF012",  # Annotate mutable class attributes with typing.ClassVar (BaseSettings do this)
+    "SIM105",  # Use contextlib.suppress(Exception) instead of try-except-pass (ugly)
+    "SIM110",  # Use return any() instead of for loop (I personally find this less clear)
+    "W191",    # Use spaces, not tabs, to indent (incompatible with formatter)
+]
+line-length = 100
+select = [
+    # Active linter categories
+    "A",      # flake8-builtins -- names should not shadow bulitin names (file, open, id, etc)
+    "B",      # flake8-bugbear -- find probable bugs
+    "C90",    # mccabe -- check complexity of functions
+    "D",      # pydocstyle -- enforce docstring standard
+    "E",      # pycodestyle errors -- standard lint error set
+    "EXE",    # flake8-executable -- executable .py files should have a shebang and vice versa
+    "F",      # pyflakes errors -- standard lint error set
+    "FA",     # flake8-future-annotations -- check for type annotations in older Python versions
+    "FLY",    # flynt -- check for joins when an f-string will work
+    "I",      # isort -- sort imports
+    "ISC",    # flake8-implicit-str-concat -- are two strings unnecessarily implicitly concatenated
+    "N",      # pep8-naming -- check naming convention
+    "PERF",   # perflint -- misc checks for performance-related issues
+    "PGH",    # pygrep-hooks -- noqa must have a code included (and type:ignore, but we disable)
+    "PIE",    # flake8-pie -- misc checks for unnecessary/useless code
+    "PLC",    # pylint convention -- check for not using falsey string checks, etc
+    "PLE",    # pylint error -- misc errors
+    "PLW",    # pylint warning -- misc unsafe practices
+    "RET",    # flake8-return -- checks around function returns
+    "RSE",    # flake8-raise -- no unnecessary parens around raised exceptions
+    "RUF",    # ruff -- misc checks, including unused noqa and some gotchas
+    "S",      # flake8-bandit -- security-related checks, such as for hardcoded passwords
+    "SIM",    # flake8-simplify -- misc checks for Python idioms being used correctly
+    "SLOT",   # flake8-slots -- some subclasses should define __slots__
+    "T10",    # flake8-debugger -- check for pdb/breakpoint calls in the code
+    "W",      # pycodestyle warnings -- standard lint warning set
+
+    # Disabled linter categories that might be useful in the future
+    #"ASYNC",  # flake8-async -- TODO: should probably add this and fix the issues to improve perf
+    #"FURB",   # refurb -- use more modern Python idioms (currently preview-only)
+    #"LOG",    # flake8-logging -- misc checks for logging idiom issues (currently preview-only)
+
+    # Disabled linter categories that were evaluated, but that we decided not to use
+    #"AIR",    # airflow -- we don't use Apache airflow
+    #"ANN",    # flake8-annotations -- only if we want to require type annotations everywhere
+    #"ARG",    # flake8-unused-arguments -- our test methods use unused args as fixtures
+    #"BLE",    # flake8-blind-except -- only if we want to disallow "except Exception:"
+    #"C4",     # flake8-comprehensions -- nitpicky
+    #"COM",    # flake8-commas -- black handles this for us (most incompatible with formatter)
+    #"DJ",     # flake8-django -- we don't use Django
+    #"DTZ",    # flake8-datetimez -- cryptography does not use timezone-aware datetimes
+    #"EM",     # flake8-errmsg -- nitpicky
+    #"ERA",    # eradicate -- commented-out code is rare, and only survives a PR if useful
+    #"FBT",    # flake8-boolean-trap -- only if we want to disallow boolean function args
+    #"FIX",    # flake8-fixme -- we use fixme, todo, etc in our codebase
+    #"G",      # flake8-logging-format -- only if we want to disallow "logging.error(f'{x}')"
+    #"ICN",    # flake8-import-conventions -- nitpicky
+    #"INP",    # flake8-no-pep420 -- incorrectly flags our migrations, unit tests, and scripts
+    #"INT",    # flake8-gettext -- not sure what this actually does
+    #"NPY",    # numpy -- we don't use NumPy
+    #"PD",     # pandas-vet -- we don't use Pandas
+    #"PLR",    # pylint refactor -- nitpicky (no magic numbers ever, functions with too many args)
+    #"PT",     # flake8-pytest-style -- nitpicky (requires unnecessary parens for consistency, etc)
+    #"PTH",    # flake8-use-pathlib -- nitpicky, unnecessary
+    #"PYI",    # flake8-pyi -- only if we manually create typing stub files
+    #"Q",      # flake8-quotes -- black handles this for us (incompatible with formatter)
+    #"SLF",    # flake8-self -- good, but we break this rule occasionally
+    #"T20",    # flake8-print -- nitpicky
+    #"TCH",    # flake8-type-checking -- only if we want to avoid runtime type checking overhead
+    #"TD",     # flake8-todos -- we don't use this process-heavy way of managing todos
+    #"TID",    # flake8-tidy-imports -- nitpicky
+    #"TRY",    # tryceratops -- nitpicky
+    #"UP",     # pyupgrade -- dislikes Optional, parens around multiline strings (black conflict)
+    #"YTT",    # flake8-2000 -- only needed if you're doing sys.version_info checks
+]
+src = ["mmpy_bot"]
+target-version = "py311"
