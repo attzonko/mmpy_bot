@@ -93,7 +93,7 @@ class ThreadPool(object):
             await webhook_server.start()
             while self.alive:
                 # We just use this to keep the loop running in a non-blocking way
-                await asyncio.sleep(0.001)
+                await asyncio.sleep(1)
             await webhook_server.stop()
             log.info("Webhook server thread stopped.")
 
