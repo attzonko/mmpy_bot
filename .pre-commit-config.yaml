@@ -22,19 +22,19 @@ repos:
           - "--filter-files"
   - repo: https://github.com/psf/black
     # Code style formatting
-    rev: 24.4.2
+    rev: 24.8.0
     hooks:
       - id: black
         exclude: (.*/)*snapshots/
   - repo: https://github.com/PyCQA/flake8
     # Checks the code for PEP8 violations and common pitfals
-    rev: 7.1.0
+    rev: 7.1.1
     hooks:
       - id: flake8
         exclude: (.*/)*snapshots/
   # Ruff is a "fastar than flake8" linter/formatter
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.5.5
+    rev: v0.6.9
     hooks:
       # Run the linter.
       - id: ruff
@@ -60,6 +60,6 @@ repos:
           - "88"
   - repo: https://github.com/pycqa/doc8
     # sphinx rst style checker
-    rev: v1.1.1
+    rev: v1.1.2
     hooks:
       - id: doc8
