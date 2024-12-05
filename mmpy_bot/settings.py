@@ -9,9 +9,7 @@ from typing import Optional, Sequence, Union, get_args, get_origin  # type: igno
 def _get_comma_separated_list(string: str, type=str):
     values = string.split(",")
     # Convert to the specified type if necessary.
-    if type is not str:
-        values = list([type(value) for value in values])
-    return values
+    return values if type is str else [type(value) for value in values]
 
 
 def _is_valid_option(_type, valid_types):
