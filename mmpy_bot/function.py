@@ -43,7 +43,7 @@ class Function(ABC):
             )
 
         self.function = function
-        self.is_coroutine = asyncio.iscoroutinefunction(function)
+        self.is_coroutine = inspect.iscoroutinefunction(function)
         self.is_click_function: bool = False
         self.matcher = matcher
         self.metadata = metadata
@@ -100,7 +100,7 @@ class MessageFunction(Function):
 
         if self.is_click_function:
             _function = self.function.callback
-            if asyncio.iscoroutinefunction(_function):
+            if inspect.iscoroutinefunction(_function):
                 raise ValueError(
                     "Combining click functions and coroutines is currently not supported!"
                     " Consider using a regular function, which will be threaded by default."
@@ -155,10 +155,10 @@ class MessageFunction(Function):
             assert len(args) <= 1  # There is only one group, (.*)?
             if len(args) == 1:
                 # Turn space-separated string into list
-                args = tuple(shlex.split(args[0]))
+                args = shlex.split(args[0])
             try:
                 ctx = self.function.make_context(
-                    info_name=self.plugin.__class__.__name__, args=list(args)
+                    info_name=self.plugin.__class__.__name__, args=args
                 )
                 ctx.params.update({"self": self.plugin, "message": message})
                 return self.function.invoke(ctx)

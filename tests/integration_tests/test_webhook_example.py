@@ -1,7 +1,7 @@
 import asyncio
 import time
 
-from .utils import start_bot  # noqa, only imported so that the bot is started
+from .utils import start_bot  # noqa: F401, only imported so that the bot is started
 from .utils import OFF_TOPIC_ID, RESPONSE_TIMEOUT
 from .utils import driver as driver_fixture
 from .utils import expect_reply

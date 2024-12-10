@@ -1,4 +1,5 @@
 import collections
+import logging
 import os
 import warnings
 from dataclasses import dataclass, field, fields
@@ -8,9 +9,7 @@ from typing import Optional, Sequence, Union, get_args, get_origin  # type: igno
 def _get_comma_separated_list(string: str, type=str):
     values = string.split(",")
     # Convert to the specified type if necessary.
-    if type is not str:
-        values = list([type(value) for value in values])
-    return values
+    return values if type is str else [type(value) for value in values]
 
 
 def _is_valid_option(_type, valid_types):
@@ -59,6 +58,7 @@ class Settings:
     DEBUG: bool = False
     # Respond to channel message "!help" (without @bot)
     RESPOND_CHANNEL_HELP: bool = False
+    LOG_LEVEL: int = logging.INFO
     LOG_FILE: Optional[str] = None
     LOG_FORMAT: str = "[%(asctime)s][%(name)s][%(levelname)s] %(message)s"
     LOG_DATE_FORMAT: str = "%m/%d/%Y %H:%M:%S"
@@ -90,6 +90,13 @@ class Settings:
                 DeprecationWarning,
             )
             self.MATTERMOST_API_PATH = self.MATTERMOST_API_PATH[: -len(api_url)]
+
+        if self.DEBUG:
+            warnings.warn(
+                "DEBUG has been deprecated and will be removed in a future release. "
+                "Set LOG_LEVEL to logging.DEBUG to increase verbosity.",
+                DeprecationWarning,
+            )
 
     def _check_environment_variables(self):
         for f in fields(self):

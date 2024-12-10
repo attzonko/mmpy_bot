@@ -20,15 +20,15 @@ jobs:
 
     steps:
       - name: Cancel Outdated Runs
-        uses: styfle/cancel-workflow-action@0.12.0
+        uses: styfle/cancel-workflow-action@0.12.1
         with:
           access_token: ${{ github.token }}
       - uses: actions/checkout@v4
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip3-${{ hashFiles('*requirements.txt') }}
@@ -47,10 +47,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip3-${{ hashFiles('*requirements.txt') }}
@@ -58,9 +58,9 @@ jobs:
         run: pip install -e .[dev]
       - name: Launch test server
         working-directory: tests/integration_tests
-        run: docker-compose up -d && sleep 30
-      - name: Print docker info
-        run: docker ps -a
+        run: docker compose up -d && sleep 30
+      - name: Print docker services info
+        run: docker compose ps -a
       - name: Run integration tests
         working-directory: tests/integration_tests
         run: pytest . -vv -n auto

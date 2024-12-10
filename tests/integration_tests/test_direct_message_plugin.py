@@ -2,7 +2,7 @@ import random
 import time
 from string import ascii_letters
 
-from .utils import start_bot  # noqa, only imported so that the bot is started
+from .utils import start_bot  # noqa: F401, only imported so that the bot is started
 from .utils import MAIN_BOT_ID, OFF_TOPIC_ID, RESPONSE_TIMEOUT, TEAM_ID
 from .utils import driver as driver_fixture
 from .utils import expect_reply

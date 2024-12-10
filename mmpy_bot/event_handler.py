@@ -13,7 +13,7 @@ from mmpy_bot.wrappers import Message, WebHookEvent
 log = logging.getLogger("mmpy.event_handler")
 
 
-class EventHandler(object):
+class EventHandler:
     def __init__(
         self,
         driver: Driver,
@@ -37,10 +37,8 @@ class EventHandler(object):
     def _should_ignore(self, message: Message):
         # Ignore message from senders specified in settings, and maybe from ourself
         return (
-            True
-            if message.sender_name.lower()
+            message.sender_name.lower()
             in (name.lower() for name in self.settings.IGNORE_USERS)
-            else False
         ) or (self.ignore_own_messages and message.sender_name == self.driver.username)
 
     async def _check_queue_loop(self, webhook_queue: queue.Queue):
@@ -75,37 +73,34 @@ class EventHandler(object):
 
         # Find all the listeners that match this message, and have their plugins handle
         # the rest.
-        tasks = []
-        for matcher, functions in self.plugin_manager.message_listeners.items():
-            match = matcher.search(message.text)
-            if match:
-                groups = list([group for group in match.groups() if group != ""])
-                for function in functions:
-                    # Create an asyncio task to handle this callback
-                    tasks.append(
-                        asyncio.create_task(
-                            function.plugin.call_function(
-                                function, message, groups=groups
-                            )
-                        )
-                    )
+        tasks = [
+            asyncio.create_task(
+                function.plugin.call_function(
+                    function,
+                    message,
+                    groups=[group for group in match.groups() if group != ""],
+                )
+            )
+            for matcher, functions in self.plugin_manager.message_listeners.items()
+            if (match := matcher.search(message.text))
+            for function in functions
+        ]
+
         # Execute the callbacks in parallel
         asyncio.gather(*tasks)
 
     async def _handle_webhook(self, event: WebHookEvent):
         # Find all the listeners that match this webhook id, and have their plugins
         # handle the rest.
-        tasks = []
-        for matcher, functions in self.plugin_manager.webhook_listeners.items():
-            match = matcher.search(event.webhook_id)
-            if match:
-                for function in functions:
-                    # Create an asyncio task to handle this callback
-                    tasks.append(
-                        asyncio.create_task(
-                            function.plugin.call_function(function, event)
-                        )
-                    )
+
+        tasks = [
+            # Create an asyncio task to handle this callback
+            asyncio.create_task(function.plugin.call_function(function, event))
+            for matcher, functions in self.plugin_manager.webhook_listeners.items()
+            if matcher.search(event.webhook_id)
+            for function in functions
+        ]
+
         # If this webhook doesn't correspond to any listeners, signal the WebHookServer
         # to not wait for any response
         if len(tasks) == 0:
