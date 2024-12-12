@@ -1,4 +1,5 @@
-aiohttp>=3.7.4.post0
-click>=7.0
-mattermostautodriver~=1.3.0
-schedule>=0.6.0
+httpx>=0.27.0,<0.28.0
+aiohttp>=3.9.5
+click>=8.1.7
+mattermostautodriver>=2.0.0
+schedule>=1.2.2
