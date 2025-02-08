@@ -73,6 +73,7 @@ class MessageFunction(Function):
         *args,
         direct_only: bool = False,
         needs_mention: bool = False,
+        ignore_own_messages: bool = True,
         silence_fail_msg: bool = False,
         allowed_users: Optional[Sequence[str]] = None,
         allowed_channels: Optional[Sequence[str]] = None,
@@ -83,6 +84,7 @@ class MessageFunction(Function):
         self.is_click_function = isinstance(self.function, click.Command)
         self.direct_only = direct_only
         self.needs_mention = needs_mention
+        self.ignore_own_messages = ignore_own_messages
         self.silence_fail_msg = silence_fail_msg
 
         if allowed_users is None:
@@ -132,6 +134,9 @@ class MessageFunction(Function):
         if self.direct_only and not message.is_direct_message:
             return return_value
 
+        if self.ignore_own_messages and (message.sender_name == self.plugin.driver.username):
+            return return_value
+
         if self.needs_mention and not (
             message.is_direct_message or self.plugin.driver.user_id in message.mentions
         ):
@@ -179,6 +184,7 @@ def listen_to(
     *,
     direct_only=False,
     needs_mention=False,
+    ignore_own_messages=True,
     allowed_users=None,
     allowed_channels=None,
     silence_fail_msg=False,
@@ -214,6 +220,7 @@ def listen_to(
             matcher=pattern,
             direct_only=direct_only,
             needs_mention=needs_mention,
+            ignore_own_messages=ignore_own_messages,
             allowed_users=allowed_users,
             allowed_channels=allowed_channels,
             silence_fail_msg=silence_fail_msg,
