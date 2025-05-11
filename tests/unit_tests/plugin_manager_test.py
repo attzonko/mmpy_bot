@@ -1,4 +1,5 @@
 import re
+import sys
 from unittest import mock
 
 import click
@@ -145,13 +146,14 @@ class TestPluginManager:
 
         for hlp in self.plugin_manager.get_help():
             assert hlp.location == "FakePlugin"
-            assert (
-                hlp.function.plugin.__doc__
-                == """Hello FakePlugin.
+            if sys.version_info >= (3, 13):
+                test_doc = "Hello FakePlugin.\n\nThis is a plugin level docstring\n"
+            else:
+                test_doc = """Hello FakePlugin.
 
     This is a plugin level docstring
     """
-            )
+            assert hlp.function.plugin.__doc__ == test_doc
             assert hlp.is_click == hlp.function.is_click_function
             assert hlp.docfull.startswith(hlp.function.__doc__)
 
