@@ -19,13 +19,11 @@ class EventHandler:
         driver: Driver,
         settings: Settings,
         plugin_manager: PluginManager,
-        ignore_own_messages=True,
     ):
         """The EventHandler class takes care of the connection to mattermost and calling
         the appropriate response function to each event."""
         self.driver = driver
         self.settings = settings
-        self.ignore_own_messages = ignore_own_messages
         self.plugin_manager = plugin_manager
 
         self._name_matcher = re.compile(rf"^@?{self.driver.username}[:,]?\s?")
@@ -39,7 +37,7 @@ class EventHandler:
         return (
             message.sender_name.lower()
             in (name.lower() for name in self.settings.IGNORE_USERS)
-        ) or (self.ignore_own_messages and message.sender_name == self.driver.username)
+        ) or (self.settings.IGNORE_OWN_MESSAGES and message.sender_name == self.driver.username)
 
     async def _check_queue_loop(self, webhook_queue: queue.Queue):
         log.info("EventHandlerWebHook queue listener started.")
