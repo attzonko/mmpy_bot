@@ -51,7 +51,7 @@ class Settings:
     MATTERMOST_API_PATH: str = ""
     BOT_TOKEN: str = "token"
     BOT_TEAM: str = "team_name"
-    SSL_VERIFY: bool = True
+    SSL_VERIFY: object = True
     WEBHOOK_HOST_ENABLED: bool = False
     WEBHOOK_HOST_URL: str = "http://127.0.0.1"
     WEBHOOK_HOST_PORT: int = 8579
