@@ -3,7 +3,7 @@
 # See https://pre-commit.com/hooks.html for more hooks
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
+    rev: v6.0.0
     hooks:
       - id: end-of-file-fixer
       - id: fix-byte-order-marker
@@ -13,7 +13,7 @@ repos:
       - id: check-merge-conflict
   - repo: https://github.com/pycqa/isort
     # Formants, sorts and reorganizes imports
-    rev: 6.0.1
+    rev: 7.0.0
     hooks:
       - id: isort
         args:
@@ -22,7 +22,7 @@ repos:
           - "--filter-files"
   - repo: https://github.com/psf/black
     # Code style formatting
-    rev: 25.1.0
+    rev: 25.9.0
     hooks:
       - id: black
         exclude: (.*/)*snapshots/
@@ -34,7 +34,7 @@ repos:
         exclude: (.*/)*snapshots/
   # Ruff is a "fastar than flake8" linter/formatter
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.12.4
+    rev: v0.14.1
     hooks:
       # Run the linter.
       - id: ruff
