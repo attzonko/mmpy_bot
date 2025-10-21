@@ -1,6 +1,7 @@
 import collections
 import logging
 import os
+import ssl
 import warnings
 from dataclasses import dataclass, field, fields
 from typing import Optional, Sequence, Union, get_args, get_origin  # type: ignore
@@ -51,7 +52,7 @@ class Settings:
     MATTERMOST_API_PATH: str = ""
     BOT_TOKEN: str = "token"
     BOT_TEAM: str = "team_name"
-    SSL_VERIFY: object = True
+    SSL_VERIFY: ssl.SSLContext | str | bool = True
     WEBHOOK_HOST_ENABLED: bool = False
     WEBHOOK_HOST_URL: str = "http://127.0.0.1"
     WEBHOOK_HOST_PORT: int = 8579
