@@ -33,7 +33,7 @@ jobs:
       - name: Install dependencies
         run: pip install -e .[dev]
       - name: Run Ruff
-        run: ruff .
+        run: ruff check .
       - name: Run Flake8
         run: flake8
       - name: Black code style
