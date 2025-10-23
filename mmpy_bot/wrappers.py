@@ -52,7 +52,7 @@ class Message(EventWrapper):
 
     @cached_property
     def parent_id(self):
-        return self.body["data"]["post"]["parent_id"]
+        return self.body["data"]["post"].get("parent_id", "").strip()
 
     @cached_property
     def reply_id(self):

@@ -27,9 +27,10 @@ class TestBot:
         for plugin in plugins:
             plugin.initialize = mock.MagicMock()
 
+        settings = Settings(MATTERMOST_URL="test_url.org", BOT_TOKEN="random_token")
         # Create a bot and verify that it gets initialized correctly
         bot = Bot(
-            settings=Settings(MATTERMOST_URL="test_url.org", BOT_TOKEN="random_token"),
+            settings=settings,
             plugins=plugins,
         )
         assert bot.driver.options["url"] == "test_url.org"
@@ -40,7 +41,9 @@ class TestBot:
 
         # Verify that all of the passed plugins were initialized
         for plugin in plugins:
-            assert plugin.initialize.called_once_with(bot.driver)
+            plugin.initialize.assert_called_once_with(
+                bot.driver, bot.plugin_manager, settings
+            )
 
     @mock.patch.multiple("mmpy_bot.Plugin", on_start=mock.DEFAULT, on_stop=mock.DEFAULT)
     def test_run(self, bot, **mocks):

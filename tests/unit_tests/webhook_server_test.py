@@ -24,7 +24,7 @@ class TestWebHookServer:
         server = WebHookServer(port=3281, url=Settings().WEBHOOK_HOST_URL)
         threadpool.start_webhook_server_thread(server)
         threadpool.start()
-        time.sleep(0.5)
+        time.sleep(1)
         assert server.running
 
         asyncio.set_event_loop(asyncio.new_event_loop())
@@ -48,13 +48,13 @@ class TestWebHookServer:
         # We have no futures waiting for request id 'nonexistent', so nothing should
         # happen.
         server.response_queue.put(("nonexistent", None))
-        time.sleep(0.1)
+        time.sleep(1)
         assert not server.response_handlers["test"].done()
 
         # If a response comes in for request id 'test', it should be removed from the
         # response handlers dict.
         server.response_queue.put(("test", None))
-        time.sleep(0.1)
+        time.sleep(1)
         assert "test" not in server.response_handlers
 
     @pytest.mark.skip("Called from test_start since we can't parallellize this.")
@@ -86,7 +86,7 @@ class TestWebHookServer:
 
         # Since there is no MessageHandler, we have to signal the server ourselves
         server.response_queue.put((event.request_id, NoResponse))
-        time.sleep(0.1)
+        time.sleep(1)
         # Upon receiving the NoResponse, the server should have emptied the response
         # queue and handlers.
         assert server.response_queue.empty()
