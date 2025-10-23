@@ -28,13 +28,13 @@ repos:
         exclude: (.*/)*snapshots/
   - repo: https://github.com/PyCQA/flake8
     # Checks the code for PEP8 violations and common pitfals
-    rev: 7.2.0
+    rev: 7.3.0
     hooks:
       - id: flake8
         exclude: (.*/)*snapshots/
   # Ruff is a "fastar than flake8" linter/formatter
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.11.9
+    rev: v0.12.4
     hooks:
       # Run the linter.
       - id: ruff
@@ -60,6 +60,6 @@ repos:
           - "88"
   - repo: https://github.com/pycqa/doc8
     # sphinx rst style checker
-    rev: v1.1.2
+    rev: v2.0.0
     hooks:
       - id: doc8

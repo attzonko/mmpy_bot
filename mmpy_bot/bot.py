@@ -154,4 +154,8 @@ class Bot:
 
         # Stop the threadpool
         self.driver.threadpool.stop()
+
+        # Stops the main driver loop
+        self.driver.disconnect()
+
         self.running = False
