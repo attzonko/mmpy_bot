@@ -1,5 +1,5 @@
-httpx>=0.27.0,<0.28.0
+httpx>=0.28.1,<0.29.0
 aiohttp>=3.9.5
 click>=8.1.7
-mattermostautodriver>=2.0.0
+mattermostautodriver>=11.2.1
 schedule>=1.2.2
