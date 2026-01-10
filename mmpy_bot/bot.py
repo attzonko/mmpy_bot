@@ -105,7 +105,13 @@ class Bot:
         self.driver.register_webhook_server(self.webhook_server)
         # Schedule the queue loop to the current event loop so that it starts together
         # with self.init_websocket.
-        asyncio.get_event_loop().create_task(
+        try:
+            loop = asyncio.get_running_loop()
+        except RuntimeError:
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+
+        loop.create_task(
             self.event_handler._check_queue_loop(self.webhook_server.event_queue)
         )
 

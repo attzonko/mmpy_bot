@@ -60,7 +60,13 @@ class WebHookServer:
         self.running = True
 
         # Schedule the response awaiting function to the same loop as the web server
-        asyncio.get_event_loop().create_task(self._obtain_responses_loop())
+        try:
+            loop = asyncio.get_running_loop()
+        except RuntimeError:
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+
+        loop.create_task(self._obtain_responses_loop())
 
     async def stop(self):
         await self.app_runner.cleanup()
