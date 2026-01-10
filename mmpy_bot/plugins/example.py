@@ -171,3 +171,8 @@ class ExamplePlugin(Plugin):
         self.driver.reply_to(message, f"Okay, I will be waiting {seconds} seconds.")
         await asyncio.sleep(int(seconds))
         self.driver.reply_to(message, "Done!")
+
+    @listen_to("^@thisuser$", re.IGNORECASE, ignore_own_messages=False)
+    def custom_ping_replytoself(self, message: Message):
+        """Demonstration of ignore_own_messages, requires global settings IGNORE_OWN_MESSAGES = False"""
+        self.driver.reply_to(message, f"Hello @{message.sender_name}")
