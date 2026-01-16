@@ -22,7 +22,7 @@ repos:
           - "--filter-files"
   - repo: https://github.com/psf/black
     # Code style formatting
-    rev: 25.9.0
+    rev: 25.12.0
     hooks:
       - id: black
         exclude: (.*/)*snapshots/
@@ -34,7 +34,7 @@ repos:
         exclude: (.*/)*snapshots/
   # Ruff is a "fastar than flake8" linter/formatter
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.14.2
+    rev: v0.14.13
     hooks:
       # Run the linter.
       - id: ruff
