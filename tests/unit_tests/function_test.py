@@ -41,6 +41,17 @@ class TestFunction:
         assert new_f.matcher.pattern == "b"
         assert f in new_f.siblings
 
+        # Verify that stacks of 3+ wrappers retain every inner sibling.
+        # Regression test: previously the inner-most wrapper was dropped
+        # because each Function's `.function` already points to the bare
+        # callable, so the unwrap loop only captured the immediately-inner
+        # wrapper and ignored its own siblings.
+        outer = Function(new_f, matcher=re.compile("c"))
+        assert outer.function is wrapped
+        assert outer.matcher.pattern == "c"
+        assert new_f in outer.siblings
+        assert f in outer.siblings
+
 
 def example_listener(self, message):
     # Used to copy the arg specs to mock.Mock functions.
@@ -106,6 +117,16 @@ class TestMessageFunction:
         assert new_f.function is wrapped
         assert new_f.matcher.pattern == "a"
         assert f in new_f.siblings
+
+        # Regression test for stacked @listen_to decorators: with 3+
+        # decorators every inner wrapper must end up in the outermost
+        # MessageFunction's siblings, otherwise PluginsManager will only
+        # register the outer two patterns.
+        outer = MessageFunction(new_f, matcher=re.compile("b"))
+        assert outer.function is wrapped
+        assert outer.matcher.pattern == "b"
+        assert new_f in outer.siblings
+        assert f in outer.siblings
 
     def test_click_function(self):
         @click.command()
