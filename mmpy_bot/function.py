@@ -28,13 +28,23 @@ class Function(ABC):
         matcher: re.Pattern,
         **metadata,
     ):
-        # If another Function was passed, keep track of all these siblings.
-        # We later use them to register not only the outermost Function, but also any
-        # stacked ones.
+        # If another Function was passed, keep track of it and any earlier
+        # wrappers in the stack as siblings. We later use them to register
+        # not only the outermost Function, but also any stacked ones.
+        #
+        # Note: a Function's ``.function`` attribute always points to the
+        # original undecorated function — never another Function — because
+        # every previous decoration set it that way at the end of __init__.
+        # So when ``function`` here is a Function, ``function.function`` is
+        # already the original undecorated function. The wrappers *between*
+        # them (the captured Function's own siblings, built up by earlier
+        # decorations) have to be copied across explicitly, otherwise a
+        # stack of 3+ @listen_to's silently loses everything from the
+        # third one inward.
         self.siblings = []
 
-        while isinstance(function, Function):
-            self.siblings.append(function)
+        if isinstance(function, Function):
+            self.siblings.extend([function] + function.siblings)
             function = function.function
 
         if function is None:
