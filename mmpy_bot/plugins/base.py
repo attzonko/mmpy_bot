@@ -64,7 +64,7 @@ class Plugin(ABC):
         groups: Optional[Sequence[str]] = [],
     ):
         if function.is_coroutine:
-            await function(event, *groups)  # type:ignore
+            await function(event, *groups)  # type: ignore
         else:
             # By default, we use the global threadpool of the driver, but we could use
             # a plugin-specific thread or process pool if we wanted.
