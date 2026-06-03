@@ -1,4 +1,4 @@
-black==26.3.1
+black==26.5.1
 docformatter==1.7.7
 filelock==3.20.1
 isort==8.0.1
