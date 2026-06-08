@@ -1,2 +1,2 @@
-Django>1.9.13
+Django>=5.2.15
 mmpy_bot>1.0.9
