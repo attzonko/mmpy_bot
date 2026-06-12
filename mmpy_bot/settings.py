@@ -37,8 +37,9 @@ def _is_valid_option(_type, valid_types):
 
 @dataclass
 class Settings:
-    """Specifies the settings to be used by a chatbot. To run a chatbot, you should
-    either create a custom Settings instance with the appropriate values, or modify them
+    """Specifies the settings to be used by a chatbot.
+
+    To run a chatbot, you should either create a custom Settings instance with the appropriate values, or modify them
     through environment variables.
 
     The order of priority in which settings are obtained is as follows:

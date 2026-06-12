@@ -107,7 +107,6 @@ def generate_plugin_help(
 
     Returns one FunctionInfo instance for every listener (message or webhook)
     """
-
     plug_help: List[FunctionInfo] = []
 
     for matcher, functions in listeners.items():
