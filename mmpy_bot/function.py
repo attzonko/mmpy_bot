@@ -196,7 +196,6 @@ def listen_to(
 ):
     """Wrap the given function in a MessageFunction class so we can register some
     properties."""
-
     if allowed_users is None:
         allowed_users = []
 

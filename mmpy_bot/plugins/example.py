@@ -146,7 +146,9 @@ class ExamplePlugin(Plugin):
         category="schedule",
     )
     def schedule_every(self, message: Message, seconds: int):
-        """Schedules a reply every x seconds. Use the `cancel jobs` command to stop.
+        """Schedules a reply every x seconds.
+
+        Use the `cancel jobs` command to stop.
 
         Arguments:
         - seconds (int): number of seconds between each reply.
