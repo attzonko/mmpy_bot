@@ -38,8 +38,8 @@ repos:
     hooks:
       # Run the linter.
       - id: ruff
-  - repo: https://github.com/mattseymour/pre-commit-pytype
-    rev: '2023.5.8'
+  - repo: https://github.com/google/pytype
+    rev: '2024.10.11'
     hooks:
       - id: pytype
         # Don't run pytype in an isolated venv or it will fail on imports
