@@ -13,7 +13,7 @@ repos:
       - id: check-merge-conflict
   - repo: https://github.com/pycqa/isort
     # Formants, sorts and reorganizes imports
-    rev: 7.0.0
+    rev: 8.0.1
     hooks:
       - id: isort
         args:
@@ -22,7 +22,7 @@ repos:
           - "--filter-files"
   - repo: https://github.com/psf/black
     # Code style formatting
-    rev: 25.9.0
+    rev: 25.12.1
     hooks:
       - id: black
         exclude: (.*/)*snapshots/
@@ -49,7 +49,7 @@ repos:
           - "auto"
   - repo: https://github.com/myint/docformatter
     # Formats docstrings following PEP 257
-    rev: v1.7.7
+    rev: v1.8.1
     hooks:
       - id: docformatter
         args:
