@@ -385,3 +385,52 @@ You should notice that this method takes a datetime object, which is different f
 
 The following code example uses `schedule.once` to schedule a job.
 This job will be trigger at `t_time`.
+
+Bot replies to its own messages
+-------------------------------
+
+By default, the bot will never reply to its own messages, to avoid loops and other potentially undefined behaviour.
+
+However, it might be useful to occasionally create listeners that can be triggered by the bot's own replies, for
+example a custom @-ping that the bot itself might make.
+
+Achieving this requires 2 setup steps:
+
+1. In the global ``mmpy_bot`` ``Settings``, set the ``IGNORE_OWN_MESSAGES`` argument to ``False``:
+
+    .. code-block:: python
+
+        #!/usr/bin/env python
+
+        from mmpy_bot import Bot, Settings
+        from my_plugin import MyPlugin
+
+        bot = Bot(
+            settings=Settings(
+                MATTERMOST_URL = "http://127.0.0.1",
+                MATTERMOST_PORT = 8065,
+                BOT_TOKEN = "<your_bot_token>",
+                BOT_TEAM = "<team_name>",
+                SSL_VERIFY = False,
+                IGNORE_OWN_MESSAGES = False,
+            ),  # Either specify your settings here or as environment variables.
+            plugins=[MyPlugin()],  # Add your own plugins here.
+        )
+        bot.run()
+
+    **NOTE:** This is safe, and will not trigger any loops by itself; the default bot behaviour is still to ignore
+    its own messages within each listener.
+
+2. For the listeners that you want to be able to reply to the bot's own messages, add an ``ignore_own_messages=False``
+keyword argument to the ``listen_to`` decorator:
+
+    .. code-block:: python
+
+        @listen_to("^poke$", ignore_own_message=False)
+        async def poke(self, message: Message):
+            """Will reply to any instance of "poke" even if sent by the bot itself."""
+            self.driver.reply_to(message, f"Hello, @{message.sender_name}!")
+
+**WARNING:** When using this functionality, be careful of the potential to cause infinite message loops! You **must**
+ensure that any listener using ``ignore_own_messages=False`` cannot itself trigger another listener, especially
+itself.
