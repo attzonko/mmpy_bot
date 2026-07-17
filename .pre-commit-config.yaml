@@ -13,7 +13,7 @@ repos:
       - id: check-merge-conflict
   - repo: https://github.com/pycqa/isort
     # Formants, sorts and reorganizes imports
-    rev: 9.0.0a3
+    rev: 9.0.0b1
     hooks:
       - id: isort
         args:
@@ -34,7 +34,7 @@ repos:
         exclude: (.*/)*snapshots/
   # Ruff is a "fastar than flake8" linter/formatter
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.15.17
+    rev: v0.15.22
     hooks:
       # Run the linter.
       - id: ruff
